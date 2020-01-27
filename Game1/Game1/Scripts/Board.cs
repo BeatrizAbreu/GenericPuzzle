@@ -62,17 +62,23 @@ namespace Game1
             int holesCount = 0;
             int rand;
 
-            //create lines of nodes
-            for (int x = 0; x < boardInfo.width; x++)
+            //create the matrix of nodes
+            for (int y = 0; y < boardInfo.height; y++)
             {
                 //create each node cell
-                for (int y = 0; y < boardInfo.height; y++)
+                for (int x = 0; x < boardInfo.width; x++)
                 {
                     rand = random.Next(100);
                     //create a hole: skip the current position
                     if (holesCount <= boardInfo.nHoles && rand > 50)
                     {
-                        y++;
+                        x++;
+                        //if the current line is already full, pass on to the next line
+                        if(x == boardInfo.width)
+                        {
+                            x = 0;
+                            y++;
+                        }
                         holesCount++;
                     }
 
