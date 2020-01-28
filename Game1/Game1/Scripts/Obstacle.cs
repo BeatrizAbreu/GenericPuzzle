@@ -9,11 +9,11 @@ namespace Game1
 {
     class Obstacle
     {
-        Vector2 position;
+        public Vector2 position;
 
-        public virtual void Action()
+        public virtual void Action(Vector2 direction)
         {
-
+            this.Action(direction);
         }
     }
 }

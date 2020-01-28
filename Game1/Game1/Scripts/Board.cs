@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Game1.Scripts;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Game1
     }
 
     //Contains the information about each node
-    class Node
+    public class Node
     {
         //node's position on the board
         public Vector2 position;
@@ -41,14 +42,18 @@ namespace Game1
     //Creates and manages the game's board
     public class Board
     {
+        public Node[,] nodes;
         BoardInfo boardInfo;
 
         public Board(int width, int height, int nHoles)
         {
+            boardInfo = new BoardInfo();
             //set board info params
             boardInfo.width = width;
             boardInfo.height = height;
             boardInfo.nHoles = nHoles;
+
+            nodes = new Node[boardInfo.width, boardInfo.height];
 
             //create the board graph with all the information
             CreateBoard(boardInfo);
@@ -57,7 +62,6 @@ namespace Game1
         //Creates all board nodes and their neighbor dictionaries
         public void CreateBoard(BoardInfo boardInfo)
         {
-            Node[,] nodes = new Node[boardInfo.width, boardInfo.height];
             Random random = new Random();
             int holesCount = 0;
             int rand;
@@ -72,95 +76,76 @@ namespace Game1
                     //create a hole: skip the current position
                     if (holesCount <= boardInfo.nHoles && rand > 50)
                     {
-                        x++;
-                        //if the current line is already full, pass on to the next line
-                        if(x == boardInfo.width)
+                        //the 1st and 2nd nodes can't both be holes
+                        if (nodes[0, 0] != null ||
+                            (nodes[0, 0] == null && nodes[x, y] != nodes[1, 0]))
                         {
-                            x = 0;
-                            y++;
+                            x++;
+                            //if the current line is already full, pass on to the next line
+                            if (x == boardInfo.width && y < boardInfo.height)
+                            {
+                                x = 0;
+                                y++;
+                            }
+                            holesCount++;
                         }
-                        holesCount++;
                     }
 
+                    nodes[x, y] = new Node();
                     //positions are filled from (0,0) to (width-1, height-1)
                     nodes[x, y].position = new Vector2(x, y);
-                    //create neighbors
-                    CreateNeighbors(nodes[x, y], nodes);
+                }
+            }
+
+            //create the neighbors after creating the nodes
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                for (int x = 0; x < boardInfo.width; x++)
+                {
+                    //if not a hole
+                    if (nodes[x,y] != null)
+                    {
+                        //create neighbors
+                        CreateNeighbors(nodes[x, y], this);
+                    }
                 }
             }
         }
 
         //Creates a neighbor dictionary for each valid (non-hole) node
-        private void CreateNeighbors(Node currentNode, Node[,] nodes)
+        private void CreateNeighbors(Node currentNode, Board board)
         {
             //create a neighbor list
             currentNode.neighbors = new Dictionary<Node, Direction>();
 
-            //identify neighbors and fill the neighbor list
-            foreach (var node in nodes)
-            {
-                float x = currentNode.position.X;
-                float y = currentNode.position.Y;
+            float x = currentNode.position.X;
+            float y = currentNode.position.Y;
+            Node node = new Node();
 
-                //if it's a neighbor
-                if (node.position == new Vector2(x - 1, y - 1)
+            //identify neighbors and fill the neighbor list
+            for (int y1 = 0; y1 < board.boardInfo.height; y1++)
+            {
+                for (int x1 = 0; x1 < board.boardInfo.width; x1++)
+                {
+                    node = board.nodes[x1, y1];
+                    //if it's a neighbor and not a hole
+                    if (node != null &&
+                        (node.position == new Vector2(x - 1, y - 1)
                     || node.position == new Vector2(x, y - 1)
                     || node.position == new Vector2(x + 1, y - 1)
                     || node.position == new Vector2(x - 1, y + 1)
                     || node.position == new Vector2(x, y + 1)
                     || node.position == new Vector2(x + 1, y + 1)
                     || node.position == new Vector2(x - 1, y)
-                    || node.position == new Vector2(x + 1, y))
-                {
-                    //calculate the direction from the current node to the neighbor
-                    Vector2 direction = node.position - currentNode.position;
-                    //direction is defined for each neighbor
-                    currentNode.neighbors.Add(node, GetDirection(direction));
+                    || node.position == new Vector2(x + 1, y)))
+                    {
+                        //calculate the direction from the current node to the neighbor
+                        Vector2 direction = node.position - currentNode.position;
+                        //direction is defined for each neighbor
+                        currentNode.neighbors.Add(node, Functions.GetDirection(direction));
+                    }
                 }
             }
         }
-
-        //Sets each node's neighbor with the right direction name (UP/DOWN/LEFT/RIGHT/etc.) 
-        private Direction GetDirection(Vector2 direction)
-        {
-            Direction dir;
-
-            //RIGHT
-            if (direction.X > 0)
-            {
-                //UP
-                if (direction.Y > 0)
-                    dir = Direction.UpRight;
-                //DOWN
-                if (direction.Y < 0)
-                    dir = Direction.DownRight;
-                //NEUTRAL
-                else
-                    dir = Direction.Right;
-            }
-            //LEFT
-            else if (direction.X < 0)
-            {
-                //UP
-                if (direction.Y > 0)
-                    dir = Direction.UpLeft;
-                //DOWN
-                if (direction.Y < 0)
-                    dir = Direction.DownLeft;
-                //NEUTRAL
-                else
-                    dir = Direction.Left;
-            }
-            //NEUTRAL
-            else
-            {
-                if (direction.Y > 0)
-                    dir = Direction.Up;
-                else 
-                    dir = Direction.Down;
-            }
-
-            return dir;
-        }       
     }
 }

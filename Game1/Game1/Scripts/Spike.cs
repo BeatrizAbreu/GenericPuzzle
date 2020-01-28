@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Game1
 {
     class Spike : Obstacle
     {
-        public override void Action()
+        public override void Action(Vector2 direction)
         {
 
         }
