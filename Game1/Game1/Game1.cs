@@ -99,7 +99,7 @@ namespace Game1
             //Player movement control
             if (state.IsKeyDown(Keys.D) && !previousState.IsKeyDown(Keys.D)) //RIGHT
              player.Walk(new Vector2(1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.A) /*&& !previousState.IsKeyDown(Keys.A)*/) //LEFT
+            if (state.IsKeyDown(Keys.A) && !previousState.IsKeyDown(Keys.A)) //LEFT
                 player.Walk(new Vector2(-1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.W) && !previousState.IsKeyDown(Keys.W)) //UP
                 player.Walk(new Vector2(0, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
