@@ -19,36 +19,39 @@ namespace Game1.Scripts
                 Direction dir = Functions.GetDirection(direction);
                 if (neighbor.Value == dir)
                 {
-                    //the current node is updated
-                    currentNode = neighbor.Key;
-
                     //change the player's position
+                    //horizontal
                     if (dir == Direction.Right || dir == Direction.Left)
                         position += direction * spriteWidth;
+                    //vertical
                     else if (dir == Direction.Up || dir == Direction.Down)
                         position += direction * spriteHeight;
+                    //diagonal
                     else
                         position = direction * ((spriteHeight + spriteWidth) / 2);
 
-                    //find the next node's obstacle
-                    foreach (var obstacle in obstacles)
-                    {
-                        if (obstacle.position == neighbor.Key.position)
-                        {
-                            //cast the obstacle's action
-                            obstacle.Action(direction);
-                        }
-                    }
+                    ////find the next node's obstacle
+                    //foreach (var obstacle in obstacles)
+                    //{
+                    //    if (obstacle.position == neighbor.Key.position)
+                    //    {
+                    //        //cast the obstacle's action
+                    //        obstacle.Action(direction);
+                    //    }
+                    //}
 
-                    //find the next node's win object
-                    foreach (var winObject in winObjects)
-                    {
-                        if (winObject.position == neighbor.Key.position)
-                        {
-                            //cast the object's action
-                            winObject.Action();
-                        }
-                    }
+                    ////find the next node's win object
+                    //foreach (var winObject in winObjects)
+                    //{
+                    //    if (winObject.position == neighbor.Key.position)
+                    //    {
+                    //        //cast the object's action
+                    //        winObject.Action();
+                    //    }
+                    //}
+
+                    //the current node is updated
+                    currentNode = neighbor.Key;
                 }
             }
         }
