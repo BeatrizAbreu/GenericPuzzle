@@ -11,7 +11,7 @@ namespace Game1.Scripts
     {
         public Vector2 position;
 
-        public void Walk(Vector2 direction, int spriteWidth, int spriteHeight, List<Obstacle> obstacles, List<WinObject> winObjects, Node currentNode)
+        public Node Walk(Vector2 direction, int spriteWidth, int spriteHeight, List<Obstacle> obstacles, List<WinObject> winObjects, Node currentNode)
         {
             //finding the next node through the current node's neighbors
             foreach (KeyValuePair<Node, Direction> neighbor in currentNode.neighbors)
@@ -19,17 +19,6 @@ namespace Game1.Scripts
                 Direction dir = Functions.GetDirection(direction);
                 if (neighbor.Value == dir)
                 {
-                    //change the player's position
-                    //horizontal
-                    if (dir == Direction.Right || dir == Direction.Left)
-                        position += direction * spriteWidth;
-                    //vertical
-                    else if (dir == Direction.Up || dir == Direction.Down)
-                        position += direction * spriteHeight;
-                    //diagonal
-                    else
-                        position = direction * ((spriteHeight + spriteWidth) / 2);
-
                     ////find the next node's obstacle
                     //foreach (var obstacle in obstacles)
                     //{
@@ -51,9 +40,11 @@ namespace Game1.Scripts
                     //}
 
                     //the current node is updated
-                    currentNode = neighbor.Key;
+                    return neighbor.Key;
                 }
             }
+
+            return currentNode;
         }
     }
 }

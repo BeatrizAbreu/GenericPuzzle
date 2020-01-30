@@ -98,21 +98,21 @@ namespace Game1
 
             //Player movement control
             if (state.IsKeyDown(Keys.D) && !previousState.IsKeyDown(Keys.D)) //RIGHT
-             player.Walk(new Vector2(1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.A) && !previousState.IsKeyDown(Keys.A)) //LEFT
-                player.Walk(new Vector2(-1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(-1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.W) && !previousState.IsKeyDown(Keys.W)) //UP
-                player.Walk(new Vector2(0, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(0, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.S) && !previousState.IsKeyDown(Keys.S)) //DOWN
-                player.Walk(new Vector2(0, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(0, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.E) && !previousState.IsKeyDown(Keys.E)) //UPRIGHT
-                player.Walk(new Vector2(1, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(1, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.Q) && !previousState.IsKeyDown(Keys.Q)) //UPLEFT
-                player.Walk(new Vector2(-1, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(-1, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.X) && !previousState.IsKeyDown(Keys.X)) //DOWNRIGHT
-                player.Walk(new Vector2(1, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(1, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.Z) && !previousState.IsKeyDown(Keys.Z)) //DOWNLEFT
-                player.Walk(new Vector2(-1, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(-1, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
 
             previousState = state;
 
@@ -138,8 +138,9 @@ namespace Game1
                     }
                 }
             }
+
             //draw the player sprite
-            spriteBatch.Draw(playerTex, player.position, Color.White);
+            spriteBatch.Draw(playerTex, new Vector2(currentNode.position.X * boardNodeTex.Width, currentNode.position.Y * boardNodeTex.Height), Color.White);
 
             spriteBatch.End();
             base.Draw(gameTime);

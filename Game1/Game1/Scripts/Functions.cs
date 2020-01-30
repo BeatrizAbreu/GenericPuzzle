@@ -21,7 +21,7 @@ namespace Game1.Scripts
                 if (direction.Y > 0)
                     dir = Direction.UpRight;
                 //DOWN
-                if (direction.Y < 0)
+                else if (direction.Y < 0)
                     dir = Direction.DownRight;
                 //NEUTRAL
                 else
@@ -34,7 +34,7 @@ namespace Game1.Scripts
                 if (direction.Y > 0)
                     dir = Direction.UpLeft;
                 //DOWN
-                if (direction.Y < 0)
+                else if(direction.Y < 0)
                     dir = Direction.DownLeft;
                 //NEUTRAL
                 else
