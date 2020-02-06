@@ -147,12 +147,16 @@ namespace Game1
             {
                 for (int x = 0; x < width; x++)
                 {
+                    float yDelta = x % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
                     //if the node isn't a hole
                     if (board.nodes[x, y] != null)
-                        spriteBatch.Draw(boardNodeTex, new Vector2(board.nodes[x, y].position.X * boardNodeTex.Width, board.nodes[x, y].position.Y * boardNodeTex.Height), Color.White);
+                        spriteBatch.Draw(boardNodeTex, 
+                                new Vector2(board.nodes[x, y].position.X * boardNodeTex.Height, 
+                                            board.nodes[x, y].position.Y * boardNodeTex.Height + yDelta), Color.White);
                     else
                     {
-                        spriteBatch.Draw(boardNodeTex, new Vector2(x * boardNodeTex.Width, y * boardNodeTex.Height), Color.Black);
+                        spriteBatch.Draw(boardNodeTex, 
+                                new Vector2(x * boardNodeTex.Height, y * boardNodeTex.Height + yDelta), Color.Black);
                     }
                 }
             }
