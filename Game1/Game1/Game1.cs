@@ -12,14 +12,17 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D boardNodeTex;
-        private Texture2D playerTex;
+        private Texture2D boardNodeTex,
+                          playerTex,
+                          boxTex,
+                          pressurePlateTex;
 
         //Board making information
         Random random = new Random();
-        int maxHoles = 1;
-        int width = 4;
-        int height = 4;
+        int nHoles = 2,
+            nBoxes = 3,
+            width = 4,
+            height = 4;
         private Board board;
 
         //Player Info
@@ -27,8 +30,9 @@ namespace Game1
         Node currentNode;
 
         //Objects information
-        List<Obstacle> obstacles;
+        List<Obstacle> obstacles; 
         List<WinObject> winObjects;
+        Vector2[] baseObstaclePos;
 
         //Keyboard
         KeyboardState previousState, state;
@@ -46,7 +50,8 @@ namespace Game1
             previousState = state;
 
             //create a board with 0 to maxHoles random holes 
-            board = new Board(width, height, random.Next(maxHoles));
+            board = new Board(width, height, nHoles, nBoxes);
+
             //create a player
             player = new Player();
 
@@ -62,9 +67,15 @@ namespace Game1
                 currentNode = board.nodes[1, 0];
             }
 
+            obstacles = board.obstacles;
+            winObjects = board.winObjects;
 
-            obstacles = new List<Obstacle>();
-            winObjects = new List<WinObject>();
+            baseObstaclePos = new Vector2[obstacles.Count];
+
+            for (int i = 0; i < obstacles.Count; i++)
+            {
+                baseObstaclePos[i] = obstacles[i].position;
+            }
 
             base.Initialize();
         }
@@ -76,13 +87,12 @@ namespace Game1
             
             boardNodeTex = Content.Load<Texture2D>("assets/node");
             playerTex = Content.Load<Texture2D>("assets/player");
-
-            // TODO: use this.Content to load your game content here
+            boxTex = Content.Load<Texture2D>("assets/box");
+            pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
         }
 
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -96,23 +106,29 @@ namespace Game1
             if (state.IsKeyDown(Keys.Escape))
                 Exit();
 
+            //Restart the game
+            if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
+            {
+                RestartGame();
+            }
+
             //Player movement control
             if (state.IsKeyDown(Keys.D) && !previousState.IsKeyDown(Keys.D)) //RIGHT
-                currentNode = player.Walk(new Vector2(1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(1, 0), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.A) && !previousState.IsKeyDown(Keys.A)) //LEFT
-                currentNode = player.Walk(new Vector2(-1, 0), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(-1, 0), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.W) && !previousState.IsKeyDown(Keys.W)) //UP
-                currentNode = player.Walk(new Vector2(0, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(0, -1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.S) && !previousState.IsKeyDown(Keys.S)) //DOWN
-                currentNode = player.Walk(new Vector2(0, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(0, 1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.E) && !previousState.IsKeyDown(Keys.E)) //UPRIGHT
-                currentNode = player.Walk(new Vector2(1, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(1, -1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.Q) && !previousState.IsKeyDown(Keys.Q)) //UPLEFT
-                currentNode = player.Walk(new Vector2(-1, -1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(-1, -1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.X) && !previousState.IsKeyDown(Keys.X)) //DOWNRIGHT
-                currentNode = player.Walk(new Vector2(1, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(1, 1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.Z) && !previousState.IsKeyDown(Keys.Z)) //DOWNLEFT
-                currentNode = player.Walk(new Vector2(-1, 1), boardNodeTex.Width, boardNodeTex.Height, obstacles, winObjects, currentNode);
+                currentNode = player.Walk(new Vector2(-1, 1), obstacles, winObjects, currentNode);
 
             previousState = state;
 
@@ -139,11 +155,74 @@ namespace Game1
                 }
             }
 
+            //draw the pressure plates' sprites
+            foreach (WinObject winObject in winObjects)
+                spriteBatch.Draw(pressurePlateTex, new Vector2(winObject.position.X * boardNodeTex.Width, winObject.position.Y * boardNodeTex.Height), Color.White);
+
+            //draw the boxes' sprites
+            foreach (Obstacle obstacle in obstacles)
+                spriteBatch.Draw(boxTex, new Vector2(obstacle.position.X * boardNodeTex.Width, obstacle.position.Y * boardNodeTex.Height), Color.White);
+
             //draw the player sprite
             spriteBatch.Draw(playerTex, new Vector2(currentNode.position.X * boardNodeTex.Width, currentNode.position.Y * boardNodeTex.Height), Color.White);
 
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void RestartGame()
+        {
+            //reset player position & the currentNode
+            if (board.nodes[0, 0] != null)
+            {
+                player.position = board.nodes[0, 0].position;
+                currentNode = board.nodes[0, 0];
+            }
+            else
+            {
+                player.position = board.nodes[1, 0].position;
+                currentNode = board.nodes[1, 0];
+            }
+
+            //reseting objects' position
+            for (int i = 0; i < obstacles.Count; i++)
+            {
+                obstacles[i].position = baseObstaclePos[i];
+            }
+
+            board = RestartBoard();
+        }
+
+        //Set the node states to the starter states
+        private Board RestartBoard()
+        {
+            //go through each node on the board
+            for (int y = 0; y < board.boardInfo.height; y++)
+            {
+                for (int x = 0; x < board.boardInfo.width; x++)
+                {
+                    //go through each obstacle's position
+                    for (int i = 0; i < baseObstaclePos.Length; i++)
+                    {
+                        //if the node is not a hole
+                        if (board.nodes[x, y] != null)
+                        {
+                            //if the node's position matches any of the first objects' position
+                            if (board.nodes[x, y].position == baseObstaclePos[i])
+                            {
+                                //update the node's state to occupied
+                                board.nodes[x, y].isEmpty = false;
+                                break;
+                            }
+                            else
+                            {
+                                board.nodes[x, y].isEmpty = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return board;
         }
     }
 }

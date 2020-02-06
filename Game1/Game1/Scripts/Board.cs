@@ -28,6 +28,8 @@ namespace Game1
         public Vector2 position;
         //each neighbor is defined by its (negative) direction towards the current node
         public Dictionary<Node, Direction> neighbors;
+        //shows if the node is occupied by a box object
+        public bool isEmpty;
     }
 
     //Contains the board' information
@@ -37,31 +39,127 @@ namespace Game1
         public int height;
         //number of holes/walls/non-walkable tiles
         public int nHoles;
+
+        public int nBoxes;
     }
 
     //Creates and manages the game's board
     public class Board
     {
         public Node[,] nodes;
-        BoardInfo boardInfo;
+        public BoardInfo boardInfo;
 
-        public Board(int width, int height, int nHoles)
+        public List<Obstacle> obstacles;
+        public List<WinObject> winObjects;
+
+        public Board(int width, int height, int nHoles, int nBoxes)
         {
-            boardInfo = new BoardInfo();
             //set board info params
+            boardInfo = new BoardInfo();          
             boardInfo.width = width;
             boardInfo.height = height;
             boardInfo.nHoles = nHoles;
+            boardInfo.nBoxes = nBoxes;
 
             nodes = new Node[boardInfo.width, boardInfo.height];
 
             //create the board graph with all the information
             CreateBoard(boardInfo);
+
+            obstacles = new List<Obstacle>();
+            winObjects = new List<WinObject>();
+
+            CreateObstacles();
+            CreateWinObjects();
+        }
+
+        public void CreateWinObjects()
+        {
+            Random random = new Random();
+            int objCount = 0;
+            int rand;
+
+            //go through the nodes
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                //while there's still objects to place
+                if (objCount < boardInfo.nBoxes)
+                {
+                    for (int x = 0; x < boardInfo.width; x++)
+                    {
+                        rand = random.Next(100);
+
+                        //if the node is not a hole and the random rolls over 30
+                        if (nodes[x, y] != null
+                            && nodes[x, y].isEmpty
+                            && rand > 30)
+                        {
+                            //create and place the object
+                            WinObject winObject = new WinObject();
+                            winObject.position = nodes[x, y].position;
+                            winObjects.Add(winObject);
+                            objCount++;
+                        }                      
+                    }
+                }
+            }
+        }
+
+        public void CreateObstacles()
+        {
+            Random random = new Random();
+            int boxCount = 0;
+            int rand;
+
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                if (boxCount < boardInfo.nBoxes)
+                {
+                    for (int x = 0; x < boardInfo.width; x++)
+                    {
+                        rand = random.Next(100);
+
+                        if (nodes[x, y] != null
+                            && x < boardInfo.width - 1 && x > 0
+                            && rand > 30)
+                        {
+                                //if there's 2 free nodes next to the box (above and below)
+                                if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
+                                     && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
+                                {
+                                    //create and place the box
+                                    Box box = new Box();
+                                    box.position = nodes[x, y].position;
+                                    nodes[x, y].isEmpty = false;
+                                    obstacles.Add(box);
+                                    boxCount++;
+                                }
+                        }
+                        else if (nodes[x, y] != null
+                            && y < boardInfo.height - 1 && y > 0
+                            && rand > 30)
+                        {
+                                //if there's 2 free nodes next to the box (to the right and left)
+                                if (nodes[x, y + 1] != null && nodes[x, y - 1] != null
+                                     && nodes[x, y + 1].isEmpty && nodes[x, y - 1].isEmpty)
+                                {
+                                    //create and place the box
+                                    Box box = new Box();
+                                    box.position = nodes[x, y].position;
+                                    nodes[x, y].isEmpty = false;
+                                    obstacles.Add(box);
+                                    boxCount++;
+                                }
+                        }
+                    }
+                }
+            }
         }
 
         //Creates all board nodes and their neighbor dictionaries
         public void CreateBoard(BoardInfo boardInfo)
         {
+            Vector2 lastHolePosition = new Vector2(0,0);
             Random random = new Random();
             int holesCount = 0;
             int rand;
@@ -74,11 +172,14 @@ namespace Game1
                 {
                     rand = random.Next(100);
                     //create a hole: skip the current position
-                    if (holesCount <= boardInfo.nHoles && rand > 50)
+                    if (holesCount < boardInfo.nHoles && rand > 50)
                     {
-                        //the 1st and 2nd nodes can't both be holes
-                        if (nodes[0, 0] != null ||
-                            (nodes[0, 0] == null && nodes[x, y] != nodes[1, 0]))
+                        //there can't be two adjacent holes
+                        if (!(x == lastHolePosition.X + 1 && y == lastHolePosition.Y
+                           || x == lastHolePosition.X - 1 && y == lastHolePosition.Y + 1 
+                           || x == lastHolePosition.X && y == lastHolePosition.Y + 1 
+                           || x == lastHolePosition.X + 1 && y == lastHolePosition.Y + 1)
+                           && !(x == 0 && y == 0))
                         {
                             x++;
                             //if the current line is already full, pass on to the next line
@@ -87,6 +188,7 @@ namespace Game1
                                 x = 0;
                                 y++;
                             }
+                            lastHolePosition = new Vector2(x,y);
                             holesCount++;
                         }
                     }
@@ -94,6 +196,7 @@ namespace Game1
                     nodes[x, y] = new Node();
                     //positions are filled from (0,0) to (width-1, height-1)
                     nodes[x, y].position = new Vector2(x, y);
+                    nodes[x, y].isEmpty = true;
                 }
             }
 
@@ -103,7 +206,7 @@ namespace Game1
                 for (int x = 0; x < boardInfo.width; x++)
                 {
                     //if not a hole
-                    if (nodes[x,y] != null)
+                    if (nodes[x, y] != null)
                     {
                         //create neighbors
                         CreateNeighbors(nodes[x, y], this);

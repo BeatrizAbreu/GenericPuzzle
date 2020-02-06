@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game1
 {
-    class Obstacle
+    public class Obstacle
     {
         public Vector2 position;
 

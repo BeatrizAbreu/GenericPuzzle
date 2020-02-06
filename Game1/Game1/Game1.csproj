@@ -44,12 +44,12 @@
     <Compile Include="Scripts\Board.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Scripts\Box.cs" />
+    <Compile Include="Scripts\PressurePlate.cs" />
     <Compile Include="Scripts\Functions.cs" />
     <Compile Include="Scripts\Obstacle.cs" />
     <Compile Include="Scripts\Player.cs" />
     <Compile Include="Scripts\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripts\Spike.cs" />
     <Compile Include="Scripts\WinObject.cs" />
   </ItemGroup>
   <ItemGroup>

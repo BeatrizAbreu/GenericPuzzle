@@ -23,3 +23,5 @@ C:\Users\beatr\OneDrive\Documentos\GitHub\GenericPuzzle\Game1\Game1\obj\x86\Debu
 C:\Users\beatr\OneDrive\Documentos\GitHub\GenericPuzzle\Game1\Game1\obj\x86\Debug\Game1.pdb
 C:\Users\beatr\OneDrive\Documentos\GitHub\GenericPuzzle\Game1\Game1\bin\Windows\x86\Debug\Content\assets\node.xnb
 C:\Users\beatr\OneDrive\Documentos\GitHub\GenericPuzzle\Game1\Game1\bin\Windows\x86\Debug\Content\assets\player.xnb
+C:\Users\beatr\OneDrive\Documentos\GitHub\GenericPuzzle\Game1\Game1\bin\Windows\x86\Debug\Content\assets\box.xnb
+C:\Users\beatr\OneDrive\Documentos\GitHub\GenericPuzzle\Game1\Game1\bin\Windows\x86\Debug\Content\assets\pressurePlate.xnb

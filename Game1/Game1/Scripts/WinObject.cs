@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace Game1
 {
-    class WinObject
+    public class WinObject
     {
         public Vector2 position;
+        public bool isTriggered;
 
-        public virtual void Action()
-        {
-
-        }
+        //public virtual void Action()
+        //{
+        //    this.Action();
+        //}
     }
 }
