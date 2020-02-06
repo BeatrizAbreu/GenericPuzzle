@@ -19,7 +19,7 @@ namespace Game1
 
         //Board making information
         Random random = new Random();
-        int nHoles = 2,
+        int nHoles,
             nBoxes = 3,
             width = 4,
             height = 4;
@@ -45,6 +45,8 @@ namespace Game1
 
         protected override void Initialize()
         {
+            nHoles = (int)width / 4;
+
             //setting first keyboard states
             state = Keyboard.GetState();
             previousState = state;
@@ -197,9 +199,9 @@ namespace Game1
         private Board RestartBoard()
         {
             //go through each node on the board
-            for (int y = 0; y < board.boardInfo.height; y++)
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < board.boardInfo.width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     //go through each obstacle's position
                     for (int i = 0; i < baseObstaclePos.Length; i++)

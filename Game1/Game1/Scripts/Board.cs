@@ -47,7 +47,7 @@ namespace Game1
     public class Board
     {
         public Node[,] nodes;
-        public BoardInfo boardInfo;
+        private BoardInfo boardInfo;
 
         public List<Obstacle> obstacles;
         public List<WinObject> winObjects;
@@ -89,18 +89,22 @@ namespace Game1
                     {
                         rand = random.Next(100);
 
-                        //if the node is not a hole and the random rolls over 30
-                        if (nodes[x, y] != null
-                            && nodes[x, y].isEmpty
-                            && rand > 30)
+                        foreach (Obstacle obstacle in obstacles)
                         {
-                            //create and place the object
-                            WinObject winObject = new WinObject();
-                            winObject.position = nodes[x, y].position;
-                            winObjects.Add(winObject);
-                            objCount++;
-                            break;
-                        }                      
+                            //if the node is not a hole and the random rolls over 30
+                            if (nodes[x, y] != null
+                                && nodes[x, y].isEmpty
+                                && (x == obstacle.position.X || y == obstacle.position.Y)
+                                && rand > 30)
+                            {
+                                //create and place the object
+                                WinObject winObject = new WinObject();
+                                winObject.position = nodes[x, y].position;
+                                winObjects.Add(winObject);
+                                objCount++;
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -121,7 +125,7 @@ namespace Game1
                         rand = random.Next(100);
 
                         if (nodes[x, y] != null
-                            && x < boardInfo.width - 1 && x > 0
+                            && x != boardInfo.width - 1 && x != 0
                             && rand > 30)
                         {
                                 //if there's 2 free nodes next to the box (above and below)
@@ -138,7 +142,7 @@ namespace Game1
                                 }
                         }
                         else if (nodes[x, y] != null
-                            && y < boardInfo.height - 1 && y > 0
+                            && y != boardInfo.height - 1 && y != 0
                             && rand > 30)
                         {
                                 //if there's 2 free nodes next to the box (to the right and left)
