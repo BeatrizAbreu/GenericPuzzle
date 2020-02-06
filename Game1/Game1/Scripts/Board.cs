@@ -99,6 +99,7 @@ namespace Game1
                             winObject.position = nodes[x, y].position;
                             winObjects.Add(winObject);
                             objCount++;
+                            break;
                         }                      
                     }
                 }
@@ -133,6 +134,7 @@ namespace Game1
                                     nodes[x, y].isEmpty = false;
                                     obstacles.Add(box);
                                     boxCount++;
+                                  // break;
                                 }
                         }
                         else if (nodes[x, y] != null
@@ -149,6 +151,7 @@ namespace Game1
                                     nodes[x, y].isEmpty = false;
                                     obstacles.Add(box);
                                     boxCount++;
+                                //break;
                                 }
                         }
                     }
