@@ -103,7 +103,7 @@ namespace Game1
                                 winObjects.Add(winObject);
                                 objCount++;
                                 break;
-                            }
+                            }    
                         }
                     }
                 }
