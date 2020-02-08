@@ -149,12 +149,14 @@ namespace Game1
                 for (int x = 0; x < width; x++)
                 {
                     float yDelta = x % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
+                    Color colorDelta = y % 2 == 0 ? Color.White : Color.LightGray;
+
                     //if the node isn't a hole
                     if (board.nodes[x, y] != null)
                     {
                         spriteBatch.Draw(boardNodeTex,
                                 new Vector2(board.nodes[x, y].position.X * boardNodeTex.Height,
-                                            board.nodes[x, y].position.Y * boardNodeTex.Height + yDelta), Color.White);
+                                            board.nodes[x, y].position.Y * boardNodeTex.Height + yDelta), colorDelta);
                     }
                     else
                     {
