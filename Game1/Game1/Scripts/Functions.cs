@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    class Functions
+    static class Functions
     {
         //Sets each node's neighbor with the right direction name (UP/DOWN/LEFT/RIGHT/etc.) 
         public static Direction GetDirection(Vector2 direction)
