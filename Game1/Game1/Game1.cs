@@ -54,18 +54,16 @@ namespace Game1
             //create a board with 0 to maxHoles random holes 
             board = new Board(width, height, nHoles, nBoxes);
 
-            //create a player
-            player = new Player();
-
             //player is placed on the first tile if it isn't a hole
             if (board.nodes[0, 0] != null)
             {
-                player.position = board.nodes[0, 0].position;
+                //create a player
+                player = new Player(board.nodes[0, 0].position);
                 currentNode = board.nodes[0, 0];
             }            
             else
             {
-                player.position = board.nodes[1, 0].position;
+                player = new Player(board.nodes[1, 0].position);
                 currentNode = board.nodes[1, 0];
             }
 

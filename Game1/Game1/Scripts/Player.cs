@@ -10,6 +10,13 @@ namespace Game1.Scripts
     class Player
     {
         public Vector2 position;
+        private static int nMoves;
+
+        public Player(Vector2 position)
+        {
+            this.position = position;
+            nMoves = 0;
+        }
 
         public Node Walk(Vector2 direction, List<Obstacle> obstacles, List<WinObject> winObjects, Node currentNode)
         {
@@ -51,6 +58,7 @@ namespace Game1.Scripts
                                             }
                                         }
 
+                                        nMoves++;
                                         //update the player's position
                                         return neighbor.Key;
                                     }
@@ -66,6 +74,7 @@ namespace Game1.Scripts
                         }
                     }
 
+                    nMoves++;
                     //the current node is updated
                     return neighbor.Key;
                 }
