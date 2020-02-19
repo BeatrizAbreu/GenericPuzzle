@@ -37,9 +37,9 @@ namespace Game1
     {
         public int width;
         public int height;
+
         //number of holes/walls/non-walkable tiles
         public int nHoles;
-
         public int nBoxes;
     }
 
@@ -82,10 +82,10 @@ namespace Game1
             //go through the nodes
             for (int y = 0; y < boardInfo.height; y++)
             {
-                //while there's still objects to place
-                if (objCount < boardInfo.nBoxes)
+                for (int x = 0; x < boardInfo.width; x++)
                 {
-                    for (int x = 0; x < boardInfo.width; x++)
+                    //while there's still objects to place
+                    if (objCount < boardInfo.nBoxes)
                     {
                         rand = random.Next(100);
 
@@ -103,7 +103,7 @@ namespace Game1
                                 winObjects.Add(winObject);
                                 objCount++;
                                 break;
-                            }    
+                            }
                         }
                     }
                 }
@@ -118,9 +118,9 @@ namespace Game1
 
             for (int y = 0; y < boardInfo.height; y++)
             {
-                if (boxCount < boardInfo.nBoxes)
+                for (int x = 0; x < boardInfo.width; x++)
                 {
-                    for (int x = 0; x < boardInfo.width; x++)
+                    if (boxCount < boardInfo.nBoxes)
                     {
                         rand = random.Next(100);
 
@@ -128,39 +128,42 @@ namespace Game1
                             && x != boardInfo.width - 1 && x != 0
                             && rand > 30)
                         {
-                                //if there's 2 free nodes next to the box (above and below)
-                                if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
-                                     && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
-                                {
-                                    //create and place the box
-                                    Box box = new Box();
-                                    box.position = nodes[x, y].position;
-                                    nodes[x, y].isEmpty = false;
-                                    obstacles.Add(box);
-                                    boxCount++;
-                                  // break;
-                                }
+                            //if there's 2 free nodes next to the box (above and below)
+                            if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
+                                 && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
+                            {
+                                //create and place the box
+                                Box box = new Box();
+                                box.position = nodes[x, y].position;
+                                nodes[x, y].isEmpty = false;
+                                obstacles.Add(box);
+                                boxCount++;
+                                //break;
+                            }
                         }
                         else if (nodes[x, y] != null
                             && y != boardInfo.height - 1 && y != 0
                             && rand > 30)
                         {
-                                //if there's 2 free nodes next to the box (to the right and left)
-                                if (nodes[x, y + 1] != null && nodes[x, y - 1] != null
-                                     && nodes[x, y + 1].isEmpty && nodes[x, y - 1].isEmpty)
-                                {
-                                    //create and place the box
-                                    Box box = new Box();
-                                    box.position = nodes[x, y].position;
-                                    nodes[x, y].isEmpty = false;
-                                    obstacles.Add(box);
-                                    boxCount++;
+                            //if there's 2 free nodes next to the box (to the right and left)
+                            if (nodes[x, y + 1] != null && nodes[x, y - 1] != null
+                                 && nodes[x, y + 1].isEmpty && nodes[x, y - 1].isEmpty)
+                            {
+                                //create and place the box
+                                Box box = new Box();
+                                box.position = nodes[x, y].position;
+                                nodes[x, y].isEmpty = false;
+                                obstacles.Add(box);
+                                boxCount++;
                                 //break;
-                                }
+                            }
                         }
                     }
                 }
             }
+
+            //Update the nBoxes var so there aren't too many win objects for the amount of boxes
+            boardInfo.nBoxes = boxCount;
         }
 
         //Creates all board nodes and their neighbor dictionaries

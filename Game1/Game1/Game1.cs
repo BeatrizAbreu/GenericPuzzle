@@ -54,18 +54,16 @@ namespace Game1
             //create a board with 0 to maxHoles random holes 
             board = new Board(width, height, nHoles, nBoxes);
 
-            //create a player
-            player = new Player();
-
             //player is placed on the first tile if it isn't a hole
             if (board.nodes[0, 0] != null)
             {
-                player.position = board.nodes[0, 0].position;
+                //create a player
+                player = new Player(board.nodes[0, 0].position);
                 currentNode = board.nodes[0, 0];
             }            
             else
             {
-                player.position = board.nodes[1, 0].position;
+                player = new Player(board.nodes[1, 0].position);
                 currentNode = board.nodes[1, 0];
             }
 
@@ -133,6 +131,7 @@ namespace Game1
                 currentNode = player.Walk(new Vector2(-1, 1), obstacles, winObjects, currentNode);
 
             previousState = state;
+            player.position = currentNode.position;
 
             base.Update(gameTime);
         }
@@ -148,14 +147,18 @@ namespace Game1
                 for (int x = 0; x < width; x++)
                 {
                     float yDelta = x % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
+                    Color colorDelta = y % 2 == 0 ? Color.White : Color.LightGray;
+
                     //if the node isn't a hole
                     if (board.nodes[x, y] != null)
-                        spriteBatch.Draw(boardNodeTex, 
-                                new Vector2(board.nodes[x, y].position.X * boardNodeTex.Height, 
-                                            board.nodes[x, y].position.Y * boardNodeTex.Height + yDelta), Color.White);
+                    {
+                        spriteBatch.Draw(boardNodeTex,
+                                new Vector2(board.nodes[x, y].position.X * boardNodeTex.Height,
+                                            board.nodes[x, y].position.Y * boardNodeTex.Height + yDelta), colorDelta);
+                    }
                     else
                     {
-                        spriteBatch.Draw(boardNodeTex, 
+                        spriteBatch.Draw(boardNodeTex,
                                 new Vector2(x * boardNodeTex.Height, y * boardNodeTex.Height + yDelta), Color.Black);
                     }
                 }
@@ -163,14 +166,24 @@ namespace Game1
 
             //draw the pressure plates' sprites
             foreach (WinObject winObject in winObjects)
-                spriteBatch.Draw(pressurePlateTex, new Vector2(winObject.position.X * boardNodeTex.Width, winObject.position.Y * boardNodeTex.Height), Color.White);
+            {
+                float yDelta = winObject.position.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
+                spriteBatch.Draw(pressurePlateTex, new Vector2(winObject.position.X * boardNodeTex.Height, winObject.position.Y * boardNodeTex.Height + yDelta), Color.White);
+            }
 
             //draw the boxes' sprites
             foreach (Obstacle obstacle in obstacles)
-                spriteBatch.Draw(boxTex, new Vector2(obstacle.position.X * boardNodeTex.Width, obstacle.position.Y * boardNodeTex.Height), Color.White);
+            {
+                float yDelta = obstacle.position.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
+                spriteBatch.Draw(boxTex, new Vector2(obstacle.position.X * boardNodeTex.Height, obstacle.position.Y * boardNodeTex.Height + yDelta), Color.White);
+            }
 
             //draw the player sprite
-            spriteBatch.Draw(playerTex, new Vector2(currentNode.position.X * boardNodeTex.Width, currentNode.position.Y * boardNodeTex.Height), Color.White);
+            {
+                float yDelta = player.position.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
+                spriteBatch.Draw(playerTex, new Vector2(player.position.X * boardNodeTex.Height, player.position.Y * boardNodeTex.Height + yDelta), Color.White);
+
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
