@@ -2,7 +2,6 @@
 
 namespace Game1
 {
-#if WINDOWS || LINUX
     /// <summary>
     /// The main class.
     /// </summary>
@@ -18,5 +17,4 @@ namespace Game1
                 game.Run();
         }
     }
-#endif
 }
