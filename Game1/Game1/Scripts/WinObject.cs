@@ -12,9 +12,14 @@ namespace Game1
         public Vector2 position;
         public bool isTriggered;
 
-        //public virtual void Action()
-        //{
-        //    this.Action();
-        //}
+        public virtual void Action()
+        {
+            isTriggered = true;
+        }
+
+        public virtual void Deactivate()
+        {
+            isTriggered = false;
+        }
     }
 }

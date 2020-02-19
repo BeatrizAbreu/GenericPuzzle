@@ -38,7 +38,7 @@ namespace Game1.Scripts
                                 //find the box's next position once it's pushed
                                 foreach (KeyValuePair<Node, Direction> futureNeighbor in neighbor.Key.neighbors)
                                 {
-                                    //if that position is found
+                                    //if that position is found and the node is empty
                                     if (futureNeighbor.Value == dir
                                         && futureNeighbor.Key.isEmpty)
                                     {
@@ -51,10 +51,16 @@ namespace Game1.Scripts
 
                                         foreach(WinObject winObject in winObjects)
                                         {
-                                            //the box is placed on a pressure plate
-                                            if(winObject.position == futureNeighbor.Key.position)
+                                            //if a pressure plate is found in the same position, the box is placed on the pressure plate
+                                            if (winObject.position == futureNeighbor.Key.position)                                              
                                             {
-                                                winObject.isTriggered = true;
+                                                winObject.Action();
+                                                //inObject.isTriggered = true;
+                                            }
+                                            //if the box was in a pressure plate
+                                            if (winObject.position == neighbor.Key.position)
+                                            {
+                                                winObject.Deactivate();
                                             }
                                         }
 
