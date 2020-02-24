@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Scripts\Board.cs" />
+    <Compile Include="Scripts\HexaBoard.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Scripts\Box.cs" />
     <Compile Include="Scripts\DirectionValidation.cs" />

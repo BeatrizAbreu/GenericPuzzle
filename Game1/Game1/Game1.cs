@@ -57,7 +57,7 @@ namespace Game1
             previousState = state;
 
             //create a board with 0 to maxHoles random holes 
-            board = new Board(width, height, nHoles, nBoxes);
+            board = new HexaBoard(width, height, nHoles, nBoxes);
 
 /* FIXME:
  Moves = board.GetDirections();
