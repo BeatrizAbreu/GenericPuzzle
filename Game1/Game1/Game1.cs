@@ -14,10 +14,9 @@ namespace Game1
         Dictionary<Keys, Vector2> Moves;
         */
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        public SpriteBatch spriteBatch { get; private set; }
 
-        private Texture2D boardNodeTex,
-                          playerTex,
+        private Texture2D playerTex,
                           boxTex,
                           pressurePlateTex;
 
@@ -56,8 +55,11 @@ namespace Game1
             state = Keyboard.GetState();
             previousState = state;
 
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            
             //create a board with 0 to maxHoles random holes 
-            board = new HexaBoard(width, height, nHoles, nBoxes);
+            board = new HexaBoard(this, width, height, nHoles, nBoxes);
 
 /* FIXME:
  Moves = board.GetDirections();
@@ -91,10 +93,7 @@ namespace Game1
 
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
             
-            boardNodeTex = Content.Load<Texture2D>("assets/node");
             playerTex = Content.Load<Texture2D>("assets/player");
             boxTex = Content.Load<Texture2D>("assets/box");
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
@@ -155,53 +154,24 @@ namespace Game1
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
             spriteBatch.Begin();
 
-            //draw the board sprites
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    float yDelta = x % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
-                    Color colorDelta = y % 2 == 0 ? Color.White : Color.LightGray;
-
-                    //if the node isn't a hole
-                    if (board[x, y] != null)
-                    {
-                        spriteBatch.Draw(boardNodeTex,
-                                new Vector2(board[x, y].position.X * boardNodeTex.Height,
-                                            board[x, y].position.Y * boardNodeTex.Height + yDelta), colorDelta);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(boardNodeTex,
-                                new Vector2(x * boardNodeTex.Height, y * boardNodeTex.Height + yDelta), Color.Black);
-                    }
-                }
-            }
+            board.Draw(gameTime);
 
             //draw the pressure plates' sprites
             foreach (WinObject winObject in winObjects)
-            {
-                float yDelta = winObject.position.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
-                spriteBatch.Draw(pressurePlateTex, new Vector2(winObject.position.X * boardNodeTex.Height, winObject.position.Y * boardNodeTex.Height + yDelta), Color.White);
-            }
+                spriteBatch.Draw(pressurePlateTex, board.DrawPosition(winObject.position), Color.White);
 
             //draw the boxes' sprites
             foreach (Obstacle obstacle in obstacles)
-            {
-                float yDelta = obstacle.position.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
-                spriteBatch.Draw(boxTex, new Vector2(obstacle.position.X * boardNodeTex.Height, obstacle.position.Y * boardNodeTex.Height + yDelta), Color.White);
-            }
+                spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
 
             //draw the player sprite
-            {
-                float yDelta = player.position.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
-                spriteBatch.Draw(playerTex, new Vector2(player.position.X * boardNodeTex.Height, player.position.Y * boardNodeTex.Height + yDelta), Color.White);
-
-            }
+            spriteBatch.Draw(playerTex, board.DrawPosition(player.position), Color.White);
 
             spriteBatch.End();
+
             base.Draw(gameTime);
         }
 

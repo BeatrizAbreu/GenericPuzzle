@@ -1,5 +1,6 @@
 ﻿using Game1.Scripts;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,17 @@ namespace Game1
     //Creates and manages the game's board
     public class HexaBoard : Board
     {
+        SpriteBatch spriteBatch;
+        Texture2D boardNodeTex;
     
-        public HexaBoard(int width, int height, int nHoles, int nBoxes) : base(width, height, nHoles, nBoxes)
+        public HexaBoard(Game1 game, int width, int height, int nHoles, int nBoxes) : base(game, width, height, nHoles, nBoxes)
         {
             /* nothing specific to hexaboard for now */
+            boardNodeTex = game.Content.Load<Texture2D>("assets/node");
+            spriteBatch = game.spriteBatch;
         }
 
-        internal override void CreateNeighbors(Node currentNode, Board board)
+        internal override void CreateNeighbors(Node currentNode)
         {
             //create a neighbor list
             currentNode.neighbors = new Dictionary<Node, Direction>();
@@ -28,14 +33,14 @@ namespace Game1
             Node node = new Node();
 
             //identify neighbors and fill the neighbor list
-            for (int y1 = 0; y1 < board.boardInfo.height; y1++)
+            for (int y1 = 0; y1 < boardInfo.height; y1++)
             {
-                for (int x1 = 0; x1 < board.boardInfo.width; x1++)
+                for (int x1 = 0; x1 < boardInfo.width; x1++)
                 {
                     node = this[x1, y1];
                     //if it's a neighbor and not a hole
                     if (node != null &&
-                        (node.position == new Vector2(x - 1, y - 1)
+                      (node.position == new Vector2(x - 1, y - 1)
                     || node.position == new Vector2(x, y - 1)
                     || node.position == new Vector2(x + 1, y - 1)
                     || node.position == new Vector2(x - 1, y + 1)
@@ -52,5 +57,30 @@ namespace Game1
                 }
             }
         }
+
+        
+        public override void Draw(GameTime gameTime) {
+            //draw the board sprites
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                for (int x = 0; x < boardInfo.width; x++)
+                {
+                    float yDelta = x % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
+                    Color colorDelta = y % 2 == 0 ? Color.White : Color.LightGray;
+
+                    //if the node isn't a hole
+                    if (this[x, y] != null)
+                        spriteBatch.Draw(boardNodeTex, DrawPosition(this[x,y].position), colorDelta);
+                    else
+                        spriteBatch.Draw(boardNodeTex, DrawPosition(new Vector2(x,y)), Color.Black);
+                }
+            }
+        }
+
+        public override Vector2 DrawPosition(Vector2 cellPos)
+        {
+            float yDelta = cellPos.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
+            return new Vector2(cellPos.X * boardNodeTex.Height, cellPos.Y * boardNodeTex.Height + yDelta);    
+        } 
     }
 }

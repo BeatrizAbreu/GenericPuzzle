@@ -57,7 +57,7 @@ namespace Game1
         public List<Obstacle> obstacles;
         public List<WinObject> winObjects;
 
-        public Board(int width, int height, int nHoles, int nBoxes)
+        public Board(Game1 game, int width, int height, int nHoles, int nBoxes)
         {
             //set board info params
             boardInfo = new BoardInfo();          
@@ -224,13 +224,16 @@ namespace Game1
                     if (nodes[x, y] != null)
                     {
                         //create neighbors
-                        CreateNeighbors(nodes[x, y], this);
+                        CreateNeighbors(nodes[x, y]);
                     }
                 }
             }
         }
 
         //Creates a neighbor dictionary for each valid (non-hole) node
-        internal abstract void CreateNeighbors(Node currentNode, Board board);
+        internal abstract void CreateNeighbors(Node currentNode);
+        public abstract void Draw(GameTime gameTime);
+
+        public abstract Vector2 DrawPosition(Vector2 cellPos); 
     }
 }
