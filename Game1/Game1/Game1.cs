@@ -12,7 +12,7 @@ namespace Game1
 
         /* FIXME: 
         Dictionary<Keys, Vector2> Moves;
-        */;
+        */
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -64,16 +64,16 @@ namespace Game1
 */
 
             //player is placed on the first tile if it isn't a hole
-            if (board.nodes[0, 0] != null)
+            if (board[0, 0] != null)
             {
                 //create a player
-                player = new Player(board.nodes[0, 0].position);
-                currentNode = board.nodes[0, 0];
+                player = new Player(board[0, 0].position);
+                currentNode = board[0, 0];
             }            
             else
             {
-                player = new Player(board.nodes[1, 0].position);
-                currentNode = board.nodes[1, 0];
+                player = new Player(board[1, 0].position);
+                currentNode = board[1, 0];
             }
 
             obstacles = board.obstacles;
@@ -166,11 +166,11 @@ namespace Game1
                     Color colorDelta = y % 2 == 0 ? Color.White : Color.LightGray;
 
                     //if the node isn't a hole
-                    if (board.nodes[x, y] != null)
+                    if (board[x, y] != null)
                     {
                         spriteBatch.Draw(boardNodeTex,
-                                new Vector2(board.nodes[x, y].position.X * boardNodeTex.Height,
-                                            board.nodes[x, y].position.Y * boardNodeTex.Height + yDelta), colorDelta);
+                                new Vector2(board[x, y].position.X * boardNodeTex.Height,
+                                            board[x, y].position.Y * boardNodeTex.Height + yDelta), colorDelta);
                     }
                     else
                     {
@@ -208,15 +208,15 @@ namespace Game1
         private void RestartGame()
         {
             //reset player position & the currentNode
-            if (board.nodes[0, 0] != null)
+            if (board[0, 0] != null)
             {
-                player.position = board.nodes[0, 0].position;
-                currentNode = board.nodes[0, 0];
+                player.position = board[0, 0].position;
+                currentNode = board[0, 0];
             }
             else
             {
-                player.position = board.nodes[1, 0].position;
-                currentNode = board.nodes[1, 0];
+                player.position = board[1, 0].position;
+                currentNode = board[1, 0];
             }
 
             //reseting objects' position
@@ -240,18 +240,18 @@ namespace Game1
                     for (int i = 0; i < baseObstaclePos.Length; i++)
                     {
                         //if the node is not a hole
-                        if (board.nodes[x, y] != null)
+                        if (board[x, y] != null)
                         {
                             //if the node's position matches any of the first objects' position
-                            if (board.nodes[x, y].position == baseObstaclePos[i])
+                            if (board[x, y].position == baseObstaclePos[i])
                             {
                                 //update the node's state to occupied
-                                board.nodes[x, y].isEmpty = false;
+                                board[x, y].isEmpty = false;
                                 break;
                             }
                             else
                             {
-                                board.nodes[x, y].isEmpty = true;
+                                board[x, y].isEmpty = true;
                             }
                         }
                     }

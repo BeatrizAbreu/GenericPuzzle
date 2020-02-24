@@ -46,7 +46,12 @@ namespace Game1
     //Creates and manages the game's board
     public class Board
     {
-        public Node[,] nodes;
+        Node[,] nodes;
+        public Node this[int i, int j] { 
+            set { nodes[i,j] = value; }
+            get { return nodes[i,j];  } 
+        }
+        
         private BoardInfo boardInfo;
 
         public List<Obstacle> obstacles;
