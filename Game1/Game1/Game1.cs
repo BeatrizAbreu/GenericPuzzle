@@ -9,6 +9,10 @@ namespace Game1
 {
     public class Game1 : Game
     {
+
+        /* FIXME: 
+        Dictionary<Keys, Vector2> Moves;
+        */;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -45,6 +49,7 @@ namespace Game1
 
         protected override void Initialize()
         {
+
             nHoles = (int)width / 4;
 
             //setting first keyboard states
@@ -53,6 +58,10 @@ namespace Game1
 
             //create a board with 0 to maxHoles random holes 
             board = new Board(width, height, nHoles, nBoxes);
+
+/* FIXME:
+ Moves = board.GetDirections();
+*/
 
             //player is placed on the first tile if it isn't a hole
             if (board.nodes[0, 0] != null)
@@ -111,6 +120,13 @@ namespace Game1
             {
                 RestartGame();
             }
+
+           /* FIXME:
+            foreach (Keys k in Moves.Keys) {
+                if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
+                    currentNode = board.Move(currentNode, Moves[k]);
+            }
+            */
 
             //Player movement control
             if (state.IsKeyDown(Keys.D) && !previousState.IsKeyDown(Keys.D)) //DOWNRIGHT
