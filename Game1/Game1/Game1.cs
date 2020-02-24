@@ -10,9 +10,9 @@ namespace Game1
     public class Game1 : Game
     {
 
-        /* FIXME: 
+        /* FIXME: */
         Dictionary<Keys, Vector2> Moves;
-        */
+        
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch { get; private set; }
 
@@ -25,7 +25,8 @@ namespace Game1
         int nHoles,
             nBoxes = 3,
             width = 4,
-            height = 4;
+            height = 4,
+            nDirections = 6;
         private Board board;
 
         //Player Info
@@ -48,7 +49,6 @@ namespace Game1
 
         protected override void Initialize()
         {
-
             nHoles = (int)width / 4;
 
             //setting first keyboard states
@@ -57,13 +57,15 @@ namespace Game1
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            
+
             //create a board with 0 to maxHoles random holes 
             board = new HexaBoard(this, width, height, nHoles, nBoxes);
 
-/* FIXME:
- Moves = board.GetDirections();
-*/
+            board.boardInfo.nDirections = nDirections;
+
+            /* FIXME: */
+            Moves = board.GetKeysDirection(board.boardInfo.nDirections);
+            
 
             //player is placed on the first tile if it isn't a hole
             if (board[0, 0] != null)
@@ -71,7 +73,7 @@ namespace Game1
                 //create a player
                 player = new Player(board[0, 0].position);
                 currentNode = board[0, 0];
-            }            
+            }
             else
             {
                 player = new Player(board[1, 0].position);
@@ -120,31 +122,12 @@ namespace Game1
                 RestartGame();
             }
 
-           /* FIXME:
-            foreach (Keys k in Moves.Keys) {
-                if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
-                    currentNode = board.Move(currentNode, Moves[k]);
-            }
-            */
-
-            //Player movement control
-            if (state.IsKeyDown(Keys.D) && !previousState.IsKeyDown(Keys.D)) //DOWNRIGHT
-                currentNode = player.Walk(new Vector2(1, 1), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.A) && !previousState.IsKeyDown(Keys.A)) //DOWNLEFT
-                currentNode = player.Walk(new Vector2(-1, 1), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.W) && !previousState.IsKeyDown(Keys.W)) //UP
-                currentNode = player.Walk(new Vector2(0, -1), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.S) && !previousState.IsKeyDown(Keys.S)) //DOWN
-                currentNode = player.Walk(new Vector2(0, 1), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.E) && !previousState.IsKeyDown(Keys.E)) //UPRIGHT
-                currentNode = player.Walk(new Vector2(1, -1), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.Q) && !previousState.IsKeyDown(Keys.Q)) //UPLEFT
-                currentNode = player.Walk(new Vector2(-1, -1), obstacles, winObjects, currentNode);
-            //if (state.IsKeyDown(Keys.X) && !previousState.IsKeyDown(Keys.X)) //DOWNRIGHT
-            //    currentNode = player.Walk(new Vector2(1, 1), obstacles, winObjects, currentNode);
-            //if (state.IsKeyDown(Keys.Z) && !previousState.IsKeyDown(Keys.Z)) //DOWNLEFT
-            //    currentNode = player.Walk(new Vector2(-1, 1), obstacles, winObjects, currentNode);
-
+            /* FIXME: */
+             foreach (Keys k in Moves.Keys) {
+                 if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
+                     currentNode = board.Move(currentNode, Moves[k]);
+             }
+             
             previousState = state;
             player.position = currentNode.position;
 
