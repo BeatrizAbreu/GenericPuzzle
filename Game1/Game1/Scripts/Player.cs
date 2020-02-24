@@ -41,15 +41,28 @@ namespace Game1.Scripts
                             //if the object is a box
                             if (!neighbor.Key.isEmpty)
                             {
+                                //indicates the box's movement direction
+                                Vector2 futureDirection = direction;
+                                Direction futureDir = dir;
+
                                 //find the box's next position once it's pushed
                                 foreach (KeyValuePair<Node, Direction> futureNeighbor in neighbor.Key.neighbors)
                                 {
+                                    //if the node's x is pair and the direction is DOWN or if x is not pair and the direction is UP and direction.X is NOT ZERO
+                                    if (direction.X != 0
+                                        && ((neighbor.Key.position.X % 2 == 0 && direction.Y > 0)
+                                        || (neighbor.Key.position.X % 2 != 0 && direction.Y < 0)))
+                                    {
+                                        futureDirection = new Vector2(direction.X, 0);
+                                        futureDir = Functions.GetDirection(futureDirection);
+                                    }
+
                                     //if that position is found and the node is empty
-                                    if (futureNeighbor.Value == dir
+                                    if (futureNeighbor.Value == futureDir
                                         && futureNeighbor.Key.isEmpty)
                                     {
                                         //cast the box's action
-                                        obstacle.Action(direction);
+                                        obstacle.Action(futureDirection);
                                         //update the neighbor node's state to empty as the box is pushed
                                         neighbor.Key.isEmpty = true;
                                         //update the future neighbor's state to not empty
