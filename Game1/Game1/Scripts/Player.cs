@@ -20,6 +20,12 @@ namespace Game1.Scripts
 
         public Node Walk(Vector2 direction, List<Obstacle> obstacles, List<WinObject> winObjects, Node currentNode)
         {
+            //if x is pair and the direction is DOWN or if x is not pair and the direction is UP and direction.X is NOT ZERO
+            if (direction.X != 0
+                && ((currentNode.position.X % 2 == 0 && direction.Y > 0)
+                || (currentNode.position.X % 2 != 0 && direction.Y < 0)))
+                direction = new Vector2(direction.X, 0);
+
             //finding the next node through the current node's neighbors
             foreach (KeyValuePair<Node, Direction> neighbor in currentNode.neighbors)
             {

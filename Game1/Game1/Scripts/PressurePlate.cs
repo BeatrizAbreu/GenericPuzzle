@@ -8,7 +8,7 @@ namespace Game1.Scripts
 {
     class PressurePlate : WinObject
     {
-        private static int activeObjectCount;
+        public static int activeObjectCount;
         public static int objectCount;
        
         public PressurePlate()

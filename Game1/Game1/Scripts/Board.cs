@@ -92,6 +92,7 @@ namespace Game1
                         foreach (Obstacle obstacle in obstacles)
                         {
                             //if the node is not a hole and the random rolls over 30
+                            //and there's a box in the same line or column but not on the same cell
                             if (nodes[x, y] != null
                                 && nodes[x, y].isEmpty
                                 && (x == obstacle.position.X || y == obstacle.position.Y)

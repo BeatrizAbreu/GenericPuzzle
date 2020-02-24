@@ -113,10 +113,10 @@ namespace Game1
             }
 
             //Player movement control
-            if (state.IsKeyDown(Keys.D) && !previousState.IsKeyDown(Keys.D)) //RIGHT
-                currentNode = player.Walk(new Vector2(1, 0), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.A) && !previousState.IsKeyDown(Keys.A)) //LEFT
-                currentNode = player.Walk(new Vector2(-1, 0), obstacles, winObjects, currentNode);
+            if (state.IsKeyDown(Keys.D) && !previousState.IsKeyDown(Keys.D)) //DOWNRIGHT
+                currentNode = player.Walk(new Vector2(1, 1), obstacles, winObjects, currentNode);
+            if (state.IsKeyDown(Keys.A) && !previousState.IsKeyDown(Keys.A)) //DOWNLEFT
+                currentNode = player.Walk(new Vector2(-1, 1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.W) && !previousState.IsKeyDown(Keys.W)) //UP
                 currentNode = player.Walk(new Vector2(0, -1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.S) && !previousState.IsKeyDown(Keys.S)) //DOWN
@@ -125,10 +125,10 @@ namespace Game1
                 currentNode = player.Walk(new Vector2(1, -1), obstacles, winObjects, currentNode);
             if (state.IsKeyDown(Keys.Q) && !previousState.IsKeyDown(Keys.Q)) //UPLEFT
                 currentNode = player.Walk(new Vector2(-1, -1), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.X) && !previousState.IsKeyDown(Keys.X)) //DOWNRIGHT
-                currentNode = player.Walk(new Vector2(1, 1), obstacles, winObjects, currentNode);
-            if (state.IsKeyDown(Keys.Z) && !previousState.IsKeyDown(Keys.Z)) //DOWNLEFT
-                currentNode = player.Walk(new Vector2(-1, 1), obstacles, winObjects, currentNode);
+            //if (state.IsKeyDown(Keys.X) && !previousState.IsKeyDown(Keys.X)) //DOWNRIGHT
+            //    currentNode = player.Walk(new Vector2(1, 1), obstacles, winObjects, currentNode);
+            //if (state.IsKeyDown(Keys.Z) && !previousState.IsKeyDown(Keys.Z)) //DOWNLEFT
+            //    currentNode = player.Walk(new Vector2(-1, 1), obstacles, winObjects, currentNode);
 
             previousState = state;
             player.position = currentNode.position;
