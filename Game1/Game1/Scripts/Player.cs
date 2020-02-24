@@ -31,7 +31,7 @@ namespace Game1.Scripts
                 futureDirection = direction;
                 direction = new Vector2(direction.X, 0);
             }
-            else
+            else if(direction.X != 0)
                 futureDirection = new Vector2(direction.X, 0);
 
             //finding the next node through the current node's neighbors

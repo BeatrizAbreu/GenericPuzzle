@@ -230,6 +230,37 @@ namespace Game1
             }
         }
 
+        public Dictionary<bool, Vector2> GetAvailableMoves(Node currentNode, List<Obstacle> obstacles)
+        {
+            Dictionary<bool, Vector2> moves = new Dictionary<bool, Vector2>();
+
+            ////finding the next possible node through the current node's neighbors
+            //foreach (KeyValuePair<Node, Direction> neighbor in currentNode.neighbors)
+            //{
+            //    bool foundObstacle = false;
+            //    int count = 0;
+            //   // moves.Add();
+
+            //    //go through the obstacles' list
+            //    foreach (var obstacle in obstacles)
+            //    {
+            //        count++;
+            //        //find if there's an obstacle in that cell
+            //        if (obstacle.position == neighbor.Key.position)
+            //        {
+            //            //one obstacle has been found
+            //            foundObstacle = true;
+            //                //if the object is not a box it can be pushed (VALID ACTION)
+            //                newDirVal.isValid = true;                       
+            //        }
+            //    }
+            //    dirValidation.Add(newDirVal);
+            //}
+            //return dirValidation;
+
+            return moves;
+        }
+
         //Creates a neighbor dictionary for each valid (non-hole) node
         internal abstract void CreateNeighbors(Node currentNode);
         public abstract void Draw(GameTime gameTime);
