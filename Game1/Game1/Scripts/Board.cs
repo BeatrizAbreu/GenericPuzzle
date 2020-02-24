@@ -1,5 +1,6 @@
 ﻿using Game1.Scripts;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -230,33 +231,35 @@ namespace Game1
             }
         }
 
-        public Dictionary<bool, Vector2> GetAvailableMoves(Node currentNode, List<Obstacle> obstacles)
+        public Dictionary<Keys, Vector2> GetKeysDirection(int nDirections)
         {
-            Dictionary<bool, Vector2> moves = new Dictionary<bool, Vector2>();
+            Dictionary<Keys, Vector2> moves = new Dictionary<Keys, Vector2>();
 
-            ////finding the next possible node through the current node's neighbors
-            //foreach (KeyValuePair<Node, Direction> neighbor in currentNode.neighbors)
-            //{
-            //    bool foundObstacle = false;
-            //    int count = 0;
-            //   // moves.Add();
+            moves.Add(Keys.W, new Vector2(0, -1)); //UP
+            moves.Add(Keys.S, new Vector2(0, 1)); //DOWN
+          
+            if (nDirections != 6)
+            {
+                //4 directions
+                moves.Add(Keys.A, new Vector2(-1, 0)); //LEFT
+                moves.Add(Keys.D, new Vector2(1, 0)); //RIGHT
 
-            //    //go through the obstacles' list
-            //    foreach (var obstacle in obstacles)
-            //    {
-            //        count++;
-            //        //find if there's an obstacle in that cell
-            //        if (obstacle.position == neighbor.Key.position)
-            //        {
-            //            //one obstacle has been found
-            //            foundObstacle = true;
-            //                //if the object is not a box it can be pushed (VALID ACTION)
-            //                newDirVal.isValid = true;                       
-            //        }
-            //    }
-            //    dirValidation.Add(newDirVal);
-            //}
-            //return dirValidation;
+                //8 directions
+                if (nDirections == 8)
+                {
+                    moves.Add(Keys.Z, new Vector2(-1, 1)); //DOWNLEFT
+                    moves.Add(Keys.X, new Vector2(1, 1)); //DOWNRIGHT
+                    moves.Add(Keys.Q, new Vector2(-1, -1)); //UPLEFT
+                    moves.Add(Keys.E, new Vector2(1, -1)); //UPRIGHT
+                }
+            }
+            else
+            {
+                moves.Add(Keys.A, new Vector2(-1, 1)); //DOWNLEFT
+                moves.Add(Keys.D, new Vector2(1, 1)); //DOWNRIGHT
+                moves.Add(Keys.Q, new Vector2(-1, -1)); //UPLEFT
+                moves.Add(Keys.E, new Vector2(1, -1)); //UPRIGHT
+            }
 
             return moves;
         }
