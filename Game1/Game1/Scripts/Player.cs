@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    class Player
+    public class Player
     {
         public Vector2 position;
-        private static int nMoves;
+        public static int nMoves;
 
         public Player(Vector2 position)
         {

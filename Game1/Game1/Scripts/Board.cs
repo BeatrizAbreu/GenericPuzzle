@@ -328,7 +328,7 @@ namespace Game1
                                             }
                                         }
 
-                                       // nMoves++;
+                                        Player.nMoves++;
                                         //update the player's position
                                         return neighbor.Key;
                                     }
@@ -344,7 +344,7 @@ namespace Game1
                         }
                     }
 
-                  //  nMoves++;
+                    Player.nMoves++;
                     //the current node is updated
                     return neighbor.Key;
                 }

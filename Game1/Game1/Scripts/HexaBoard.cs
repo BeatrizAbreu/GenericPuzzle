@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Game1
 {
-  
     //Creates and manages the game's board
     public class HexaBoard : Board
     {
