@@ -23,8 +23,8 @@ namespace Game1
         Random random = new Random();
         int nHoles,
             nBoxes = 3,
-            width = 4,
-            height = 4,
+            width  = 9,
+            height = 5,
             nDirections = 6;
         private Board board;
 
