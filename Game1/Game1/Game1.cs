@@ -9,7 +9,6 @@ namespace Game1
 {
     public class Game1 : Game
     {
-
         /* FIXME: */
         Dictionary<Keys, Vector2> Moves;
         
@@ -40,6 +39,10 @@ namespace Game1
 
         //Keyboard
         KeyboardState previousState, state;
+
+        //Time
+        private static readonly TimeSpan timer = TimeSpan.FromMilliseconds(300);
+        private TimeSpan timerStartTime;
 
         public Game1()
         {
@@ -111,6 +114,13 @@ namespace Game1
                 Exit();
 
             state = Keyboard.GetState();
+
+            //Autoplay
+            if (timerStartTime + timer < gameTime.TotalGameTime)
+            {
+                currentNode = board.AutoPlay(currentNode);
+                timerStartTime = gameTime.TotalGameTime;
+            }
 
             //Exit the game
             if (state.IsKeyDown(Keys.Escape))

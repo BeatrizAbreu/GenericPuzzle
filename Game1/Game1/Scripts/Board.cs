@@ -352,7 +352,21 @@ namespace Game1
 
             return currentNode;
         }
-    
+
+        public Node AutoPlay(Node currentNode)
+        {
+            Random rand = new Random();
+            int random = rand.Next(0, currentNode.neighbors.Count);
+
+            Player.nMoves++;
+            // currentNode.neighbors.ElementAt(random).Key
+
+            //FIXME - FALTA WAIT TIME
+
+            Vector2 direction = currentNode.neighbors.ElementAt(random).Key.position - currentNode.position;
+            return currentNode = Move(currentNode, direction);
+        }
+
 
         //Creates a neighbor dictionary for each valid (non-hole) node
         internal abstract void CreateNeighbors(Node currentNode);
