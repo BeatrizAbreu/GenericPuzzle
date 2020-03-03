@@ -10,6 +10,7 @@ namespace Game1
     public class Obstacle
     {
         public Vector2 position;
+        public string tag;
 
         public virtual void Action(Vector2 direction)
         {

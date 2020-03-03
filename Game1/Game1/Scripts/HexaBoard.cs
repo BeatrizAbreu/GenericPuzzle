@@ -15,7 +15,7 @@ namespace Game1
         SpriteBatch spriteBatch;
         Texture2D boardNodeTex;
     
-        public HexaBoard(Game1 game, int width, int height, int nHoles, int nBoxes) : base(game, width, height, nHoles, nBoxes)
+        public HexaBoard(Game1 game, int width, int height, int nHoles, int nBoxes, int nEnemies) : base(game, width, height, nHoles, nBoxes, nEnemies)
         {
             /* nothing specific to hexaboard for now */
             boardNodeTex = game.Content.Load<Texture2D>("assets/node");

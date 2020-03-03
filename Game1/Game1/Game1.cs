@@ -15,17 +15,19 @@ namespace Game1
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch { get; private set; }
 
-        private Texture2D playerTex,
-                          boxTex,
-                          pressurePlateTex;
+        private Texture2D playerTex;
+        private Texture2D boxTex;
+        private Texture2D pressurePlateTex;
+        private Texture2D spikeTex;
 
         //Board making information
         Random random = new Random();
-        int nHoles,
-            nBoxes = 3,
-            width  = 9,
-            height = 5,
-            nDirections = 6;
+        int nHoles;
+        int nBoxes = 5;
+        int nEnemies = 2;
+        int width = 9;
+        int height = 5;
+        int nDirections = 6;
         private Board board;
 
         //Player Info
@@ -35,6 +37,7 @@ namespace Game1
         //Objects information
         List<Obstacle> obstacles; 
         List<WinObject> winObjects;
+        List<EnemyObject> enemyObjects;
         Vector2[] baseObstaclePos;
 
         //Keyboard
@@ -42,6 +45,7 @@ namespace Game1
 
         //Time
         private static readonly TimeSpan timer = TimeSpan.FromMilliseconds(300);
+        private static readonly TimeSpan fastTimer = TimeSpan.FromMilliseconds(100);
         private TimeSpan timerStartTime;
 
         public Game1()
@@ -62,7 +66,7 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //create a board with 0 to maxHoles random holes 
-            board = new HexaBoard(this, width, height, nHoles, nBoxes);
+            board = new HexaBoard(this, width, height, nHoles, nBoxes, nEnemies);
 
             board.boardInfo.nDirections = nDirections;
 
@@ -85,6 +89,7 @@ namespace Game1
 
             obstacles = board.obstacles;
             winObjects = board.winObjects;
+            enemyObjects = board.enemyObjects;
 
             baseObstaclePos = new Vector2[obstacles.Count];
 
@@ -102,6 +107,7 @@ namespace Game1
             playerTex = Content.Load<Texture2D>("assets/player");
             boxTex = Content.Load<Texture2D>("assets/box");
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
+            spikeTex = Content.Load<Texture2D>("assets/spike");
         }
 
         protected override void UnloadContent()
@@ -110,6 +116,17 @@ namespace Game1
 
         protected override void Update(GameTime gameTime)
         {
+            if (Player.hasLost)
+            {
+                if (timerStartTime + fastTimer < gameTime.TotalGameTime)
+                {
+                    RestartGame();
+                    Player.hasLost = false;
+                    timerStartTime = gameTime.TotalGameTime;
+                }                
+            }
+
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -159,6 +176,10 @@ namespace Game1
             //draw the boxes' sprites
             foreach (Obstacle obstacle in obstacles)
                 spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
+
+            //draw the spikes' sprites
+            foreach (EnemyObject enemyObject in enemyObjects)
+                spriteBatch.Draw(spikeTex, board.DrawPosition(enemyObject.position), Color.White);
 
             //draw the player sprite
             spriteBatch.Draw(playerTex, board.DrawPosition(player.position), Color.White);

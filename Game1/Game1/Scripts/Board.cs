@@ -44,6 +44,7 @@ namespace Game1
         //number of holes/walls/non-walkable tiles
         public int nHoles;
         public int nBoxes;
+        public int nEnemies;
     }
 
     //Creates and manages the game's board
@@ -59,8 +60,9 @@ namespace Game1
 
         public List<Obstacle> obstacles;
         public List<WinObject> winObjects;
+        public List<EnemyObject> enemyObjects;
 
-        public Board(Game1 game, int width, int height, int nHoles, int nBoxes)
+        public Board(Game1 game, int width, int height, int nHoles, int nBoxes, int nEnemies)
         {
             //set board info params
             boardInfo = new BoardInfo();          
@@ -68,16 +70,52 @@ namespace Game1
             boardInfo.height = height;
             boardInfo.nHoles = nHoles;
             boardInfo.nBoxes = nBoxes;
+            boardInfo.nEnemies = nEnemies;
 
             nodes = new Node[boardInfo.width, boardInfo.height];
 
             obstacles = new List<Obstacle>();
             winObjects = new List<WinObject>();
+            enemyObjects = new List<EnemyObject>();
             
             //create the board graph with all the information
             CreateBoard(boardInfo);
             CreateObstacles();
             CreateWinObjects();
+            CreateEnemyObjects();
+        }
+
+        public void CreateEnemyObjects()
+        {
+            Random random = new Random();
+            int objCount = 0;
+            int rand;
+
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                for (int x = 0; x < boardInfo.width; x++)
+                {
+                    if (objCount < boardInfo.nEnemies)
+                    {
+                        rand = random.Next(100);
+
+                        //if the node is empty and not a hole and is not the first or second position
+                        if (nodes[x, y] != null
+                            && nodes[x, y].isEmpty
+                            && rand > 30
+                            && (x != 0 || y != 0) 
+                            && !(x == 1 || y == 0))
+                        {
+                            //create and place the spikes
+                            Spike spike = new Spike();
+                            spike.position = nodes[x, y].position;
+                            nodes[x, y].isEmpty = false;
+                            enemyObjects.Add(spike);
+                            objCount++;
+                        }
+                    }
+                }
+            }
         }
 
         public void CreateWinObjects()
@@ -169,7 +207,6 @@ namespace Game1
                     }
                 }
             }
-
             //Update the nBoxes var so there aren't too many win objects for the amount of boxes
             boardInfo.nBoxes = boxCount;
         }
@@ -296,8 +333,8 @@ namespace Game1
                         //find the obstacle that's in the neighbor
                         if (obstacle.position == neighbor.Key.position)
                         {
-                            //if the object is a box
-                            if (!neighbor.Key.isEmpty)
+                            //if the object is a box 
+                            if (!neighbor.Key.isEmpty && obstacle.tag == "box")
                             {
                                 //find the box's next position once it's pushed
                                 foreach (KeyValuePair<Node, Direction> futureNeighbor in neighbor.Key.neighbors)
@@ -335,16 +372,25 @@ namespace Game1
                                 }
                                 return currentNode;
                             }
-
-                            ////if the object is a spike
-                            //else
-                            //{
-
-                            //}
                         }
                     }
 
-                    Player.nMoves++;
+                    //find the next node's enemy
+                    foreach (var enemyObj in enemyObjects)
+                    {
+                        //find the obstacle that's in the neighbor
+                        if (enemyObj.position == neighbor.Key.position)
+                        {
+                            //if the object is an enemy 
+                            if (!neighbor.Key.isEmpty)
+                            {
+                                //kill the player
+                                enemyObj.Action();
+                            }
+                        }
+                    }
+
+                                Player.nMoves++;
                     //the current node is updated
                     return neighbor.Key;
                 }
@@ -361,9 +407,8 @@ namespace Game1
             Player.nMoves++;
             // currentNode.neighbors.ElementAt(random).Key
 
-            //FIXME - FALTA WAIT TIME
-
             Vector2 direction = currentNode.neighbors.ElementAt(random).Key.position - currentNode.position;
+
             return currentNode = Move(currentNode, direction);
         }
 

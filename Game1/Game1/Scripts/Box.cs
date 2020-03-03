@@ -9,6 +9,11 @@ namespace Game1.Scripts
 {
     class Box : Obstacle
     {
+        public Box()
+        {
+            this.tag = "box";
+        }
+
         public override void Action(Vector2 direction)
         {
             //the box is pushed in the player's direction if possible

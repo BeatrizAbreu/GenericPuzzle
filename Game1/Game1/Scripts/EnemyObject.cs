@@ -7,16 +7,13 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    public class Player
+    public class EnemyObject
     {
         public Vector2 position;
-        public static int nMoves;
-        public static bool hasLost;
 
-        public Player(Vector2 position)
+        public virtual void Action()
         {
-            this.position = position;
-            nMoves = 0;
+            this.Action();
         }
     }
 }
