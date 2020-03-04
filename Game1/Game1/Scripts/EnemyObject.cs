@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    public class EnemyObject
+    public abstract class EnemyObject
     {
         public Vector2 position;
 
-        public virtual void Action()
-        {
-            this.Action();
-        }
+        public abstract void Action();
     }
 }

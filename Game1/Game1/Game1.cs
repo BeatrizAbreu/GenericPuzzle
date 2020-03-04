@@ -116,6 +116,9 @@ namespace Game1
 
         protected override void Update(GameTime gameTime)
         {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
+
             if (Player.hasLost)
             {
                 if (timerStartTime + fastTimer < gameTime.TotalGameTime)
@@ -123,41 +126,40 @@ namespace Game1
                     RestartGame();
                     Player.hasLost = false;
                     timerStartTime = gameTime.TotalGameTime;
-                }                
+                }
             }
 
-
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            state = Keyboard.GetState();
-
-            //Autoplay
-            if (timerStartTime + timer < gameTime.TotalGameTime)
+            else
             {
-                currentNode = board.AutoPlay(currentNode);
-                timerStartTime = gameTime.TotalGameTime;
+                state = Keyboard.GetState();
+
+                //Autoplay
+                if (timerStartTime + timer < gameTime.TotalGameTime)
+                {
+                    currentNode = board.AutoPlay(currentNode);
+                    timerStartTime = gameTime.TotalGameTime;
+                }
+
+                //Exit the game
+                if (state.IsKeyDown(Keys.Escape))
+                    Exit();
+
+                //Restart the game
+                if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
+                {
+                    RestartGame();
+                }
+
+                /* FIXME: */
+                foreach (Keys k in Moves.Keys)
+                {
+                    if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
+                        currentNode = board.Move(currentNode, Moves[k]);
+                }
+
+                previousState = state;
+                player.position = currentNode.position;
             }
-
-            //Exit the game
-            if (state.IsKeyDown(Keys.Escape))
-                Exit();
-
-            //Restart the game
-            if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
-            {
-                RestartGame();
-            }
-
-            /* FIXME: */
-             foreach (Keys k in Moves.Keys) {
-                 if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
-                     currentNode = board.Move(currentNode, Moves[k]);
-             }
-             
-            previousState = state;
-            player.position = currentNode.position;
-
             base.Update(gameTime);
         }
 
@@ -173,13 +175,13 @@ namespace Game1
             foreach (WinObject winObject in winObjects)
                 spriteBatch.Draw(pressurePlateTex, board.DrawPosition(winObject.position), Color.White);
 
-            //draw the boxes' sprites
-            foreach (Obstacle obstacle in obstacles)
-                spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
-
             //draw the spikes' sprites
             foreach (EnemyObject enemyObject in enemyObjects)
                 spriteBatch.Draw(spikeTex, board.DrawPosition(enemyObject.position), Color.White);
+
+            //draw the boxes' sprites
+            foreach (Obstacle obstacle in obstacles)
+                spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
 
             //draw the player sprite
             spriteBatch.Draw(playerTex, board.DrawPosition(player.position), Color.White);
@@ -233,13 +235,18 @@ namespace Game1
                                 board[x, y].isEmpty = false;
                                 break;
                             }
-                            else
+                            else 
                             {
                                 board[x, y].isEmpty = true;
                             }
                         }
                     }
-                }
+        }
+            }
+
+            foreach (EnemyObject enemyObj in enemyObjects)
+            {
+                board[(int)enemyObj.position.X, (int)enemyObj.position.Y].isEmpty = false;
             }
             return board;
         }

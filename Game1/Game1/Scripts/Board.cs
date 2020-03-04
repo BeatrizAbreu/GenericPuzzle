@@ -109,7 +109,7 @@ namespace Game1
                             //create and place the spikes
                             Spike spike = new Spike();
                             spike.position = nodes[x, y].position;
-                            nodes[x, y].isEmpty = false;
+                            //nodes[x, y].isEmpty = false;
                             enemyObjects.Add(spike);
                             objCount++;
                         }
@@ -381,16 +381,12 @@ namespace Game1
                         //find the obstacle that's in the neighbor
                         if (enemyObj.position == neighbor.Key.position)
                         {
-                            //if the object is an enemy 
-                            if (!neighbor.Key.isEmpty)
-                            {
-                                //kill the player
-                                enemyObj.Action();
-                            }
+                            //kill the player
+                            enemyObj.Action();
                         }
                     }
 
-                                Player.nMoves++;
+                    Player.nMoves++;
                     //the current node is updated
                     return neighbor.Key;
                 }
