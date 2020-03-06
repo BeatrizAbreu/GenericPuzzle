@@ -28,7 +28,7 @@ namespace Game1
         //node's position on the board
         public Vector2 position;
         //each neighbor is defined by its (negative) direction towards the current node
-        public Dictionary<Node, Direction> neighbors;
+        public Dictionary<Direction, Node> neighbors;
         //shows if the node is occupied by a box object
         public bool isEmpty;
     }
@@ -303,98 +303,9 @@ namespace Game1
             return moves;
         }
 
-        public Node Move(Node currentNode, Vector2 direction)
-        {
-            //indicates the box's movement direction
-            Vector2 futureDirection = direction;
+        public abstract Node Move(Node currentNode, Vector2 direction);
 
-            //if x is pair and the direction is DOWN or if x is not pair and the direction is UP and direction.X is NOT ZERO
-            if (direction.X != 0
-                && ((currentNode.position.X % 2 == 0 && direction.Y > 0)
-                || (currentNode.position.X % 2 != 0 && direction.Y < 0)))
-            {
-                futureDirection = direction;
-                direction = new Vector2(direction.X, 0);
-            }
-            else if (direction.X != 0)
-                futureDirection = new Vector2(direction.X, 0);
-
-            //finding the next node through the current node's neighbors
-            foreach (KeyValuePair<Node, Direction> neighbor in currentNode.neighbors)
-            {
-                Direction dir = Functions.GetDirection(direction);
-                Direction futureDir = Functions.GetDirection(futureDirection);
-
-                if (neighbor.Value == dir)
-                {
-                    //find the next node's obstacle
-                    foreach (var obstacle in obstacles)
-                    {
-                        //find the obstacle that's in the neighbor
-                        if (obstacle.position == neighbor.Key.position)
-                        {
-                            //if the object is a box 
-                            if (!neighbor.Key.isEmpty && obstacle.tag == "box")
-                            {
-                                //find the box's next position once it's pushed
-                                foreach (KeyValuePair<Node, Direction> futureNeighbor in neighbor.Key.neighbors)
-                                {
-                                    //if that position is found and the node is empty
-                                    if (futureNeighbor.Value == futureDir
-                                        && futureNeighbor.Key.isEmpty)
-                                    {
-                                        //cast the box's action
-                                        obstacle.Action(futureDirection);
-                                        //update the neighbor node's state to empty as the box is pushed
-                                        neighbor.Key.isEmpty = true;
-                                        //update the future neighbor's state to not empty
-                                        futureNeighbor.Key.isEmpty = false;
-
-                                        foreach (WinObject winObject in winObjects)
-                                        {
-                                            //if a pressure plate is found in the same position, the box is placed on the pressure plate
-                                            if (winObject.position == futureNeighbor.Key.position)
-                                            {
-                                                winObject.Action();
-                                                //inObject.isTriggered = true;
-                                            }
-                                            //if the box was in a pressure plate
-                                            if (winObject.position == neighbor.Key.position)
-                                            {
-                                                winObject.Deactivate();
-                                            }
-                                        }
-
-                                        Player.nMoves++;
-                                        //update the player's position
-                                        return neighbor.Key;
-                                    }
-                                }
-                                return currentNode;
-                            }
-                        }
-                    }
-
-                    //find the next node's enemy
-                    foreach (var enemyObj in enemyObjects)
-                    {
-                        //find the obstacle that's in the neighbor
-                        if (enemyObj.position == neighbor.Key.position)
-                        {
-                            //kill the player
-                            enemyObj.Action();
-                        }
-                    }
-
-                    Player.nMoves++;
-                    //the current node is updated
-                    return neighbor.Key;
-                }
-            }
-
-            return currentNode;
-        }
-
+    
         public Node AutoPlay(Node currentNode)
         {
             Random rand = new Random();
@@ -403,7 +314,7 @@ namespace Game1
             Player.nMoves++;
             // currentNode.neighbors.ElementAt(random).Key
 
-            Vector2 direction = currentNode.neighbors.ElementAt(random).Key.position - currentNode.position;
+            Vector2 direction = currentNode.neighbors.ElementAt(random).Value.position - currentNode.position;
 
             return currentNode = Move(currentNode, direction);
         }
