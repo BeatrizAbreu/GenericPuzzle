@@ -9,6 +9,12 @@ namespace Game1.Scripts
 {
     static class Functions
     {
+
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> l) {
+            return l.OrderBy(a => Guid.NewGuid());
+        }
+
+
         //Sets each node's neighbor with the right direction name (UP/DOWN/LEFT/RIGHT/etc.) 
         public static Direction GetDirection(Vector2 direction)
         {

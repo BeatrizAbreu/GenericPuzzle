@@ -9,8 +9,7 @@ namespace Game1
 {
     public class Game1 : Game
     {
-        /* FIXME: */
-        Dictionary<Keys, Vector2> Moves;
+        Dictionary<Keys, Direction> Moves;
         
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch { get; private set; }
@@ -70,7 +69,6 @@ namespace Game1
 
             board.boardInfo.nDirections = nDirections;
 
-            /* FIXME: */
             Moves = board.GetKeysDirection(board.boardInfo.nDirections);
             
 
@@ -78,12 +76,12 @@ namespace Game1
             if (board[0, 0] != null)
             {
                 //create a player
-                player = new Player(board[0, 0].position);
+                player = new Player(board, board[0, 0].position);
                 currentNode = board[0, 0];
             }
             else
             {
-                player = new Player(board[1, 0].position);
+                player = new Player(board, board[1, 0].position);
                 currentNode = board[1, 0];
             }
 
@@ -134,8 +132,9 @@ namespace Game1
                 state = Keyboard.GetState();
 
                 //Autoplay
-                if (timerStartTime + timer < gameTime.TotalGameTime)
+                if (false && timerStartTime + timer < gameTime.TotalGameTime)
                 {
+                    // FIXME: make autoplay return the copy of the whole game info
                     currentNode = board.AutoPlay(currentNode);
                     timerStartTime = gameTime.TotalGameTime;
                 }
@@ -150,15 +149,13 @@ namespace Game1
                     RestartGame();
                 }
 
-                /* FIXME: */
                 foreach (Keys k in Moves.Keys)
                 {
                     if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
-                        currentNode = board.Move(currentNode, Moves[k]);
+                        player.Move(Moves[k]);
                 }
 
                 previousState = state;
-                player.position = currentNode.position;
             }
             base.Update(gameTime);
         }

@@ -31,6 +31,8 @@ namespace Game1
         public Dictionary<Direction, Node> neighbors;
         //shows if the node is occupied by a box object
         public bool isEmpty;
+
+        public Node() { neighbors = new Dictionary<Direction, Node>(); }
     }
 
     //Contains the board' information
@@ -83,6 +85,10 @@ namespace Game1
             CreateObstacles();
             CreateWinObjects();
             CreateEnemyObjects();
+        }
+
+        public Node Node(Vector2 pos) {
+            return this[(int)pos.X, (int)pos.Y];
         }
 
         public void CreateEnemyObjects()
@@ -179,7 +185,7 @@ namespace Game1
                                  && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
                             {
                                 //create and place the box
-                                Box box = new Box();
+                                Box box = new Box(this);
                                 box.position = nodes[x, y].position;
                                 nodes[x, y].isEmpty = false;
                                 obstacles.Add(box);
@@ -196,7 +202,7 @@ namespace Game1
                                  && nodes[x, y + 1].isEmpty && nodes[x, y - 1].isEmpty)
                             {
                                 //create and place the box
-                                Box box = new Box();
+                                Box box = new Box(this);
                                 box.position = nodes[x, y].position;
                                 nodes[x, y].isEmpty = false;
                                 obstacles.Add(box);
@@ -232,7 +238,7 @@ namespace Game1
                         //there can't be two adjacent holes
                         if (!(x == lastHolePosition.X + 1 && y == lastHolePosition.Y
                            || x == lastHolePosition.X - 1 && y == lastHolePosition.Y + 1 
-                           || x == lastHolePosition.X && y == lastHolePosition.Y + 1 
+                           || x == lastHolePosition.X     && y == lastHolePosition.Y + 1 
                            || x == lastHolePosition.X + 1 && y == lastHolePosition.Y + 1)
                            && !(x == 0 && y == 0))
                         {
@@ -255,55 +261,44 @@ namespace Game1
                 }
             }
 
-            //create the neighbors after creating the nodes
-            for (int y = 0; y < boardInfo.height; y++)
-            {
-                for (int x = 0; x < boardInfo.width; x++)
-                {
-                    //if not a hole
-                    if (nodes[x, y] != null)
-                    {
-                        //create neighbors
-                        CreateNeighbors(nodes[x, y]);
-                    }
-                }
-            }
+            CreateNeighbors();
+            
         }
 
-        public Dictionary<Keys, Vector2> GetKeysDirection(int nDirections)
+        public Dictionary<Keys, Direction> GetKeysDirection(int nDirections)
         {
-            Dictionary<Keys, Vector2> moves = new Dictionary<Keys, Vector2>();
+            Dictionary<Keys, Direction> moves = new Dictionary<Keys, Direction>();
 
-            moves.Add(Keys.W, new Vector2(0, -1)); //UP
-            moves.Add(Keys.S, new Vector2(0, 1)); //DOWN
-          
+            moves[Keys.W] = Direction.Up;
+            moves[Keys.S] = Direction.Down;
+            
             if (nDirections != 6)
             {
                 //4 directions
-                moves.Add(Keys.A, new Vector2(-1, 0)); //LEFT
-                moves.Add(Keys.D, new Vector2(1, 0)); //RIGHT
+                moves[Keys.A] = Direction.Left;
+                moves[Keys.D] = Direction.Right;
 
                 //8 directions
                 if (nDirections == 8)
                 {
-                    moves.Add(Keys.Z, new Vector2(-1, 1)); //DOWNLEFT
-                    moves.Add(Keys.X, new Vector2(1, 1)); //DOWNRIGHT
-                    moves.Add(Keys.Q, new Vector2(-1, -1)); //UPLEFT
-                    moves.Add(Keys.E, new Vector2(1, -1)); //UPRIGHT
+                    moves[Keys.Z] = Direction.DownLeft;
+                    moves[Keys.X] = Direction.DownRight;
+                    moves[Keys.Q] = Direction.UpLeft;
+                    moves[Keys.E] = Direction.UpRight;
                 }
             }
             else
             {
-                moves.Add(Keys.A, new Vector2(-1, 1)); //DOWNLEFT
-                moves.Add(Keys.D, new Vector2(1, 1)); //DOWNRIGHT
-                moves.Add(Keys.Q, new Vector2(-1, -1)); //UPLEFT
-                moves.Add(Keys.E, new Vector2(1, -1)); //UPRIGHT
+                moves[Keys.A] = Direction.DownLeft;
+                moves[Keys.D] = Direction.DownRight;
+                moves[Keys.Q] = Direction.UpLeft;
+                moves[Keys.E] = Direction.UpRight;
             }
 
             return moves;
         }
 
-        public abstract Node Move(Node currentNode, Vector2 direction);
+        public abstract Node Move(Node currentNode, Direction direction);
 
     
         public Node AutoPlay(Node currentNode)
@@ -314,14 +309,14 @@ namespace Game1
             Player.nMoves++;
             // currentNode.neighbors.ElementAt(random).Key
 
-            Vector2 direction = currentNode.neighbors.ElementAt(random).Value.position - currentNode.position;
+           // Vector2 direction = currentNode.neighbors.ElementAt(random).Value.position - currentNode.position;
 
-            return currentNode = Move(currentNode, direction);
+            return currentNode = Move(currentNode, currentNode.neighbors.Keys.Shuffle().First());
         }
 
 
         //Creates a neighbor dictionary for each valid (non-hole) node
-        internal abstract void CreateNeighbors(Node currentNode);
+        internal abstract void CreateNeighbors();
         public abstract void Draw(GameTime gameTime);
 
         public abstract Vector2 DrawPosition(Vector2 cellPos); 
