@@ -301,12 +301,6 @@ namespace Game1
         public abstract Node Move(Node currentNode, Direction direction);
 
     
-        public bool AutoPlay(Node currentNode, ref Player player)
-        {
-            Player.nMoves++;
-            return player.Move(Functions.GetDirection(currentNode.neighbors.Shuffle().First().Value.position - currentNode.position)) ? true : false;
-        }
-
 
         //Creates a neighbor dictionary for each valid (non-hole) node
         internal abstract void CreateNeighbors();

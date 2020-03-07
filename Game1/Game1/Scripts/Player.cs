@@ -20,6 +20,11 @@ namespace Game1.Scripts
             nMoves = 0;
         }
 
+        public bool AutoPlay()
+        {
+            return Move(board.Node(position).neighbors.Keys.Shuffle().First());
+        }
+
         public bool Move(Direction direction)
         {                        
             Node currentNode = board.Node(position);

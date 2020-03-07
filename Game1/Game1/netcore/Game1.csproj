@@ -21,7 +21,7 @@
 
   
   <ItemGroup>
-    <Compile Include="../Game1.cs" />
+    <Compile Include="../*.cs" />
     <Compile Include="../Scripts/*.cs" />
   </ItemGroup>
 
