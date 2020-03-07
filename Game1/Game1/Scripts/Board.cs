@@ -303,10 +303,8 @@ namespace Game1
     
         public bool AutoPlay(Node currentNode, ref Player player)
         {
-            Random rand = new Random();
-            int random = rand.Next(0, currentNode.neighbors.Count);
             Player.nMoves++;
-            return player.Move(Functions.GetDirection(currentNode.neighbors.ElementAt<KeyValuePair<Direction,Node>>(random).Value.position - currentNode.position)) ? true : false;
+            return player.Move(Functions.GetDirection(currentNode.neighbors.Shuffle().First().Value.position - currentNode.position)) ? true : false;
         }
 
 
