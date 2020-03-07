@@ -53,9 +53,10 @@ namespace Game1
     public abstract class Board
     {
         Node[,] nodes;
-        public virtual Node this[int i, int j] { 
-            set { nodes[i,j] = value; }
-            get { return nodes[i,j];  } 
+        public virtual Node this[int i, int j]
+        {
+            set { nodes[i, j] = value; }
+            get { return nodes[i, j]; }
         }
 
         internal BoardInfo boardInfo;
@@ -63,11 +64,12 @@ namespace Game1
         public List<Obstacle> obstacles;
         public List<WinObject> winObjects;
         public List<EnemyObject> enemyObjects;
+        private int placementChance;
 
         public Board(Game1 game, int width, int height, int nHoles, int nBoxes, int nEnemies)
         {
             //set board info params
-            boardInfo = new BoardInfo();          
+            boardInfo = new BoardInfo();
             boardInfo.width = width;
             boardInfo.height = height;
             boardInfo.nHoles = nHoles;
@@ -79,7 +81,7 @@ namespace Game1
             obstacles = new List<Obstacle>();
             winObjects = new List<WinObject>();
             enemyObjects = new List<EnemyObject>();
-            
+
             //create the board graph with all the information
             CreateBoard(boardInfo);
             CreateObstacles();
@@ -87,7 +89,8 @@ namespace Game1
             CreateEnemyObjects();
         }
 
-        public Node Node(Vector2 pos) {
+        public Node Node(Vector2 pos)
+        {
             return this[(int)pos.X, (int)pos.Y];
         }
 
@@ -103,21 +106,26 @@ namespace Game1
                 {
                     if (objCount < boardInfo.nEnemies)
                     {
+                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height);
                         rand = random.Next(100);
 
-                        //if the node is empty and not a hole and is not the first or second position
-                        if (nodes[x, y] != null
-                            && nodes[x, y].isEmpty
-                            && rand > 30
-                            && (x != 0 || y != 0) 
-                            && !(x == 1 || y == 0))
+                        foreach (WinObject winObj in winObjects)
                         {
-                            //create and place the spikes
-                            Spike spike = new Spike();
-                            spike.position = nodes[x, y].position;
-                            //nodes[x, y].isEmpty = false;
-                            enemyObjects.Add(spike);
-                            objCount++;
+                            //if the node is empty and not a hole and is not the first or second position
+                            if (nodes[x, y] != null
+                                && nodes[x, y].position != winObj.position
+                                && nodes[x, y].isEmpty
+                                && rand > placementChance
+                                && (x != 0 || y != 0)
+                                && !(x == 1 || y == 0))
+                            {
+                                //create and place the spikes
+                                Spike spike = new Spike();
+                                spike.position = nodes[x, y].position;
+                                //nodes[x, y].isEmpty = false;
+                                enemyObjects.Add(spike);
+                                objCount++;
+                            }
                         }
                     }
                 }
@@ -138,6 +146,7 @@ namespace Game1
                     //while there's still objects to place
                     if (objCount < boardInfo.nBoxes)
                     {
+                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height);
                         rand = random.Next(100);
 
                         foreach (Obstacle obstacle in obstacles)
@@ -147,7 +156,7 @@ namespace Game1
                             if (nodes[x, y] != null
                                 && nodes[x, y].isEmpty
                                 && (x == obstacle.position.X || y == obstacle.position.Y)
-                                && rand > 30)
+                                && rand > placementChance)
                             {
                                 //create and place the object
                                 WinObject winObject = new WinObject();
@@ -174,11 +183,12 @@ namespace Game1
                 {
                     if (boxCount < boardInfo.nBoxes)
                     {
+                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height);
                         rand = random.Next(100);
 
                         if (nodes[x, y] != null
                             && x != boardInfo.width - 1 && x != 0
-                            && rand > 30)
+                            && rand > placementChance)
                         {
                             //if there's 2 free nodes next to the box (above and below)
                             if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
@@ -195,7 +205,7 @@ namespace Game1
                         }
                         else if (nodes[x, y] != null
                             && y != boardInfo.height - 1 && y != 0
-                            && rand > 30)
+                            && rand > placementChance)
                         {
                             //if there's 2 free nodes next to the box (to the right and left)
                             if (nodes[x, y + 1] != null && nodes[x, y - 1] != null
@@ -220,7 +230,7 @@ namespace Game1
         //Creates all board nodes and their neighbor dictionaries
         public void CreateBoard(BoardInfo boardInfo)
         {
-            Vector2 lastHolePosition = new Vector2(0,0);
+            Vector2 lastHolePosition = new Vector2(0, 0);
             Random random = new Random();
             int holesCount = 0;
             int rand;
@@ -237,8 +247,8 @@ namespace Game1
                     {
                         //there can't be two adjacent holes
                         if (!(x == lastHolePosition.X + 1 && y == lastHolePosition.Y
-                           || x == lastHolePosition.X - 1 && y == lastHolePosition.Y + 1 
-                           || x == lastHolePosition.X     && y == lastHolePosition.Y + 1 
+                           || x == lastHolePosition.X - 1 && y == lastHolePosition.Y + 1
+                           || x == lastHolePosition.X && y == lastHolePosition.Y + 1
                            || x == lastHolePosition.X + 1 && y == lastHolePosition.Y + 1)
                            && !(x == 0 && y == 0))
                         {
@@ -249,7 +259,7 @@ namespace Game1
                                 x = 0;
                                 y++;
                             }
-                            lastHolePosition = new Vector2(x,y);
+                            lastHolePosition = new Vector2(x, y);
                             holesCount++;
                         }
                     }
@@ -262,7 +272,7 @@ namespace Game1
             }
 
             CreateNeighbors();
-            
+
         }
 
         public Dictionary<Keys, Direction> GetKeysDirection(int nDirections)
@@ -271,7 +281,7 @@ namespace Game1
 
             moves[Keys.W] = Direction.Up;
             moves[Keys.S] = Direction.Down;
-            
+
             if (nDirections != 6)
             {
                 //4 directions
@@ -300,12 +310,10 @@ namespace Game1
 
         public abstract Node Move(Node currentNode, Direction direction);
 
-    
-
         //Creates a neighbor dictionary for each valid (non-hole) node
         internal abstract void CreateNeighbors();
         public abstract void Draw(GameTime gameTime);
 
-        public abstract Vector2 DrawPosition(Vector2 cellPos); 
+        public abstract Vector2 DrawPosition(Vector2 cellPos);
     }
 }
