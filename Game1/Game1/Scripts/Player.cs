@@ -20,9 +20,11 @@ namespace Game1.Scripts
             nMoves = 0;
         }
 
-        public bool AutoPlay()
+        public GameState AutoPlay(List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects)
         {
-            return Move(board.Node(position).neighbors.Keys.Shuffle().First());
+            Move(board.Node(position).neighbors.Keys.Shuffle().First());
+            GameState gameState = new GameState(board.nodes, obstacles, enemyObjects, winObjects, this);
+            return gameState;
         }
 
         public bool Move(Direction direction)

@@ -52,7 +52,7 @@ namespace Game1
     //Creates and manages the game's board
     public abstract class Board
     {
-        Node[,] nodes;
+        public Node[,] nodes;
         public virtual Node this[int i, int j]
         {
             set { nodes[i, j] = value; }

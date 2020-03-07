@@ -135,7 +135,7 @@ namespace Game1
                 if (timerStartTime + timer < gameTime.TotalGameTime)
                 {
                     // FIXME: make autoplay return the copy of the whole game info
-                    player.AutoPlay();
+                    player.AutoPlay(obstacles, enemyObjects, winObjects);
                     //player.position = currentNode.position;
                     timerStartTime = gameTime.TotalGameTime;
                 }
