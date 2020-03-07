@@ -47,6 +47,9 @@ namespace Game1
         private static readonly TimeSpan fastTimer = TimeSpan.FromMilliseconds(100);
         private TimeSpan timerStartTime;
 
+        //MCTS
+        GameState currentGameState;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -135,7 +138,7 @@ namespace Game1
                 if (timerStartTime + timer < gameTime.TotalGameTime)
                 {
                     // FIXME: make autoplay return the copy of the whole game info
-                    player.AutoPlay(obstacles, enemyObjects, winObjects);
+                    currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
                     //player.position = currentNode.position;
                     timerStartTime = gameTime.TotalGameTime;
                 }

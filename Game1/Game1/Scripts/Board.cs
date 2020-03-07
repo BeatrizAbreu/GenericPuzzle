@@ -104,20 +104,24 @@ namespace Game1
             {
                 for (int x = 0; x < boardInfo.width; x++)
                 {
-                    if (objCount < boardInfo.nEnemies)
+                    if (nodes[x, y] != null
+                        && objCount < boardInfo.nEnemies)
                     {
-                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height);
+                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
                         rand = random.Next(100);
 
                         foreach (WinObject winObj in winObjects)
                         {
-                            //if the node is empty and not a hole and is not the first or second position
-                            if (nodes[x, y] != null
-                                && nodes[x, y].position != winObj.position
-                                && nodes[x, y].isEmpty
+                            //if the node is taken by a winObject, jump to the next node
+                            if (nodes[x, y].position == winObj.position)
+                                break;
+
+                            //if the node is empty and is not the first, second or third position
+                            if (nodes[x, y].isEmpty
                                 && rand > placementChance
                                 && (x != 0 || y != 0)
-                                && !(x == 1 || y == 0))
+                                && !(x == 1 || y == 0)
+                                && !(x == 1 || y == 1))
                             {
                                 //create and place the spikes
                                 Spike spike = new Spike();
@@ -125,6 +129,7 @@ namespace Game1
                                 //nodes[x, y].isEmpty = false;
                                 enemyObjects.Add(spike);
                                 objCount++;
+                                break;
                             }
                         }
                     }
@@ -144,17 +149,18 @@ namespace Game1
                 for (int x = 0; x < boardInfo.width; x++)
                 {
                     //while there's still objects to place
-                    if (objCount < boardInfo.nBoxes)
+                    if (nodes[x, y] != null
+                        &&objCount < boardInfo.nBoxes)
                     {
-                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height);
+                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
                         rand = random.Next(100);
 
                         foreach (Obstacle obstacle in obstacles)
                         {
                             //if the node is not a hole and the random rolls over 30
                             //and there's a box in the same line or column but not on the same cell
-                            if (nodes[x, y] != null
-                                && nodes[x, y].isEmpty
+                            if (nodes[x, y].isEmpty
+                                && !(x == 0 && y == 0)
                                 && (x == obstacle.position.X || y == obstacle.position.Y)
                                 && rand > placementChance)
                             {
@@ -181,13 +187,13 @@ namespace Game1
             {
                 for (int x = 0; x < boardInfo.width; x++)
                 {
-                    if (boxCount < boardInfo.nBoxes)
+                    if (nodes[x, y] != null
+                        &&boxCount < boardInfo.nBoxes)
                     {
-                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height);
+                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
                         rand = random.Next(100);
 
-                        if (nodes[x, y] != null
-                            && x != boardInfo.width - 1 && x != 0
+                        if (x != boardInfo.width - 1 && x != 0
                             && rand > placementChance)
                         {
                             //if there's 2 free nodes next to the box (above and below)
@@ -200,11 +206,9 @@ namespace Game1
                                 nodes[x, y].isEmpty = false;
                                 obstacles.Add(box);
                                 boxCount++;
-                                //break;
                             }
                         }
-                        else if (nodes[x, y] != null
-                            && y != boardInfo.height - 1 && y != 0
+                        else if (y != boardInfo.height - 1 && y != 0
                             && rand > placementChance)
                         {
                             //if there's 2 free nodes next to the box (to the right and left)
@@ -217,7 +221,6 @@ namespace Game1
                                 nodes[x, y].isEmpty = false;
                                 obstacles.Add(box);
                                 boxCount++;
-                                //break;
                             }
                         }
                     }
