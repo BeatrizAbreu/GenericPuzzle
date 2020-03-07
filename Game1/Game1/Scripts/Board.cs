@@ -301,17 +301,12 @@ namespace Game1
         public abstract Node Move(Node currentNode, Direction direction);
 
     
-        public Node AutoPlay(Node currentNode)
+        public bool AutoPlay(Node currentNode, ref Player player)
         {
             Random rand = new Random();
             int random = rand.Next(0, currentNode.neighbors.Count);
-
             Player.nMoves++;
-            // currentNode.neighbors.ElementAt(random).Key
-
-           // Vector2 direction = currentNode.neighbors.ElementAt(random).Value.position - currentNode.position;
-
-            return currentNode = Move(currentNode, currentNode.neighbors.Keys.Shuffle().First());
+            return player.Move(Functions.GetDirection(currentNode.neighbors.ElementAt<KeyValuePair<Direction,Node>>(random).Value.position - currentNode.position)) ? true : false;
         }
 
 

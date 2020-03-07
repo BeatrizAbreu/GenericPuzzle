@@ -132,10 +132,11 @@ namespace Game1
                 state = Keyboard.GetState();
 
                 //Autoplay
-                if (false && timerStartTime + timer < gameTime.TotalGameTime)
+                if (timerStartTime + timer < gameTime.TotalGameTime)
                 {
                     // FIXME: make autoplay return the copy of the whole game info
-                    currentNode = board.AutoPlay(currentNode);
+                   board.AutoPlay(currentNode, ref player);
+                    //player.position = currentNode.position;
                     timerStartTime = gameTime.TotalGameTime;
                 }
 
@@ -241,10 +242,10 @@ namespace Game1
         }
             }
 
-            foreach (EnemyObject enemyObj in enemyObjects)
-            {
-                board[(int)enemyObj.position.X, (int)enemyObj.position.Y].isEmpty = false;
-            }
+            //foreach (EnemyObject enemyObj in enemyObjects)
+            //{
+            //    board[(int)enemyObj.position.X, (int)enemyObj.position.Y].isEmpty = false;
+            //}
             return board;
         }
     }
