@@ -11,7 +11,7 @@ namespace Game1.Scripts
     {
         public Box(Board board) : base(board)
         {
-            this.tag = "box";
+            //this.tag = "box";
         }
 
         public override bool Move(Direction direction)

@@ -32,7 +32,8 @@ namespace Game1.Scripts
             Node currentNode = board.Node(position);
             Node targetNode = board.Move(currentNode, direction);
 
-            // FIXME: return false if they are the same?
+            if(currentNode == targetNode) 
+                return false;
 
             foreach (Obstacle obstacle in board.obstacles)
             {
@@ -40,7 +41,7 @@ namespace Game1.Scripts
                 if (obstacle.position == targetNode.position)
                 {
                     // if the object is a box 
-                    if (!targetNode.isEmpty && obstacle.tag == "box")
+                    if (!targetNode.isEmpty)
                     {
                         if (!obstacle.Move(direction))
                             return false;
