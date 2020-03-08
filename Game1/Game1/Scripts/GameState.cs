@@ -9,10 +9,10 @@ namespace Game1.Scripts
     public class GameState
     {
         Node[,] nodes;
-        Player player;
+        public Player player;
         List<Obstacle> obstacles;
         List<EnemyObject> enemyObjects;
-        List<WinObject> winObjects;
+        public List<WinObject> winObjects;
 
         public GameState(Node[,] nodes, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Player player)
         {

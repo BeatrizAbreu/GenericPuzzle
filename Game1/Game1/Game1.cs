@@ -21,17 +21,16 @@ namespace Game1
 
         //Board making information
         Random random = new Random();
-        int nHoles;
+        int nHoles = 2;
         int nBoxes = 5;
         int nEnemies = 2;
-        int width = 9;
+        int width = 5;
         int height = 5;
         int nDirections = 6;
         private Board board;
 
         //Player Info
         Player player;
-        Node currentNode;
 
         //Objects information
         List<Obstacle> obstacles; 
@@ -58,8 +57,6 @@ namespace Game1
 
         protected override void Initialize()
         {
-            nHoles = (int)width / 4;
-
             //setting first keyboard states
             state = Keyboard.GetState();
             previousState = state;
@@ -80,12 +77,10 @@ namespace Game1
             {
                 //create a player
                 player = new Player(board, board[0, 0].position);
-                currentNode = board[0, 0];
             }
             else
             {
                 player = new Player(board, board[1, 0].position);
-                currentNode = board[1, 0];
             }
 
             obstacles = board.obstacles;
@@ -103,8 +98,7 @@ namespace Game1
         }
 
         protected override void LoadContent()
-        {
-            
+        {           
             playerTex = Content.Load<Texture2D>("assets/player");
             boxTex = Content.Load<Texture2D>("assets/box");
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
@@ -117,18 +111,9 @@ namespace Game1
 
         protected override void Update(GameTime gameTime)
         {
+            //Exit the game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            if (Player.hasLost)
-            {
-                if (timerStartTime + fastTimer < gameTime.TotalGameTime)
-                {
-                    RestartGame();
-                    Player.hasLost = false;
-                    timerStartTime = gameTime.TotalGameTime;
-                }
-            }
+                Exit();          
 
             else
             {
@@ -137,17 +122,17 @@ namespace Game1
                 //Autoplay
                 if (timerStartTime + timer < gameTime.TotalGameTime)
                 {
-                    // FIXME: make autoplay return the copy of the whole game info
                     currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
-                    //player.position = currentNode.position;
                     timerStartTime = gameTime.TotalGameTime;
                 }
 
-                //Exit the game
-                if (state.IsKeyDown(Keys.Escape))
-                    Exit();
+                //Respawn the player when he loses
+                if (Player.hasLost)
+                {
+                    Respawn(gameTime);
+                }
 
-                //Restart the game
+                //Restart the game upon clicking R
                 if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
                 {
                     RestartGame();
@@ -198,12 +183,10 @@ namespace Game1
             if (board[0, 0] != null)
             {
                 player.position = board[0, 0].position;
-                currentNode = board[0, 0];
             }
             else
             {
                 player.position = board[1, 0].position;
-                currentNode = board[1, 0];
             }
 
             //reseting objects' position
@@ -236,20 +219,27 @@ namespace Game1
                                 board[x, y].isEmpty = false;
                                 break;
                             }
-                            else 
+                            else
                             {
                                 board[x, y].isEmpty = true;
                             }
                         }
                     }
-        }
+                }
             }
-
-            //foreach (EnemyObject enemyObj in enemyObjects)
-            //{
-            //    board[(int)enemyObj.position.X, (int)enemyObj.position.Y].isEmpty = false;
-            //}
             return board;
+        }
+
+        private void Respawn(GameTime gameTime)
+        {
+            if (timerStartTime + fastTimer < gameTime.TotalGameTime)
+            {
+                //wait 2 seconds
+                System.Threading.Thread.Sleep(2000);
+                RestartGame();
+                Player.hasLost = false;
+                timerStartTime = gameTime.TotalGameTime;
+            }
         }
     }
 }

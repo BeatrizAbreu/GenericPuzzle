@@ -307,16 +307,30 @@ namespace Game1
                 moves[Keys.Q] = Direction.UpLeft;
                 moves[Keys.E] = Direction.UpRight;
             }
-
             return moves;
         }
 
-        public abstract Node Move(Node currentNode, Direction direction);
+        private bool EvaluateVictory(GameState gameState)
+        {
+            int triggeredCount = 0;
 
+            if (Player.hasLost)
+                return false;
+
+            foreach (WinObject winObj in gameState.winObjects)
+            {
+                if (winObj.isTriggered)
+                    triggeredCount++;
+            }
+
+            return triggeredCount == gameState.winObjects.Count;
+        }
+
+        //Returns the targetNode for each node-direction pair
+        public abstract Node Move(Node currentNode, Direction direction);
         //Creates a neighbor dictionary for each valid (non-hole) node
         internal abstract void CreateNeighbors();
         public abstract void Draw(GameTime gameTime);
-
         public abstract Vector2 DrawPosition(Vector2 cellPos);
     }
 }
