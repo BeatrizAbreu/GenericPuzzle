@@ -13,5 +13,6 @@ namespace Game1.Scripts
         int winCount;
         int playsCount;
         string hashGameState;
+        bool beenVisited;
     }
 }

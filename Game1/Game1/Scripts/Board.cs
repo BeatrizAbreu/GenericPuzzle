@@ -326,6 +326,191 @@ namespace Game1
             return triggeredCount == gameState.winObjects.Count;
         }
 
+        //verifies if any box is unreachable -> lost game (returns false)
+        private bool CheckBoxReach()
+        {
+            foreach (Obstacle obstacle in obstacles)
+            {
+                //if the box is on one of the four corners
+                if ((obstacle.position.X == 0 && obstacle.position.Y == 0)
+                    || (obstacle.position.X == boardInfo.width - 1 && obstacle.position.Y == boardInfo.height - 1))
+                {
+                    //is there a winObject in that position?
+                    foreach (WinObject winObj in winObjects)
+                    {
+                        if (winObj.position == obstacle.position)
+                            return true; //box is reachable
+                    }
+                    return false; //the box is stuck in a corner without a pressure plate
+                }
+
+                //if the nodes are squares and the box is in one of the four extreme lines
+                //OR if the nodes are hexagons OR octagons AND the box is on the extreme COLUMNS (x == 0 || x == width-1)
+                if (obstacle.position.X == boardInfo.width - 1
+                   || obstacle.position.X == 0
+                   || (boardInfo.nDirections == 4
+                       && (obstacle.position.Y == boardInfo.height - 1
+                       || obstacle.position.Y == 0)))
+                {
+                    List<WinObject> winObjsInReach = new List<WinObject>();
+
+                    foreach (WinObject winObj in winObjects)
+                    {
+                        if (obstacle.position.X == winObj.position.X
+                            || obstacle.position.Y == winObj.position.Y)
+                            winObjsInReach.Add(winObj);
+                    }
+
+                    //there's pressure plates in that line
+                    if (winObjsInReach.Count > 0)
+                    {
+                        //indicates the closest winObj in reach
+                        int smallestIndex = 0;
+
+                        //if there's more than one pressure plate in the line
+                        if (winObjsInReach.Count > 1)
+                        {
+                            int i = 0;
+                            int[] distance = new int[winObjsInReach.Count];
+
+                            //find the closest pressure plate in the line
+                            foreach (WinObject winReach in winObjsInReach)
+                            {
+                                distance[i] = (int)System.Math.Abs(winReach.position.X - obstacle.position.X);
+                                smallestIndex = i > 0 ? (distance[i] < distance[i - 1] ? distance[i] : distance[i - 1]) : distance[i];
+                                i++;
+                            }
+                        }
+
+                        //check the winObj in the line with the smallestIndex
+                        //if that pressure plate isn't occupied
+                        if (!winObjsInReach[smallestIndex].isTriggered)
+                        {
+                            //there's another box or whole or enemy between the current box and the pressure plate?
+                            for (int x = 0; x > obstacle.position.X && x < winObjsInReach[smallestIndex].position.X; x++)
+                            {
+                                //the node is a hole
+                                if (nodes[x, (int)winObjsInReach[smallestIndex].position.Y] == null)
+                                    return false;
+                                //there's a box inbetween
+                                else if (!nodes[x, (int)winObjsInReach[smallestIndex].position.Y].isEmpty)
+                                    return false;
+                                //is there an enemy inbetween?
+                                else
+                                {
+                                    foreach (EnemyObject enemy in enemyObjects)
+                                    {
+                                        if (enemy.position == nodes[x, (int)winObjsInReach[smallestIndex].position.Y].position)
+                                            return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    }
+                    //no pressure plates in that line
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                /* FIX ME: IF NDIRECTIONS == 8 && OBJ.POS.Y == 0 || OBJ.POS.Y == HEIGHT - 1 */
+                else if (boardInfo.nDirections == 6
+                    && (obstacle.position.Y == 0 || obstacle.position.Y == boardInfo.height - 1))
+                {
+                    if (obstacle.position.X % 2 == 0 || obstacle.position.X == boardInfo.width - 1)
+                    {
+                        return false; //box is unpushable
+                    }
+                    else
+                    {
+                        List<Node> availableNodes = new List<Node>();
+
+                        foreach (KeyValuePair<Direction, Node> neighbor in nodes[(int)obstacle.position.X, (int)obstacle.position.Y].neighbors)
+                        {
+                            if (!neighbor.Value.isEmpty)
+                            {
+                                foreach (KeyValuePair<Direction, Node> futureNeighbor in neighbor.Value.neighbors)
+                                {
+                                    if (!futureNeighbor.Value.isEmpty)
+                                        return false;
+                                }
+                                return true;
+                            }
+
+                            foreach (EnemyObject enemy in enemyObjects)
+                            {
+                                if (enemy.position == neighbor.Value.position)
+                                {
+                                    return false;
+                                }
+                            }
+
+                            availableNodes.Add(neighbor.Value);
+                        }
+
+                        foreach (Node node in availableNodes)
+                        {
+                            //if the node is on the first or last line (the box will become stuck if pushed there)
+                            if (node.position.Y == 0 || node.position.Y == boardInfo.width - 1)
+                            {
+                                foreach (WinObject winObj in winObjects)
+                                {
+                                    //if that node has a pressure plate
+                                    if (winObj.position == node.position)
+                                    {
+                                        //if the box can be pushed onto that node
+                                        if ((obstacle.position.Y == boardInfo.width - 1 && obstacle.position.X < node.position.X && nodes[(int)obstacle.position.X + 1, (int)obstacle.position.Y - 1].isEmpty)
+                                            || (obstacle.position.Y == boardInfo.width - 1 && obstacle.position.X > node.position.X && nodes[(int)obstacle.position.X - 1, (int)obstacle.position.Y - 1].isEmpty)
+                                            || (obstacle.position.Y == 0 && obstacle.position.X < node.position.X && nodes[(int)obstacle.position.X + 1, (int)obstacle.position.Y + 1].isEmpty)
+                                            || (obstacle.position.Y == 0 && obstacle.position.X > node.position.X && nodes[(int)obstacle.position.X - 1, (int)obstacle.position.Y + 1].isEmpty))
+                                        {
+                                            foreach (EnemyObject enemy in enemyObjects)
+                                            {
+                                                //if that node has an enemy
+                                                if (enemy.position == node.position)
+                                                {
+                                                    return false;
+                                                }
+                                            }
+                                            //if the 2 nodes (the one from where the player pushes the object and the one that recieves the object) don't have a box or enemy 
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false; //box will only get stuck
+                            }
+
+                            //if the node is not on the last/first line (box won't get stuck)
+                            else
+                            {
+                                //if the box can be pushed onto that node
+                                if ((obstacle.position.Y == boardInfo.width - 2 && obstacle.position.X < node.position.X && nodes[(int)obstacle.position.X - 1, (int)obstacle.position.Y].isEmpty)
+                                    || (obstacle.position.Y == boardInfo.width - 2 && obstacle.position.X > node.position.X && nodes[(int)obstacle.position.X + 1, (int)obstacle.position.Y].isEmpty)
+                                    || (obstacle.position.Y == 1 && obstacle.position.X < node.position.X && nodes[(int)obstacle.position.X - 1, (int)obstacle.position.Y].isEmpty)
+                                    || (obstacle.position.Y == 1 && obstacle.position.X > node.position.X && nodes[(int)obstacle.position.X + 1, (int)obstacle.position.Y].isEmpty))
+                                {
+                                    foreach (EnemyObject enemy in enemyObjects)
+                                    {
+                                        //if that node has an enemy
+                                        if (enemy.position == node.position)
+                                        {
+                                            return false;
+                                        }
+                                    }
+                                    //if the 2 nodes (the one from where the player pushes the object and the one that recieves the object) don't have a box or enemy 
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return true; //box is reachable
+            }
+            return true;
+        }
+
         //Returns the targetNode for each node-direction pair
         public abstract Node Move(Node currentNode, Direction direction);
         //Creates a neighbor dictionary for each valid (non-hole) node
