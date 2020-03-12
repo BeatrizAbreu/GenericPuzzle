@@ -310,7 +310,7 @@ namespace Game1
             return moves;
         }
 
-        private bool EvaluateVictory(GameState gameState)
+        public bool EvaluateVictory(GameState gameState)
         {
             int triggeredCount = 0;
 
@@ -509,6 +509,21 @@ namespace Game1
                 return true; //box is reachable
             }
             return true;
+        }
+
+        List<NodeMCTS> CreateTree(NodeMCTS root)
+        {
+            List<NodeMCTS> children = new List<NodeMCTS>();
+            Player player = new Player(this, new Vector2(0, 0));
+
+            foreach (KeyValuePair<Direction, Node> neighbor in nodes[0, 0].neighbors)
+            {
+                NodeMCTS child = new NodeMCTS(CreateTree(root));
+                child.pathDirection = neighbor.Key;
+                children.Add(child);
+            }
+
+            return children;   
         }
 
         //Returns the targetNode for each node-direction pair

@@ -48,6 +48,9 @@ namespace Game1
 
         //MCTS
         GameState currentGameState;
+        int winCount;
+        int drawCount;
+        NodeMCTS treeRootMTCS;
 
         public Game1()
         {
@@ -57,6 +60,7 @@ namespace Game1
 
         protected override void Initialize()
         {
+            winCount = drawCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
             previousState = state;
@@ -118,19 +122,7 @@ namespace Game1
             else
             {
                 state = Keyboard.GetState();
-
-                //Autoplay
-                if (timerStartTime + timer < gameTime.TotalGameTime)
-                {
-                    currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
-                    timerStartTime = gameTime.TotalGameTime;
-                }
-
-                //Respawn the player when he loses
-                if (Player.hasLost)
-                {
-                    Respawn(gameTime);
-                }
+                MakeTreePlays(gameTime, treeRootMTCS);
 
                 //Restart the game upon clicking R
                 if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
@@ -239,6 +231,33 @@ namespace Game1
                 RestartGame();
                 Player.hasLost = false;
                 timerStartTime = gameTime.TotalGameTime;
+            }
+        }
+
+        private void MakeTreePlays(GameTime gameTime, NodeMCTS root)
+        {
+            //go through the three's nodes
+            foreach (NodeMCTS node in root.children)
+            {
+                for (int i = 0; i < 500; i++)
+                {
+                    //Autoplay
+                    if (timerStartTime + timer < gameTime.TotalGameTime)
+                    {
+                        //Respawn the player when he loses
+                        if (Player.hasLost || board.EvaluateVictory(currentGameState))
+                        {
+                            winCount += board.EvaluateVictory(currentGameState) ? 1 : 0;
+                            Respawn(gameTime);
+                            node.gameState = currentGameState;
+                            MakeTreePlays(gameTime, node);
+                            break;
+                        }
+
+                        currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
+                        timerStartTime = gameTime.TotalGameTime;
+                    }
+                }
             }
         }
     }
