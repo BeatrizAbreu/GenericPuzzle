@@ -119,7 +119,7 @@ namespace Game1
             else
             {
                 state = Keyboard.GetState();
-                MakeTreePlays(gameTime, treeRootMTCS);
+                MonteCarloTreeSearch(gameTime, treeRootMTCS);
 
                 //Restart the game upon clicking R
                 if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
