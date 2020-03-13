@@ -48,8 +48,6 @@ namespace Game1
 
         //MCTS
         GameState currentGameState;
-        int winCount;
-        int drawCount;
         NodeMCTS treeRootMTCS;
 
         public Game1()
@@ -60,7 +58,6 @@ namespace Game1
 
         protected override void Initialize()
         {
-            winCount = drawCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
             previousState = state;
@@ -234,28 +231,47 @@ namespace Game1
             }
         }
 
-        private void MakeTreePlays(GameTime gameTime, NodeMCTS root)
+        private void MonteCarloTreeSearch(GameTime gameTime, NodeMCTS root)
         {
             //go through the three's nodes
             foreach (NodeMCTS node in root.children)
             {
-                for (int i = 0; i < 500; i++)
+                //if the node is not a leaf, keep going through the children
+                if (node.children != null)
                 {
-                    //Autoplay
-                    if (timerStartTime + timer < gameTime.TotalGameTime)
-                    {
-                        //Respawn the player when he loses
-                        if (Player.hasLost || board.EvaluateVictory(currentGameState))
-                        {
-                            winCount += board.EvaluateVictory(currentGameState) ? 1 : 0;
-                            Respawn(gameTime);
-                            node.gameState = currentGameState;
-                            MakeTreePlays(gameTime, node);
-                            break;
-                        }
+                    MonteCarloTreeSearch(gameTime, node);
+                }
 
-                        currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
-                        timerStartTime = gameTime.TotalGameTime;
+                //found a leaf
+                else
+                {
+                    //plays 500 times or until it loses/wins
+                    for (int i = 0; i < 500; i++)
+                    {
+                        //Autoplay
+                        if (timerStartTime + timer < gameTime.TotalGameTime)
+                        {
+                            //Respawn the player when he loses/wins and give the info to the father node
+                            if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
+                            {                        
+                                if (board.EvaluateVictory(currentGameState) == -1)
+                                {
+                                    root.lossCount++;
+                                }
+                                else
+                                {
+                                    root.winCount++;
+                                }
+                                //drawCount = root.children.Count - root.lossCount - root.winCount;
+
+                                Respawn(gameTime);
+                                node.gameState = currentGameState;
+                                break;
+                            }
+
+                            currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
+                            timerStartTime = gameTime.TotalGameTime;
+                        }
                     }
                 }
             }

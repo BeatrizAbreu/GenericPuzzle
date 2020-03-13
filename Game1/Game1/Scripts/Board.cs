@@ -310,12 +310,13 @@ namespace Game1
             return moves;
         }
 
-        public bool EvaluateVictory(GameState gameState)
+        public int EvaluateVictory(GameState gameState)
         {
             int triggeredCount = 0;
+            int r = 0;
 
             if (Player.hasLost)
-                return false;
+                return -1;
 
             foreach (WinObject winObj in gameState.winObjects)
             {
@@ -323,7 +324,7 @@ namespace Game1
                     triggeredCount++;
             }
 
-            return triggeredCount == gameState.winObjects.Count;
+            return r = triggeredCount == gameState.winObjects.Count ? 1 : 0;
         }
 
         //verifies if any box is unreachable -> lost game (returns false)
@@ -514,7 +515,8 @@ namespace Game1
         List<NodeMCTS> CreateTree(NodeMCTS root)
         {
             List<NodeMCTS> children = new List<NodeMCTS>();
-            Player player = new Player(this, new Vector2(0, 0));
+
+            /* FIX ME: ONLY N TIMES */
 
             foreach (KeyValuePair<Direction, Node> neighbor in nodes[0, 0].neighbors)
             {
@@ -522,8 +524,7 @@ namespace Game1
                 child.pathDirection = neighbor.Key;
                 children.Add(child);
             }
-
-            return children;   
+            return children;
         }
 
         //Returns the targetNode for each node-direction pair

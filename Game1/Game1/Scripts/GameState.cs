@@ -13,6 +13,7 @@ namespace Game1.Scripts
         List<Obstacle> obstacles;
         List<EnemyObject> enemyObjects;
         public List<WinObject> winObjects;
+        bool beenVisited;
 
         public GameState(Node[,] nodes, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Player player)
         {

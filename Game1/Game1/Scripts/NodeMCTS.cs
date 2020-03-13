@@ -11,10 +11,9 @@ namespace Game1.Scripts
         public Direction pathDirection;
         public GameState gameState;
         public List<NodeMCTS> children;
-        int winCount;
-        int playsCount;
+        public int winCount;
+        public int lossCount;
         string hashGameState;
-        bool beenVisited;
 
         public NodeMCTS(List<NodeMCTS> children)
         {
