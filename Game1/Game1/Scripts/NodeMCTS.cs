@@ -18,9 +18,8 @@ namespace Game1.Scripts
         public NodeMCTS(List<NodeMCTS> children)
         {
             this.children = children;
-            beenVisited = false;
             winCount = 0;
-            playsCount = 0;
+            lossCount = 0;
             hashGameState = "";
         }
     }

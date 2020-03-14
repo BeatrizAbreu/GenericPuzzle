@@ -9,7 +9,7 @@ namespace Game1.Scripts
     public class GameState
     {
         Node[,] nodes;
-        public Player player;
+        Player player;
         List<Obstacle> obstacles;
         List<EnemyObject> enemyObjects;
         public List<WinObject> winObjects;
@@ -22,6 +22,7 @@ namespace Game1.Scripts
             this.enemyObjects = enemyObjects;
             this.winObjects = winObjects;
             this.player = player;
+            beenVisited = false;
         }
     }
 }

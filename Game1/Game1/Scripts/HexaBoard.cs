@@ -92,8 +92,8 @@ namespace Game1
                     //if the node isn't a hole
                     if (this[x, y] != null)
                         spriteBatch.Draw(boardNodeTex, DrawPosition(this[x,y].position), colorDelta);
-                    else
-                        spriteBatch.Draw(boardNodeTex, DrawPosition(new Vector2(x,y)), Color.Black);
+                    //else
+                     //   spriteBatch.Draw(boardNodeTex, DrawPosition(new Vector2(x,y)), Color.Black);
                 }
             }
         }

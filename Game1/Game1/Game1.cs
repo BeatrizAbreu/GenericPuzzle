@@ -49,6 +49,7 @@ namespace Game1
         //MCTS
         GameState currentGameState;
         NodeMCTS treeRootMTCS;
+        int lossCount, winCount;
 
         public Game1()
         {
@@ -58,6 +59,7 @@ namespace Game1
 
         protected override void Initialize()
         {
+            lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
             previousState = state;
@@ -95,6 +97,8 @@ namespace Game1
                 baseObstaclePos[i] = obstacles[i].position;
             }
 
+            currentGameState = new GameState(board.nodes, obstacles, enemyObjects, winObjects, player);
+
             base.Initialize();
         }
 
@@ -119,7 +123,36 @@ namespace Game1
             else
             {
                 state = Keyboard.GetState();
-                MonteCarloTreeSearch(gameTime, treeRootMTCS);
+                //MonteCarloTreeSearch(gameTime, treeRootMTCS);
+                
+                //plays 500 times or until it loses/wins
+                for (int i = 0; i < 500; i++)
+                {
+                    //Autoplay
+                    if (timerStartTime + timer < gameTime.TotalGameTime)
+                    {
+                        currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
+
+                        //Respawn the player when he loses/wins and give the info to the father node
+                        if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
+                        {
+                            if (board.EvaluateVictory(currentGameState) == -1)
+                            {
+                               lossCount++;
+                            }
+                            else
+                            {
+                                winCount++;
+                            }
+                            //drawCount = root.children.Count - root.lossCount - root.winCount;
+
+                            Respawn(gameTime);
+                            break;
+                        }
+
+                        timerStartTime = gameTime.TotalGameTime;
+                    }
+                }
 
                 //Restart the game upon clicking R
                 if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
@@ -140,7 +173,7 @@ namespace Game1
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
 
@@ -224,7 +257,7 @@ namespace Game1
             if (timerStartTime + fastTimer < gameTime.TotalGameTime)
             {
                 //wait 2 seconds
-                System.Threading.Thread.Sleep(2000);
+               // System.Threading.Thread.Sleep(2000);
                 RestartGame();
                 Player.hasLost = false;
                 timerStartTime = gameTime.TotalGameTime;

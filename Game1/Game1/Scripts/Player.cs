@@ -32,7 +32,7 @@ namespace Game1.Scripts
             Node currentNode = board.Node(position);
             Node targetNode = board.Move(currentNode, direction);
 
-            if(currentNode == targetNode) 
+            if (currentNode == targetNode) 
                 return false;
 
             foreach (Obstacle obstacle in board.obstacles)
@@ -43,8 +43,12 @@ namespace Game1.Scripts
                     // if the object is a box 
                     if (!targetNode.isEmpty)
                     {
+                       if (obstacle.position == new Vector2(0, 2))
+                           Console.Write(direction + " " + targetNode.isEmpty);
                         if (!obstacle.Move(direction))
-                            return false;
+                        {
+                            return false;                        
+                        }
                     }
                 }
 

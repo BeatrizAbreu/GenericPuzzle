@@ -318,6 +318,7 @@ namespace Game1
             if (Player.hasLost)
                 return -1;
 
+            //if(gameState.winObjects != null)
             foreach (WinObject winObj in gameState.winObjects)
             {
                 if (winObj.isTriggered)
