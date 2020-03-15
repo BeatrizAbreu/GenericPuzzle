@@ -42,13 +42,15 @@ namespace Game1
 
         //Time
         private static readonly TimeSpan timer = TimeSpan.FromMilliseconds(300);
-        private static readonly TimeSpan fastTimer = TimeSpan.FromMilliseconds(100);
+        private static readonly TimeSpan spawnTimer = TimeSpan.FromMilliseconds(1500);
         private TimeSpan timerStartTime;
 
         //MCTS
         GameState currentGameState;
         NodeMCTS treeRootMTCS;
         int lossCount, winCount;
+        int playsCount;
+        int movesCount = 0;
 
         public Game1()
         {
@@ -58,7 +60,8 @@ namespace Game1
 
         protected override void Initialize()
         {
-            new RNG(0);
+            playsCount = lossCount = winCount = 0;
+            new RNG(2);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
@@ -118,7 +121,23 @@ namespace Game1
         {
             //Exit the game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();          
+                Exit();
+
+            //Respawn the player when he loses/wins and give the info to the father node
+            if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
+            {
+                if (board.EvaluateVictory(currentGameState) == -1)
+                {
+                    lossCount++;
+                }
+                else
+                {
+                    winCount++;
+                }
+                //drawCount = root.children.Count - root.lossCount - root.winCount;
+
+                Respawn(gameTime);
+            }
 
             else
             {
@@ -129,29 +148,27 @@ namespace Game1
                 for (int i = 0; i < 500; i++)
                 {
                     //Autoplay
-                    if (timerStartTime + timer < gameTime.TotalGameTime)
+                   // if (timerStartTime + timer < gameTime.TotalGameTime)
                     {
                         currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
-
-                        //Respawn the player when he loses/wins and give the info to the father node
+                      //  timerStartTime = gameTime.TotalGameTime;
                         if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
                         {
-                            if (board.EvaluateVictory(currentGameState) == -1)
-                            {
-                               lossCount++;
-                            }
-                            else
-                            {
-                                winCount++;
-                            }
-                            //drawCount = root.children.Count - root.lossCount - root.winCount;
-
-                            Respawn(gameTime);
                             break;
                         }
-
-                        timerStartTime = gameTime.TotalGameTime;
+                        movesCount++;
                     }
+                }
+
+                if (movesCount == 500 || Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
+                {
+                    playsCount++;
+                    movesCount = 0;
+                }
+
+                if(playsCount == 100)
+                {
+                    Console.WriteLine(playsCount + "  :" + winCount + " vs " + lossCount);
                 }
 
                 //Restart the game upon clicking R
@@ -254,10 +271,8 @@ namespace Game1
 
         private void Respawn(GameTime gameTime)
         {
-            if (timerStartTime + fastTimer < gameTime.TotalGameTime)
+            if (timerStartTime + spawnTimer < gameTime.TotalGameTime)
             {
-                //wait 2 seconds
-               // System.Threading.Thread.Sleep(2000);
                 RestartGame();
                 Player.hasLost = false;
                 timerStartTime = gameTime.TotalGameTime;

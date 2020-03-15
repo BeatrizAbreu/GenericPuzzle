@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
@@ -59,7 +58,7 @@ namespace Game1.Scripts
             // First we move
             Player.nMoves++;
             position = targetNode.position;
-            
+
             // then we might die
             // find the next node's enemy
             foreach (EnemyObject enemyObj in board.enemyObjects)
@@ -70,9 +69,7 @@ namespace Game1.Scripts
                     // kill the player
                     enemyObj.Action();
                 }
-            }
-       
-            
+            }          
             return true;
         }
     }
