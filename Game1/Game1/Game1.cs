@@ -150,13 +150,16 @@ namespace Game1
                     //Autoplay
                    // if (timerStartTime + timer < gameTime.TotalGameTime)
                     {
-                        currentGameState = player.AutoPlay(obstacles, enemyObjects, winObjects);
-                      //  timerStartTime = gameTime.TotalGameTime;
-                        if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
+                        //if the player moved
+                        if(player.AutoPlay(obstacles, enemyObjects, winObjects, ref currentGameState))
                         {
-                            break;
+                            //  timerStartTime = gameTime.TotalGameTime;
+                            if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
+                            {
+                                break;
+                            }
+                            movesCount++;
                         }
-                        movesCount++;
                     }
                 }
 
