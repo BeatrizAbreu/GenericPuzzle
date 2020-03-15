@@ -96,7 +96,6 @@ namespace Game1
 
         public void CreateEnemyObjects()
         {
-            Random random = new Random();
             int objCount = 0;
             int rand;
 
@@ -108,7 +107,7 @@ namespace Game1
                         && objCount < boardInfo.nEnemies)
                     {
                         placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
-                        rand = random.Next(100);
+                        rand = RNG.Next(100);
 
                         foreach (WinObject winObj in winObjects)
                         {
@@ -139,7 +138,6 @@ namespace Game1
 
         public void CreateWinObjects()
         {
-            Random random = new Random();
             int objCount = 0;
             int rand;
 
@@ -153,7 +151,7 @@ namespace Game1
                         &&objCount < boardInfo.nBoxes)
                     {
                         placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
-                        rand = random.Next(100);
+                        rand = RNG.Next(100);
 
                         foreach (Obstacle obstacle in obstacles)
                         {
@@ -179,7 +177,6 @@ namespace Game1
 
         public void CreateObstacles()
         {
-            Random random = new Random();
             int boxCount = 0;
             int rand;
 
@@ -191,7 +188,7 @@ namespace Game1
                         &&boxCount < boardInfo.nBoxes)
                     {
                         placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
-                        rand = random.Next(100);
+                        rand = RNG.Next(100);
 
                         if (x != boardInfo.width - 1 && x != 0
                             && rand > placementChance)
@@ -234,7 +231,6 @@ namespace Game1
         public void CreateBoard(BoardInfo boardInfo)
         {
             Vector2 lastHolePosition = new Vector2(0, 0);
-            Random random = new Random();
             int holesCount = 0;
             int rand;
 
@@ -244,7 +240,7 @@ namespace Game1
                 //create each node cell
                 for (int x = 0; x < boardInfo.width; x++)
                 {
-                    rand = random.Next(100);
+                    rand = RNG.Next(100);
                     //create a hole: skip the current position
                     if (holesCount < boardInfo.nHoles && rand > 50)
                     {

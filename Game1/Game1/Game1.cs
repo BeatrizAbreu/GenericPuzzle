@@ -20,7 +20,6 @@ namespace Game1
         private Texture2D spikeTex;
 
         //Board making information
-        Random random = new Random();
         int nHoles = 2;
         int nBoxes = 5;
         int nEnemies = 2;
@@ -59,6 +58,7 @@ namespace Game1
 
         protected override void Initialize()
         {
+            new RNG(0);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
