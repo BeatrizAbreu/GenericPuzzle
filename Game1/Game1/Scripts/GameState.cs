@@ -33,6 +33,7 @@ namespace Game1.Scripts
             {
                 if (!player.AutoPlay(obstacles, enemyObjects, winObjects, this))
                     break; // no possible movement
+                    
                 victory = board.EvaluateVictory(this); 
                 if (victory != 0)
                     break; // win
