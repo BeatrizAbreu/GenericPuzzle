@@ -56,7 +56,7 @@ namespace Game1.Scripts
                 {
                     GameState tempGameState = this;
                     //plays 500 times or until it loses/wins
-                    for (int i = 0; i < 500; i++)
+                    for (int i = 0; i < 50; i++)
                     {
                         //  timerStartTime = gameTime.TotalGameTime;
                         if (board.EvaluateVictory(this) != 0 || Game1.movesCount >= 500)

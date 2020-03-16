@@ -23,7 +23,7 @@ namespace Game1
 
         //Board making information
         static int nHoles = 0;
-        static int nBoxes = 2;
+        static int nBoxes = 1;
         static int nEnemies = 0;
         static int width = 5;
         static int height = 5;
@@ -326,9 +326,7 @@ namespace Game1
             string[] file = File.ReadAllLines(Content.RootDirectory + "/level.txt");
             width = file[0].Length;
             height = file.Length;
-            int c = 0;
-            int d = 0;
-
+ 
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
@@ -342,15 +340,13 @@ namespace Game1
                         {
                         Box box = new Box(board);
                         box.position = new Vector2(i, j);
-                        obstacles[c] = box;
-                        c++;
+                        obstacles[0] = box;
                     }
                     else if (file[i][j] == '.')
                     {
                         PressurePlate pp = new PressurePlate();
                         pp.position = new Vector2(i, j);
-                        winObjects[d] = pp;
-                        d++;
+                        winObjects[0] = pp;
                     }
                 }
             }
