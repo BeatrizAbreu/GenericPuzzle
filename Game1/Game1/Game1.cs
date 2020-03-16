@@ -126,7 +126,7 @@ namespace Game1
 
                 if (result > 0) winCount++;
                 if (result < 0) lossCount++;
-                System.Console.WriteLine($"{winCount} vs {lossCount} ({player.nMoves})");
+                System.Console.WriteLine($"{winCount} vs {lossCount} ({currentGameState.player.nMoves})");
             }
         }
 

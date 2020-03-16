@@ -10,7 +10,7 @@ namespace Game1.Scripts
     public class GameState
     {
         Board board;
-        Player player;
+        public Player player;
         List<Obstacle> obstacles;
         List<EnemyObject> enemyObjects;
         public List<WinObject> winObjects;
@@ -33,7 +33,7 @@ namespace Game1.Scripts
             {
                 if (!player.AutoPlay(obstacles, enemyObjects, winObjects, this))
                     break; // no possible movement
-                    
+
                 victory = board.EvaluateVictory(this); 
                 if (victory != 0)
                     break; // win
