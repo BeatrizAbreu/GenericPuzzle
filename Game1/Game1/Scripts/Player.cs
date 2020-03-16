@@ -9,7 +9,7 @@ namespace Game1.Scripts
     public class Player
     {
         public Vector2 position;
-        public static int nMoves;
+        public int nMoves;
         public static bool hasLost;
         Board board;
         public Player(Board board, Vector2 position)
@@ -19,17 +19,12 @@ namespace Game1.Scripts
             nMoves = 0;
         }
 
-        public bool AutoPlay(List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, ref GameState gameState)
+        public bool AutoPlay(List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, GameState gameState)
         {
-            // FIXME: mais cedo ou mais tarde, validar se o Move retornou false, e nesse caso, descartar o movimento
-            //        talvez colocar a funcao a retornar o GameState como um parametro out, e retornar um booleano tb
-            //        se booleano é falso, o GameState é inexistente...
-            if (Move(board.Node(position).neighbors.Keys.Shuffle().First()))
-            {
-                gameState = new GameState(board.nodes, obstacles, enemyObjects, winObjects, this);
-                return true;
+            // Bangs the wall until a movement succeeds
+            foreach (var movement in board.Node(position).neighbors.Keys.Shuffle()) {
+                if (Move(movement)) return true;
             }
-
             return false;
         }
 
@@ -60,7 +55,7 @@ namespace Game1.Scripts
             }
             
             // First we move
-            Player.nMoves++;
+            nMoves++;
             position = targetNode.position;
 
             // then we might die

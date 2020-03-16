@@ -102,7 +102,7 @@ namespace Game1
                 baseObstaclePos[i] = obstacles[i].position;
             }
 
-            currentGameState = new GameState(board.nodes, obstacles, enemyObjects, winObjects, player);
+            currentGameState = new GameState(board, obstacles, enemyObjects, winObjects, player);
 
             base.Initialize();
         }
@@ -118,8 +118,16 @@ namespace Game1
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
             spikeTex = Content.Load<Texture2D>("assets/spike");
 
+            GameState sourceState = currentGameState.Copy();
             //MonteCarlo auto-player
-            currentGameState.PlayTest(gameTime, board);
+            for (int i = 0; i < 10; i++, currentGameState = sourceState.Copy())
+            {
+                int result = currentGameState.PlayTest(500);
+
+                if (result > 0) winCount++;
+                if (result < 0) lossCount++;
+                System.Console.WriteLine($"{winCount} vs {lossCount} ({player.nMoves})");
+            }
         }
 
         protected override void UnloadContent()
@@ -133,24 +141,24 @@ namespace Game1
                 Exit();
 
             ////Respawn the player when he loses/wins and give the info to the father node
-            if (board.EvaluateVictory(currentGameState) != 0)
-            {
-                if (board.EvaluateVictory(currentGameState) == -1)
-                {
-                    lossCount++;
-                }
-                else
-                {
-                    winCount++;
-                }
-                //drawCount = root.children.Count - root.lossCount - root.winCount;
+            // if (board.EvaluateVictory(currentGameState) != 0)
+            // {
+            //     if (board.EvaluateVictory(currentGameState) == -1)
+            //     {
+            //         lossCount++;
+            //     }
+            //     else
+            //     {
+            //         winCount++;
+            //     }
+            //     //drawCount = root.children.Count - root.lossCount - root.winCount;
 
-                Respawn(gameTime);
-            }
+            //     Respawn(gameTime);
+            // }
 
-            else
-            {
-                state = Keyboard.GetState();
+            // else
+            // {
+            //     state = Keyboard.GetState();
                 //MonteCarloTreeSearch(gameTime, treeRootMTCS);
                 
                 ////plays 500 times or until it loses/wins
@@ -184,19 +192,19 @@ namespace Game1
                 //}
 
                 //Restart the game upon clicking R
-                if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
-                {
-                    RestartGame();
-                }
+            //     if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
+            //     {
+            //         RestartGame();
+            //     }
 
-                foreach (Keys k in Moves.Keys)
-                {
-                    if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
-                        player.Move(Moves[k]);
-                }
+            //     foreach (Keys k in Moves.Keys)
+            //     {
+            //         if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
+            //             player.Move(Moves[k]);
+            //     }
 
-                previousState = state;
-            }
+            //     previousState = state;
+            // }
             base.Update(gameTime);
         }
 

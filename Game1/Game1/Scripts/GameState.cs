@@ -9,16 +9,16 @@ namespace Game1.Scripts
 {
     public class GameState
     {
-        Node[,] nodes;
+        Board board;
         Player player;
         List<Obstacle> obstacles;
         List<EnemyObject> enemyObjects;
         public List<WinObject> winObjects;
         public bool beenVisited;
 
-        public GameState(Node[,] nodes, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Player player)
+        public GameState(Board board, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Player player)
         {
-            this.nodes = nodes;
+            this.board = board;
             this.obstacles = obstacles;
             this.enemyObjects = enemyObjects;
             this.winObjects = winObjects;
@@ -26,69 +26,21 @@ namespace Game1.Scripts
             beenVisited = false;
         }
 
-        public void PlayTest(GameTime gameTime, Board board)
+        public int PlayTest(int plays)
         {
-            while (true)
+            int victory = 0;
+            for (int i = 0; i < plays; i++)
             {
-                //Respawn the player when he loses/wins and give the info to the father node
-                if (board.EvaluateVictory(this) != 0)
-                {
-                    if (board.EvaluateVictory(this) == -1)
-                    {
-                        Game1.lossCount++;
-                    }
-                    else
-                    {
-                        Game1.winCount++;
-                    }
-                    //drawCount = root.children.Count - root.lossCount - root.winCount;
-
-                    Game1.Respawn(gameTime);
-                }
-
-                if (Game1.playsCount == 1000)
-                {
-                    Console.WriteLine(Game1.playsCount + "  :" + Game1.winCount + " vs " + Game1.lossCount + " / player: " + player.position);
-                    break;
-                }
-
-                else
-                {
-                    GameState tempGameState = this;
-                    //plays 500 times or until it loses/wins
-                    for (int i = 0; i < 50; i++)
-                    {
-                        //  timerStartTime = gameTime.TotalGameTime;
-                        if (board.EvaluateVictory(this) != 0 || Game1.movesCount >= 500)
-                        {
-                            break;
-                        }
-
-                        //Autoplay
-                        // if (timerStartTime + timer < gameTime.TotalGameTime)
-                        //{
-                            //if the player moved
-                            if (player.AutoPlay(obstacles, enemyObjects, winObjects, ref tempGameState))
-                            {
-                                this.nodes = tempGameState.nodes;
-                                this.player = tempGameState.player;
-                                this.obstacles = tempGameState.obstacles;
-                                this.enemyObjects = tempGameState.enemyObjects;
-                                this.winObjects = tempGameState.winObjects;
-                                this.beenVisited = tempGameState.beenVisited;
-
-                                Game1.movesCount++;
-                            }
-                       // }
-                    }
-                }
-
-                if (Game1.movesCount >= 500 || board.EvaluateVictory(this) != 0)
-                {
-                    Game1.playsCount++;
-                    Game1.movesCount = 0;
-                }
+                if (!player.AutoPlay(obstacles, enemyObjects, winObjects, this))
+                    break; // no possible movement
+                victory = board.EvaluateVictory(this); 
+                if (victory != 0)
+                    break; // win
             }
+
+            return victory; 
+        }
+         
 
             //    public void MonteCarloTreeSearch(GameTime gameTime, NodeMCTS root, Board board)
             //{
@@ -193,4 +145,3 @@ namespace Game1.Scripts
             //    }
         }
     }
-}
