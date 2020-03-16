@@ -46,7 +46,7 @@ namespace Game1.Scripts
                     Game1.Respawn(gameTime);
                 }
 
-                if (Game1.playsCount == 100)
+                if (Game1.playsCount == 1000)
                 {
                     Console.WriteLine(Game1.playsCount + "  :" + Game1.winCount + " vs " + Game1.lossCount + " / player: " + player.position);
                     break;

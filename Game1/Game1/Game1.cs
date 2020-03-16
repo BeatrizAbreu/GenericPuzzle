@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Game1
 {
@@ -21,10 +22,10 @@ namespace Game1
         private Texture2D spikeTex;
 
         //Board making information
-        static int nHoles = 2;
-        static int nBoxes = 5;
-        static int nEnemies = 2;
-        static int width = 9;
+        static int nHoles = 0;
+        static int nBoxes = 2;
+        static int nEnemies = 0;
+        static int width = 5;
         static int height = 5;
         static int nDirections = 6;
         private static Board board;
@@ -108,6 +109,7 @@ namespace Game1
 
         protected override void LoadContent()
         {
+            LoadLevel();
             GameTime gameTime = new GameTime();
 
             //Loading sprites
@@ -117,7 +119,7 @@ namespace Game1
             spikeTex = Content.Load<Texture2D>("assets/spike");
 
             //MonteCarlo auto-player
-           // currentGameState.PlayTest(gameTime, board);
+            currentGameState.PlayTest(gameTime, board);
         }
 
         protected override void UnloadContent()
@@ -316,6 +318,41 @@ namespace Game1
                 RestartGame();
                 Player.hasLost = false;
                 timerStartTime = gameTime.TotalGameTime;
+            }
+        }
+
+        void LoadLevel()
+        {
+            string[] file = File.ReadAllLines(Content.RootDirectory + "/level.txt");
+            width = file[0].Length;
+            height = file.Length;
+            int c = 0;
+            int d = 0;
+
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                     if (file[i][j] == 'P')
+                    {
+                        // Player
+                        player.position = new Vector2(i,j);
+                    }
+                    else if (file[i][j] == 'B')
+                        {
+                        Box box = new Box(board);
+                        box.position = new Vector2(i, j);
+                        obstacles[c] = box;
+                        c++;
+                    }
+                    else if (file[i][j] == '.')
+                    {
+                        PressurePlate pp = new PressurePlate();
+                        pp.position = new Vector2(i, j);
+                        winObjects[d] = pp;
+                        d++;
+                    }
+                }
             }
         }
     }
