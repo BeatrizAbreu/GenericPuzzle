@@ -14,6 +14,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch { get; private set; }
 
+        //Textures
         private Texture2D playerTex;
         private Texture2D boxTex;
         private Texture2D pressurePlateTex;
@@ -23,7 +24,7 @@ namespace Game1
         static int nHoles = 2;
         static int nBoxes = 5;
         static int nEnemies = 2;
-        static int width = 5;
+        static int width = 9;
         static int height = 5;
         static int nDirections = 6;
         private static Board board;
@@ -108,12 +109,15 @@ namespace Game1
         protected override void LoadContent()
         {
             GameTime gameTime = new GameTime();
+
+            //Loading sprites
             playerTex = Content.Load<Texture2D>("assets/player");
             boxTex = Content.Load<Texture2D>("assets/box");
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
             spikeTex = Content.Load<Texture2D>("assets/spike");
 
-            currentGameState.PlayTest(gameTime, board);
+            //MonteCarlo auto-player
+           // currentGameState.PlayTest(gameTime, board);
         }
 
         protected override void UnloadContent()
@@ -127,20 +131,20 @@ namespace Game1
                 Exit();
 
             ////Respawn the player when he loses/wins and give the info to the father node
-            //if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
-            //{
-            //    if (board.EvaluateVictory(currentGameState) == -1)
-            //    {
-            //        lossCount++;
-            //    }
-            //    else
-            //    {
-            //        winCount++;
-            //    }
-            //    //drawCount = root.children.Count - root.lossCount - root.winCount;
+            if (board.EvaluateVictory(currentGameState) != 0)
+            {
+                if (board.EvaluateVictory(currentGameState) == -1)
+                {
+                    lossCount++;
+                }
+                else
+                {
+                    winCount++;
+                }
+                //drawCount = root.children.Count - root.lossCount - root.winCount;
 
-            //    Respawn(gameTime);
-            //}
+                Respawn(gameTime);
+            }
 
             else
             {
@@ -212,7 +216,37 @@ namespace Game1
 
             //draw the boxes' sprites
             foreach (Obstacle obstacle in obstacles)
-                spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
+            {
+                bool occupied = false;
+                foreach (WinObject winObject in winObjects)
+                {
+                    if (winObject.position == obstacle.position)
+                    {
+                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.Green);
+                        occupied = true;
+                        break;
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
+                    }
+                }
+                if (!occupied)
+                {
+                    foreach (EnemyObject enemyObject in enemyObjects)
+                    {
+                        if (enemyObject.position == obstacle.position)
+                        {
+                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.Red);
+                            break;
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
+                        }
+                    }
+                }
+            }
 
             //draw the player sprite
             spriteBatch.Draw(playerTex, board.DrawPosition(player.position), Color.White);
@@ -275,14 +309,14 @@ namespace Game1
             return board;
         }
 
-        //private void Respawn(GameTime gameTime)
-        //{
-        //    if (timerStartTime + spawnTimer < gameTime.TotalGameTime)
-        //    {
-        //        RestartGame();
-        //        Player.hasLost = false;
-        //        timerStartTime = gameTime.TotalGameTime;
-        //    }
-        //}
+        public static void Respawn(GameTime gameTime)
+        {
+            if (timerStartTime + spawnTimer < gameTime.TotalGameTime)
+            {
+                RestartGame();
+                Player.hasLost = false;
+                timerStartTime = gameTime.TotalGameTime;
+            }
+        }
     }
 }

@@ -72,6 +72,7 @@ namespace Game1.Scripts
                 {
                     // kill the player
                     enemyObj.Action();
+                    break;
                 }
             }          
             return true;

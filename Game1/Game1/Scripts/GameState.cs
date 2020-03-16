@@ -26,16 +26,6 @@ namespace Game1.Scripts
             beenVisited = false;
         }
 
-        private void Respawn(GameTime gameTime)
-        {
-            if (Game1.timerStartTime + Game1.spawnTimer < gameTime.TotalGameTime)
-            {
-                Game1.RestartGame();
-                Player.hasLost = false;
-                Game1.timerStartTime = gameTime.TotalGameTime;
-            }
-        }
-
         public void PlayTest(GameTime gameTime, Board board)
         {
             while (true)
@@ -53,12 +43,12 @@ namespace Game1.Scripts
                     }
                     //drawCount = root.children.Count - root.lossCount - root.winCount;
 
-                    Respawn(gameTime);
+                    Game1.Respawn(gameTime);
                 }
 
-                if (Game1.playsCount == 500)
+                if (Game1.playsCount == 100)
                 {
-                    Console.WriteLine(Game1.playsCount + "  :" + Game1.winCount + " vs " + Game1.lossCount);
+                    Console.WriteLine(Game1.playsCount + "  :" + Game1.winCount + " vs " + Game1.lossCount + " / player: " + player.position);
                     break;
                 }
 
@@ -68,9 +58,15 @@ namespace Game1.Scripts
                     //plays 500 times or until it loses/wins
                     for (int i = 0; i < 500; i++)
                     {
+                        //  timerStartTime = gameTime.TotalGameTime;
+                        if (board.EvaluateVictory(this) != 0 || Game1.movesCount >= 500)
+                        {
+                            break;
+                        }
+
                         //Autoplay
                         // if (timerStartTime + timer < gameTime.TotalGameTime)
-                        {
+                        //{
                             //if the player moved
                             if (player.AutoPlay(obstacles, enemyObjects, winObjects, ref tempGameState))
                             {
@@ -81,18 +77,13 @@ namespace Game1.Scripts
                                 this.winObjects = tempGameState.winObjects;
                                 this.beenVisited = tempGameState.beenVisited;
 
-                                //  timerStartTime = gameTime.TotalGameTime;
-                                if (board.EvaluateVictory(this) != 0)
-                                {
-                                    break;
-                                }
                                 Game1.movesCount++;
                             }
-                        }
+                       // }
                     }
                 }
 
-                if (Game1.movesCount == 500 || board.EvaluateVictory(this) != 0)
+                if (Game1.movesCount >= 500 || board.EvaluateVictory(this) != 0)
                 {
                     Game1.playsCount++;
                     Game1.movesCount = 0;
