@@ -16,10 +16,7 @@ namespace Game1
         public SpriteBatch spriteBatch { get; private set; }
 
         //Textures
-        private Texture2D playerTex;
-        private Texture2D boxTex;
-        private Texture2D pressurePlateTex;
-        private Texture2D spikeTex;
+        private Texture2D playerTex, boardNodeTex, boxTex, pressurePlateTex, spikeTex;
 
         //Board making information
         static int nHoles = 0;
@@ -63,7 +60,7 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //create a board with 0 to maxHoles random holes 
-            Board board = new HexaBoard(this, width, height, nHoles, nBoxes, nEnemies);
+            Board board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies);
 
             board.boardInfo.nDirections = nDirections;
 
@@ -92,19 +89,23 @@ namespace Game1
             GameTime gameTime = new GameTime();
 
             //Loading sprites
-            playerTex = Content.Load<Texture2D>("assets/player");
-            boxTex = Content.Load<Texture2D>("assets/box");
+            boxTex           = Content.Load<Texture2D>("assets/box");
+            spikeTex         = Content.Load<Texture2D>("assets/spike");
+            playerTex        = Content.Load<Texture2D>("assets/player");
+            boardNodeTex     = Content.Load<Texture2D>("assets/node");
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
-            spikeTex = Content.Load<Texture2D>("assets/spike");
 
-            GameState sourceState = currentGameState.Copy();
+
+            GameState sourceState = currentGameState;
             //MonteCarlo auto-player
-            for (int i = 0; i < 10; i++, currentGameState = sourceState.Copy())
+            for (int i = 0; i < 10; i++)
             {
+                currentGameState = sourceState.Copy();
                 int result = currentGameState.PlayTest(500);
 
                 if (result > 0) winCount++;
                 if (result < 0) lossCount++;
+           
                 System.Console.WriteLine($"{winCount} vs {lossCount} ({currentGameState.player.nMoves})");
             }
         }
@@ -194,15 +195,17 @@ namespace Game1
             spriteBatch.Begin();
 
             Board board= currentGameState.board;
-            board.Draw(spriteBatch, gameTime);
+
+            foreach (Node node in currentGameState.board.nodes)
+                if (node != null) spriteBatch.Draw(boardNodeTex, board.DrawPosition(node.position) * boardNodeTex.Height, Color.White);
 
             //draw the pressure plates' sprites
             foreach (WinObject winObject in currentGameState.winObjects)
-                spriteBatch.Draw(pressurePlateTex, board.DrawPosition(winObject.position), Color.White);
+                spriteBatch.Draw(pressurePlateTex, board.DrawPosition(winObject.position) * boardNodeTex.Height, Color.White);
 
             //draw the spikes' sprites
             foreach (EnemyObject enemyObject in currentGameState.enemyObjects)
-                spriteBatch.Draw(spikeTex, board.DrawPosition(enemyObject.position), Color.White);
+                spriteBatch.Draw(spikeTex, board.DrawPosition(enemyObject.position)* boardNodeTex.Height, Color.White);
 
             //draw the boxes' sprites
             foreach (Obstacle obstacle in currentGameState.obstacles)
@@ -212,13 +215,13 @@ namespace Game1
                 {
                     if (winObject.position == obstacle.position)
                     {
-                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.Green);
+                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.Green);
                         occupied = true;
                         break;
                     }
                     else
                     {
-                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
+                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.White);
                     }
                 }
                 if (!occupied)
@@ -227,19 +230,19 @@ namespace Game1
                     {
                         if (enemyObject.position == obstacle.position)
                         {
-                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.Red);
+                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.Red);
                             break;
                         }
                         else
                         {
-                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position), Color.White);
+                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.White);
                         }
                     }
                 }
             }
 
             //draw the player sprite
-            spriteBatch.Draw(playerTex, board.DrawPosition(currentGameState.player.position), Color.White);
+            spriteBatch.Draw(playerTex, board.DrawPosition(currentGameState.player.position)* boardNodeTex.Height, Color.White);
 
             spriteBatch.End();
 

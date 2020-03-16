@@ -11,13 +11,10 @@ namespace Game1
 {
     //Creates and manages the game's board
     public class HexaBoard : Board
-    {
-        Texture2D boardNodeTex;
-    
-        public HexaBoard(Game1 game, int width, int height, int nHoles, int nBoxes, int nEnemies) : base(game, width, height, nHoles, nBoxes, nEnemies)
+    {    
+        public HexaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies) : base(width, height, nHoles, nBoxes, nEnemies)
         {
             /* nothing specific to hexaboard for now */
-            boardNodeTex = game.Content.Load<Texture2D>("assets/node");
         }
 
         internal override void CreateNeighbors()
@@ -77,29 +74,10 @@ namespace Game1
             }
         }
 
-        
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime) {
-            //draw the board sprites
-            for (int y = 0; y < boardInfo.height; y++)
-            {
-                for (int x = 0; x < boardInfo.width; x++)
-                {
-                    float yDelta = x % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
-                    Color colorDelta = y % 2 == 0 ? Color.White : Color.LightGray;
-
-                    //if the node isn't a hole
-                    if (this[x, y] != null)
-                        spriteBatch.Draw(boardNodeTex, DrawPosition(this[x,y].position), colorDelta);
-                    //else
-                     //   spriteBatch.Draw(boardNodeTex, DrawPosition(new Vector2(x,y)), Color.Black);
-                }
-            }
-        }
-
         public override Vector2 DrawPosition(Vector2 cellPos)
         {
-            float yDelta = cellPos.X % 2 == 0 ? 0 : boardNodeTex.Height / 2f;
-            return new Vector2(cellPos.X * boardNodeTex.Height, cellPos.Y * boardNodeTex.Height + yDelta);    
+            float yDelta = cellPos.X % 2 == 0 ? 0 : 0.5f;
+            return new Vector2(cellPos.X, cellPos.Y + yDelta);    
         } 
 
         public override Node Move(Node currentNode, Direction direction)

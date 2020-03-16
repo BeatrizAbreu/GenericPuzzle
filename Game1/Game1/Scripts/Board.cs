@@ -67,7 +67,7 @@ namespace Game1
         public List<EnemyObject> enemyObjects;
         private int placementChance;
 
-        public Board(Game1 game, int width, int height, int nHoles, int nBoxes, int nEnemies)
+        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies)
         {
             //set board info params
             boardInfo = new BoardInfo();
@@ -529,7 +529,6 @@ namespace Game1
         public abstract Node Move(Node currentNode, Direction direction);
         //Creates a neighbor dictionary for each valid (non-hole) node
         internal abstract void CreateNeighbors();
-        public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
         public abstract Vector2 DrawPosition(Vector2 cellPos);
     }
 }
