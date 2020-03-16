@@ -9,21 +9,19 @@ namespace Game1.Scripts
 {
     public class GameState
     {
-        Board board;
-        public Player player;
-        List<Obstacle> obstacles;
-        List<EnemyObject> enemyObjects;
-        public List<WinObject> winObjects;
-        public bool beenVisited;
+        public Board board  {get; private set;}
+        public Player player {get; private set;}
+        public List<Obstacle>    obstacles     {get; private set;}
+        public List<EnemyObject> enemyObjects  {get; private set;}
+        public List<WinObject>   winObjects    {get; private set;}
 
-        public GameState(Board board, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Player player)
+        public GameState(Board board, Player player)
         {
-            this.board = board;
-            this.obstacles = obstacles;
-            this.enemyObjects = enemyObjects;
-            this.winObjects = winObjects;
             this.player = player;
-            beenVisited = false;
+            this.board  = board;
+            this.obstacles    = board.obstacles;
+            this.enemyObjects = board.enemyObjects;
+            this.winObjects   = board.winObjects;
         }
 
         public int PlayTest(int plays)

@@ -28,16 +28,6 @@ namespace Game1
         static int width = 5;
         static int height = 5;
         static int nDirections = 6;
-        private static Board board;
-
-        //Player Info
-        private static Player player;
-
-        //Objects information
-        static List<Obstacle> obstacles;
-        static List<WinObject> winObjects;
-        static List<EnemyObject> enemyObjects;
-        static Vector2[] baseObstaclePos;
 
         //Keyboard
         KeyboardState previousState, state;
@@ -63,7 +53,7 @@ namespace Game1
         protected override void Initialize()
         {
             playsCount = lossCount = winCount = 0;
-            new RNG(2);
+            new RNG(3);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
@@ -73,13 +63,13 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //create a board with 0 to maxHoles random holes 
-            board = new HexaBoard(this, width, height, nHoles, nBoxes, nEnemies);
+            Board board = new HexaBoard(this, width, height, nHoles, nBoxes, nEnemies);
 
             board.boardInfo.nDirections = nDirections;
 
             Moves = board.GetKeysDirection(board.boardInfo.nDirections);
             
-
+            Player player;
             //player is placed on the first tile if it isn't a hole
             if (board[0, 0] != null)
             {
@@ -91,18 +81,7 @@ namespace Game1
                 player = new Player(board, board[1, 0].position);
             }
 
-            obstacles = board.obstacles;
-            winObjects = board.winObjects;
-            enemyObjects = board.enemyObjects;
-
-            baseObstaclePos = new Vector2[obstacles.Count];
-
-            for (int i = 0; i < obstacles.Count; i++)
-            {
-                baseObstaclePos[i] = obstacles[i].position;
-            }
-
-            currentGameState = new GameState(board, obstacles, enemyObjects, winObjects, player);
+            currentGameState = new GameState(board, player);
 
             base.Initialize();
         }
@@ -214,21 +193,22 @@ namespace Game1
 
             spriteBatch.Begin();
 
-            board.Draw(gameTime);
+            Board board= currentGameState.board;
+            board.Draw(spriteBatch, gameTime);
 
             //draw the pressure plates' sprites
-            foreach (WinObject winObject in winObjects)
+            foreach (WinObject winObject in currentGameState.winObjects)
                 spriteBatch.Draw(pressurePlateTex, board.DrawPosition(winObject.position), Color.White);
 
             //draw the spikes' sprites
-            foreach (EnemyObject enemyObject in enemyObjects)
+            foreach (EnemyObject enemyObject in currentGameState.enemyObjects)
                 spriteBatch.Draw(spikeTex, board.DrawPosition(enemyObject.position), Color.White);
 
             //draw the boxes' sprites
-            foreach (Obstacle obstacle in obstacles)
+            foreach (Obstacle obstacle in currentGameState.obstacles)
             {
                 bool occupied = false;
-                foreach (WinObject winObject in winObjects)
+                foreach (WinObject winObject in currentGameState.winObjects)
                 {
                     if (winObject.position == obstacle.position)
                     {
@@ -243,7 +223,7 @@ namespace Game1
                 }
                 if (!occupied)
                 {
-                    foreach (EnemyObject enemyObject in enemyObjects)
+                    foreach (EnemyObject enemyObject in currentGameState.enemyObjects)
                     {
                         if (enemyObject.position == obstacle.position)
                         {
@@ -259,75 +239,70 @@ namespace Game1
             }
 
             //draw the player sprite
-            spriteBatch.Draw(playerTex, board.DrawPosition(player.position), Color.White);
+            spriteBatch.Draw(playerTex, board.DrawPosition(currentGameState.player.position), Color.White);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        public static void RestartGame()
-        {
-            //reset player position & the currentNode
-            if (board[0, 0] != null)
-            {
-                player.position = board[0, 0].position;
-            }
-            else
-            {
-                player.position = board[1, 0].position;
-            }
+        // public void RestartGame()
+        // {
+        //     Board board = currentGameState.board;
+        //     //reset player position & the currentNode
+        //     if (board[0, 0] != null)
+        //     {
+        //         currentGameState.player.position = board[0, 0].position;
+        //     }
+        //     else
+        //     {
+        //         currentGameState.player.position = board[1, 0].position;
+        //     }
 
-            //reseting objects' position
-            for (int i = 0; i < obstacles.Count; i++)
-            {
-                obstacles[i].position = baseObstaclePos[i];
-            }
-
-            board = RestartBoard();
-        }
+        //     board = RestartBoard(board);
+        // }
 
         //Set the node states to the starter states
-        private static Board RestartBoard()
-        {
-            //go through each node on the board
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    //go through each obstacle's position
-                    for (int i = 0; i < baseObstaclePos.Length; i++)
-                    {
-                        //if the node is not a hole
-                        if (board[x, y] != null)
-                        {
-                            //if the node's position matches any of the first objects' position
-                            if (board[x, y].position == baseObstaclePos[i])
-                            {
-                                //update the node's state to occupied
-                                board[x, y].isEmpty = false;
-                                break;
-                            }
-                            else
-                            {
-                                board[x, y].isEmpty = true;
-                            }
-                        }
-                    }
-                }
-            }
-            return board;
-        }
+        // private static Board RestartBoard(Board board)
+        // {
+        //     //go through each node on the board
+        //     for (int y = 0; y < height; y++)
+        //     {
+        //         for (int x = 0; x < width; x++)
+        //         {
+        //             //go through each obstacle's position
+        //             for (int i = 0; i < obstacles.Count; i++)
+        //             {
+        //                 //if the node is not a hole
+        //                 if (board[x, y] != null)
+        //                 {
+        //                     //if the node's position matches any of the first objects' position
+        //                     if (board[x, y].position == obstacles[i].position)
+        //                     {
+        //                         //update the node's state to occupied
+        //                         board[x, y].isEmpty = false;
+        //                         break;
+        //                     }
+        //                     else
+        //                     {
+        //                         board[x, y].isEmpty = true;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     return board;
+        // }
 
-        public static void Respawn(GameTime gameTime)
-        {
-            if (timerStartTime + spawnTimer < gameTime.TotalGameTime)
-            {
-                RestartGame();
-                Player.hasLost = false;
-                timerStartTime = gameTime.TotalGameTime;
-            }
-        }
+        // public void Respawn(GameTime gameTime)
+        // {
+        //     if (timerStartTime + spawnTimer < gameTime.TotalGameTime)
+        //     {
+        //         RestartGame();
+        //         Player.hasLost = false;
+        //         timerStartTime = gameTime.TotalGameTime;
+        //     }
+        // }
 
         void LoadLevel()
         {
@@ -342,19 +317,19 @@ namespace Game1
                      if (file[i][j] == 'P')
                     {
                         // Player
-                        player.position = new Vector2(i,j);
+                        currentGameState.player.position = new Vector2(i,j);
                     }
                     else if (file[i][j] == 'B')
                         {
-                        Box box = new Box(board);
+                        Box box = new Box(currentGameState.board);
                         box.position = new Vector2(i, j);
-                        obstacles[0] = box;
+                        currentGameState.obstacles[0] = box;
                     }
                     else if (file[i][j] == '.')
                     {
                         PressurePlate pp = new PressurePlate();
                         pp.position = new Vector2(i, j);
-                        winObjects[0] = pp;
+                        currentGameState.winObjects[0] = pp;
                     }
                 }
             }

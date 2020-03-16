@@ -12,14 +12,12 @@ namespace Game1
     //Creates and manages the game's board
     public class HexaBoard : Board
     {
-        SpriteBatch spriteBatch;
         Texture2D boardNodeTex;
     
         public HexaBoard(Game1 game, int width, int height, int nHoles, int nBoxes, int nEnemies) : base(game, width, height, nHoles, nBoxes, nEnemies)
         {
             /* nothing specific to hexaboard for now */
             boardNodeTex = game.Content.Load<Texture2D>("assets/node");
-            spriteBatch = game.spriteBatch;
         }
 
         internal override void CreateNeighbors()
@@ -80,7 +78,7 @@ namespace Game1
         }
 
         
-        public override void Draw(GameTime gameTime) {
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime) {
             //draw the board sprites
             for (int y = 0; y < boardInfo.height; y++)
             {
