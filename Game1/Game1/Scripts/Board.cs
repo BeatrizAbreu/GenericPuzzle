@@ -272,7 +272,6 @@ namespace Game1
             }
 
             CreateNeighbors();
-
         }
 
         public Dictionary<Keys, Direction> GetKeysDirection(int nDirections)
@@ -315,7 +314,6 @@ namespace Game1
             if (Player.hasLost)
                 return -1;
 
-            //if(gameState.winObjects != null)
             foreach (WinObject winObj in gameState.winObjects)
             {
                 if (winObj.isTriggered)
@@ -343,8 +341,8 @@ namespace Game1
                     return false; //the box is stuck in a corner without a pressure plate
                 }
 
-                //if the nodes are squares and the box is in one of the four extreme lines
-                //OR if the nodes are hexagons OR octagons AND the box is on the extreme COLUMNS (x == 0 || x == width-1)
+                //if the nodes are squares and the box is in one of the four extreme lines or columns
+                //OR if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
                 if (obstacle.position.X == boardInfo.width - 1
                    || obstacle.position.X == 0
                    || (boardInfo.nDirections == 4
@@ -508,6 +506,60 @@ namespace Game1
                 return true; //box is reachable
             }
             return true;
+        }
+
+        private bool CheckReach(Node currentNode, Vector2 boxPos, Vector2 ppPos)
+        {
+            foreach (KeyValuePair<Direction, Node> neighbor in currentNode.neighbors)
+            {
+                //if the current neighbor has a box 
+                if (!neighbor.Value.isEmpty)
+                    return false;
+
+                //if the current neighbor has the closest pressure plate
+                if (ppPos == neighbor.Value.position)
+                {
+                    return true;
+                }
+
+
+                //if the current neighbor has an enemy 
+                foreach (EnemyObject enemyObj in enemyObjects)
+                {
+                    if (enemyObj.position == neighbor.Value.position)
+                        return false;
+                }
+
+                //if the current neighbor is reachable 
+                CheckReach(neighbor.Value, boxPos, ppPos);
+            }
+            return false;
+        }
+
+        private WinObject GetClosestWinObject(Vector2 position)
+        {
+            int minDistance = 0, distance;
+            int x = 0, y = 0;
+            WinObject minWinObject = new WinObject();
+
+            foreach (WinObject winObject in winObjects)
+            {
+                x = (int)Math.Abs(winObject.position.X - position.X);
+                y = (int)Math.Abs(winObject.position.Y - position.Y);
+                distance = x > y ? x : y;
+                if (minDistance == 0)
+                {
+                    minDistance = distance;
+                    minWinObject = winObject;
+                }
+                else if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    minWinObject = winObject;
+                }
+            }
+
+            return minWinObject;
         }
 
         List<NodeMCTS> CreateTree(NodeMCTS root)
