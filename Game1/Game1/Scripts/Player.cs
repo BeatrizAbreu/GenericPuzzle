@@ -21,8 +21,12 @@ namespace Game1.Scripts
 
         public bool AutoPlay(List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, GameState gameState)
         {
+            var keys = board.Node(position).neighbors.Keys.Shuffle().ToList();
+            // Useful for debug
+            // System.Console.WriteLine("Available movements: {0}", String.Join(",", keys.Select((k)=>k.ToString())));
+            
             // Bangs the wall until a movement succeeds
-            foreach (var movement in board.Node(position).neighbors.Keys.Shuffle()) {
+            foreach (var movement in keys) {
                 if (Move(movement)) return true;
             }
             return false;
@@ -39,16 +43,9 @@ namespace Game1.Scripts
             foreach (Obstacle obstacle in board.obstacles)
             {
                 // Obstacle ahead!
-                if (obstacle.position == targetNode.position)
+                if (obstacle.position == targetNode.position && !obstacle.Move(direction))
                 {
-                    // if the object is a box 
-                    if (!targetNode.isEmpty)
-                    {
-                        if (!obstacle.Move(direction))
-                        {
-                            return false;                        
-                        }
-                    }
+                    return false;                        
                 }              
             }
             
