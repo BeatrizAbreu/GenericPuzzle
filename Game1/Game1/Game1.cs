@@ -61,14 +61,14 @@ namespace Game1
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            Player player;
+            Board board;
 
             if (!fileON)
             {
                 //Create a game board
-                Board board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies);
-                board.boardInfo.nDirections = nDirections;
-                Moves = board.GetKeysDirection(board.boardInfo.nDirections);
-                Player player;
+                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies);
+
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
                 {
@@ -83,8 +83,15 @@ namespace Game1
             }
             else
             {
-                LoadLevel();
+                board = LoadLevel(out player);
+                foreach (Obstacle obs in board.obstacles)
+                {
+                    obs.board = board;
+                }
             }
+
+            board.boardInfo.nDirections = nDirections;
+            Moves = board.GetKeysDirection(board.boardInfo.nDirections);
 
             base.Initialize();
         }
@@ -311,7 +318,7 @@ namespace Game1
         //     }
         // }
 
-        void LoadLevel()
+        Board LoadLevel(out Player player)
         {         
             string[] file = File.ReadAllLines(Content.RootDirectory + "/level.txt");
             width = file[0].Length;
@@ -390,14 +397,9 @@ namespace Game1
             }
 
             board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects);
-
-            foreach (Obstacle obs in board.obstacles)
-            {
-                obs.board = board;
-            }
-
-            Player player = new Player(board, playerPos);
+            player = new Player(board, playerPos);
             currentGameState = new GameState(board, player);
+            return board;
         }
     }
 }
