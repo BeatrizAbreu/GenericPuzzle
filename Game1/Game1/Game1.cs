@@ -351,7 +351,7 @@ namespace Game1
                 }
             }
 
-            Board board = new HexaBoard(width, height, holesCount, boxCount, enemyCount);
+            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount);
             Vector2[] holesPosition = new Vector2[holesCount];
             holesCount = 0;
 
@@ -362,14 +362,14 @@ namespace Game1
                     // Player
                     if (file[y][x] == 'P')
                     {                      
-                        playerPos = new Vector2(y, x);
+                        playerPos = new Vector2(x, y);
                     }
                     //Box
                     else if (file[y][x] == 'B')
                     {                        
-                        Box box = new Box(board)
+                        Box box = new Box(tempBoard)
                         {
-                            position = new Vector2(y, x)
+                            position = new Vector2(x, y)
                         };
                         obstacles.Add(box);
                     }
@@ -377,26 +377,26 @@ namespace Game1
                     else if (file[y][x] == '.')
                     {                       
                         PressurePlate pp = new PressurePlate();
-                        pp.position = new Vector2(y, x);
+                        pp.position = new Vector2(x, y);
                         winObjects.Add(pp);
                     }
                     //Hole
                     else if (file[y][x] == '#')
                     {
-                        holesPosition[holesCount] = new Vector2(y, x);
+                        holesPosition[holesCount] = new Vector2(x, y);
                         holesCount++;
                     }
                     //Enemy
                     else if(file[y][x] == 'X')
                     {
                         Spike spike = new Spike();
-                        spike.position = new Vector2(y, x);
+                        spike.position = new Vector2(x, y);
                         enemyObjects.Add(spike);
                     }
                 }
             }
 
-            board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects);
+            Board board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects);
             player = new Player(board, playerPos);
             currentGameState = new GameState(board, player);
             return board;

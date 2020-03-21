@@ -97,6 +97,7 @@ namespace Game1
             //set board info params
             boardInfo = new BoardInfo();
             boardInfo.width = width;
+            boardInfo.height = height;
 
             nodes = new Node[boardInfo.width, boardInfo.height];
             this.holesPosition = holesPosition;
