@@ -334,17 +334,17 @@ namespace Game1
                 for (int j = 0; j < width; j++)
                 {
                     // Hole
-                    if (file[j][i] == '#')
+                    if (file[i][j] == '#')
                     {
                         holesCount++;
                     }
                     //Box
-                    else if (file[j][i] == 'B')
+                    else if (file[i][j] == 'B')
                     {
                         boxCount++;
                     }
                     //Enemy
-                    else if (file[j][i] == 'X')
+                    else if (file[i][j] == 'X')
                     {
                         enemyCount++;
                     }
@@ -360,37 +360,37 @@ namespace Game1
                 for (int x = 0; x < width; x++)
                 {
                     // Player
-                    if (file[x][y] == 'P')
+                    if (file[y][x] == 'P')
                     {                      
-                        playerPos = new Vector2(x, y);
+                        playerPos = new Vector2(y, x);
                     }
                     //Box
-                    else if (file[x][y] == 'B')
+                    else if (file[y][x] == 'B')
                     {                        
                         Box box = new Box(board)
                         {
-                            position = new Vector2(x, y)
+                            position = new Vector2(y, x)
                         };
                         obstacles.Add(box);
                     }
                     //Pressure plate
-                    else if (file[x][y] == '.')
+                    else if (file[y][x] == '.')
                     {                       
                         PressurePlate pp = new PressurePlate();
-                        pp.position = new Vector2(x, y);
+                        pp.position = new Vector2(y, x);
                         winObjects.Add(pp);
                     }
                     //Hole
-                    else if (file[x][y] == '#')
+                    else if (file[y][x] == '#')
                     {
-                        holesPosition[holesCount] = new Vector2(x, y);
+                        holesPosition[holesCount] = new Vector2(y, x);
                         holesCount++;
                     }
                     //Enemy
-                    else if(file[x][y] == 'X')
+                    else if(file[y][x] == 'X')
                     {
                         Spike spike = new Spike();
-                        spike.position = new Vector2(x, y);
+                        spike.position = new Vector2(y, x);
                         enemyObjects.Add(spike);
                     }
                 }
