@@ -41,6 +41,9 @@ namespace Game1
         public static int playsCount;
         public static int movesCount = 0;
 
+        //Board from file
+        private bool fileON = true;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -59,33 +62,35 @@ namespace Game1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //create a board with 0 to maxHoles random holes 
-            Board board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies);
-
-            board.boardInfo.nDirections = nDirections;
-
-            Moves = board.GetKeysDirection(board.boardInfo.nDirections);
-            
-            Player player;
-            //player is placed on the first tile if it isn't a hole
-            if (board[0, 0] != null)
+            if (!fileON)
             {
-                //create a player
-                player = new Player(board, board[0, 0].position);
+                //Create a game board
+                Board board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies);
+                board.boardInfo.nDirections = nDirections;
+                Moves = board.GetKeysDirection(board.boardInfo.nDirections);
+                Player player;
+                //player is placed on the first tile if it isn't a hole
+                if (board[0, 0] != null)
+                {
+                    //create a player
+                    player = new Player(board, board[0, 0].position);
+                }
+                else
+                {
+                    player = new Player(board, board[1, 0].position);
+                }
+                currentGameState = new GameState(board, player);
             }
             else
             {
-                player = new Player(board, board[1, 0].position);
+                LoadLevel();
             }
-
-            currentGameState = new GameState(board, player);
 
             base.Initialize();
         }
 
         protected override void LoadContent()
-        {
-            LoadLevel();
+        {        
             GameTime gameTime = new GameTime();
 
             //Loading sprites
@@ -94,7 +99,6 @@ namespace Game1
             playerTex        = Content.Load<Texture2D>("assets/player");
             boardNodeTex     = Content.Load<Texture2D>("assets/node");
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
-
 
             GameState sourceState = currentGameState;
             //MonteCarlo auto-player
@@ -308,34 +312,92 @@ namespace Game1
         // }
 
         void LoadLevel()
-        {
+        {         
             string[] file = File.ReadAllLines(Content.RootDirectory + "/level.txt");
             width = file[0].Length;
             height = file.Length;
- 
+            List<Obstacle> obstacles = new List<Obstacle>();
+            List<WinObject> winObjects = new List<WinObject>();
+            List<EnemyObject> enemyObjects = new List<EnemyObject>();
+            Vector2 playerPos = new Vector2();
+            int holesCount = 0, boxCount = 0, enemyCount = 0;      
+
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                     if (file[i][j] == 'P')
+                    // Hole
+                    if (file[j][i] == '#')
                     {
-                        // Player
-                        currentGameState.player.position = new Vector2(i,j);
+                        holesCount++;
                     }
-                    else if (file[i][j] == 'B')
-                        {
-                        Box box = new Box(currentGameState.board);
-                        box.position = new Vector2(i, j);
-                        currentGameState.obstacles[0] = box;
-                    }
-                    else if (file[i][j] == '.')
+                    //Box
+                    else if (file[j][i] == 'B')
                     {
-                        PressurePlate pp = new PressurePlate();
-                        pp.position = new Vector2(i, j);
-                        currentGameState.winObjects[0] = pp;
+                        boxCount++;
+                    }
+                    //Enemy
+                    else if (file[j][i] == 'X')
+                    {
+                        enemyCount++;
                     }
                 }
             }
+
+            Board board = new HexaBoard(width, height, holesCount, boxCount, enemyCount);
+            Vector2[] holesPosition = new Vector2[holesCount];
+            holesCount = 0;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    // Player
+                    if (file[x][y] == 'P')
+                    {                      
+                        playerPos = new Vector2(x, y);
+                    }
+                    //Box
+                    else if (file[x][y] == 'B')
+                    {                        
+                        Box box = new Box(board)
+                        {
+                            position = new Vector2(x, y)
+                        };
+                        obstacles.Add(box);
+                    }
+                    //Pressure plate
+                    else if (file[x][y] == '.')
+                    {                       
+                        PressurePlate pp = new PressurePlate();
+                        pp.position = new Vector2(x, y);
+                        winObjects.Add(pp);
+                    }
+                    //Hole
+                    else if (file[x][y] == '#')
+                    {
+                        holesPosition[holesCount] = new Vector2(x, y);
+                        holesCount++;
+                    }
+                    //Enemy
+                    else if(file[x][y] == 'X')
+                    {
+                        Spike spike = new Spike();
+                        spike.position = new Vector2(x, y);
+                        enemyObjects.Add(spike);
+                    }
+                }
+            }
+
+            board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects);
+
+            foreach (Obstacle obs in board.obstacles)
+            {
+                obs.board = board;
+            }
+
+            Player player = new Player(board, playerPos);
+            currentGameState = new GameState(board, player);
         }
     }
 }

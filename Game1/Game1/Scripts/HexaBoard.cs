@@ -17,6 +17,12 @@ namespace Game1
             /* nothing specific to hexaboard for now */
         }
 
+        public HexaBoard(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects) 
+            : base(width, height, holesPosition, obstacles, enemyObjects, winObjects)
+        {
+            /* nothing specific to hexaboard for now */
+        }
+
         internal override void CreateNeighbors()
         {
             for (int y = 0; y < boardInfo.height; y++)

@@ -67,6 +67,8 @@ namespace Game1
         public List<EnemyObject> enemyObjects;
         private int placementChance;
 
+        private Vector2[] holesPosition;
+
         public Board(int width, int height, int nHoles, int nBoxes, int nEnemies)
         {
             //set board info params
@@ -84,10 +86,27 @@ namespace Game1
             enemyObjects = new List<EnemyObject>();
 
             //create the board graph with all the information
-            CreateBoard(boardInfo);
+            CreateBoard();
             CreateObstacles();
             CreateWinObjects();
             CreateEnemyObjects();
+        }
+
+        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects)
+        {
+            //set board info params
+            boardInfo = new BoardInfo();
+            boardInfo.width = width;
+
+            nodes = new Node[boardInfo.width, boardInfo.height];
+            this.holesPosition = holesPosition;
+
+            this.obstacles = obstacles;
+            this.winObjects = winObjects;
+            this.enemyObjects = enemyObjects;
+
+            //create the board graph with all the information
+            CreateBoardFromFile();
         }
 
         public Node Node(Vector2 pos)
@@ -228,8 +247,43 @@ namespace Game1
             boardInfo.nBoxes = boxCount;
         }
 
+        //Creates the board read from file
+        public void CreateBoardFromFile()
+        {
+            int counter = 0;
+            //create the matrix of nodes
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                //create each node cell
+                for (int x = 0; x < boardInfo.width; x++)
+                {
+                    //create a hole: skip the current position
+                    if (holesPosition.Length > counter
+                        && x == holesPosition[counter].X
+                        && y == holesPosition[counter].Y)
+                    {
+                        x++;
+                        //if the current line is already full, pass on to the next line
+                        if (x == boardInfo.width && y < boardInfo.height)
+                        {
+                            x = 0;
+                            y++;
+                        }
+                        counter++;
+                    }
+
+                    nodes[x, y] = new Node();
+                    //positions are filled from (0,0) to (width-1, height-1)
+                    nodes[x, y].position = new Vector2(x, y);
+                    nodes[x, y].isEmpty = true;
+                }
+            }
+
+            CreateNeighbors();
+        }
+
         //Creates all board nodes and their neighbor dictionaries
-        public void CreateBoard(BoardInfo boardInfo)
+        public void CreateBoard()
         {
             Vector2 lastHolePosition = new Vector2(0, 0);
             int holesCount = 0;
@@ -432,17 +486,16 @@ namespace Game1
             return minWinObjects;
         }
 
-        List<NodeMCTS> CreateTree(NodeMCTS root)
+        Dictionary<Direction, NodeMCTS> CreateTree(NodeMCTS root)
         {
-            List<NodeMCTS> children = new List<NodeMCTS>();
+            Dictionary<Direction, NodeMCTS> children = new Dictionary<Direction, NodeMCTS>();
 
             /* FIX ME: ONLY N TIMES */
 
             foreach (KeyValuePair<Direction, Node> neighbor in nodes[0, 0].neighbors)
             {
                 NodeMCTS child = new NodeMCTS(CreateTree(root));
-                child.pathDirection = neighbor.Key;
-                children.Add(child);
+                children.Add(neighbor.Key, child);
             }
             return children;
         }
