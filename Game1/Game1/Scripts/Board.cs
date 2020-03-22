@@ -487,19 +487,19 @@ namespace Game1
             return minWinObjects;
         }
 
-        Dictionary<Direction, NodeMCTS> CreateTree(NodeMCTS root)
-        {
-            Dictionary<Direction, NodeMCTS> children = new Dictionary<Direction, NodeMCTS>();
+        //Dictionary<Direction, NodeMCTS> CreateTree(NodeMCTS root)
+        //{
+        //    Dictionary<Direction, NodeMCTS> children = new Dictionary<Direction, NodeMCTS>();
 
-            /* FIX ME: ONLY N TIMES */
+        //    /* FIX ME: ONLY N TIMES */
 
-            foreach (KeyValuePair<Direction, Node> neighbor in nodes[0, 0].neighbors)
-            {
-                NodeMCTS child = new NodeMCTS(CreateTree(root));
-                children.Add(neighbor.Key, child);
-            }
-            return children;
-        }
+        //    foreach (KeyValuePair<Direction, Node> neighbor in nodes[0, 0].neighbors)
+        //    {
+        //        NodeMCTS child = new NodeMCTS(CreateTree(root));
+        //        children.Add(neighbor.Key, child);
+        //    }
+        //    return children;
+        //}
 
         //Returns the targetNode for each node-direction pair
         public abstract Node Move(Node currentNode, Direction direction);
