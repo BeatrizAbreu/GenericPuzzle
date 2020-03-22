@@ -29,26 +29,33 @@ namespace Game1.Scripts
             int x = (int)root.gameState.player.position.X, y = (int)root.gameState.player.position.Y;
             var neighborKeys = root.gameState.board.Node(new Microsoft.Xna.Framework.Vector2(x, y)).neighbors.Keys.Shuffle().ToList();
 
-            foreach (KeyValuePair<Direction, Node> neighbor in root.gameState.board.nodes[x, y].neighbors)
+            //if the node has a neighbor list, iterate through each neighbor
+            if (root.gameState.board.nodes[x, y].neighbors != null)
             {
-                //the direction hasn't yet been visited
-                if (children.ContainsKey(neighbor.Key))
+                foreach (KeyValuePair<Direction, Node> neighbor in root.gameState.board.nodes[x, y].neighbors)
                 {
-                    break;
+                    //if the direction hasn't yet been visited
+                    if (!children.ContainsKey(neighbor.Key))
+                    {
+                        if (root.gameState.player.Move(neighbor.Key))
+                        {
+                            //create the child node and random run
+                            NodeMCTS child = new NodeMCTS(root.gameState);
+                            //add the child to the children list
+                            root.children.Add(neighbor.Key, child);
+                            //update the parent's win/loss/plays values
+                            root.playsCount += child.playsCount;
+                            root.lossCount += child.lossCount;
+                            root.winCount += child.winCount;
+                        }
+                    }
                 }
 
-                //make the movement
-                if (root.gameState.player.Move(neighbor.Key))
+                foreach (KeyValuePair<Direction, NodeMCTS> child in root.children)
                 {
-                    //create the child node
-                    NodeMCTS child = new NodeMCTS(root.gameState);
-                    root.children.Add(neighbor.Key, child);
+                    //iterate through each child's children as well
+                    Iterate(child.Value);
                 }
-            }
-
-            foreach (KeyValuePair<Direction, NodeMCTS> child in root.children)
-            {
-
             }
         }
     }
