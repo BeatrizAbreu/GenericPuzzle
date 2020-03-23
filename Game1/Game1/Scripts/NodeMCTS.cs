@@ -20,8 +20,9 @@ namespace Game1.Scripts
             this.children = new Dictionary<Direction, NodeMCTS>();
             this.gameState = gameState;
 
+            GameState copy = gameState.Copy();
             //make random run
-            int result = gameState.PlayTest(500);
+            int result = copy.PlayTest(500);
             playsCount++;
             if (result > 0) winCount++;
             if (result < 0) lossCount++;
@@ -45,6 +46,8 @@ namespace Game1.Scripts
                 //saves the best path given the formula
                 NodeMCTS bestPath = new NodeMCTS();
 
+                NodeMCTS rootCopy = root.Copy();
+
                 bool isExpanding = false;
 
                 foreach (var key in neighborKeys)
@@ -53,18 +56,18 @@ namespace Game1.Scripts
                     if (!children.ContainsKey(key))
                     {
                         //if the player can move towards that direction, it moves
-                        if (root.gameState.player.Move(key))
+                        if (rootCopy.gameState.player.Move(key))
                         {
                             //create the child node and executes a random run
-                            NodeMCTS child = new NodeMCTS(root.gameState);
+                            NodeMCTS child = new NodeMCTS(rootCopy.gameState);
 
                             //add the child to the children list
-                            firstRoot.children.Add(key, child);
+                            root.children.Add(key, child);
 
                             //update the parent's win/loss/plays values
-                            firstRoot.playsCount += child.playsCount;
-                            firstRoot.lossCount += child.lossCount;
-                            firstRoot.winCount += child.winCount;
+                            root.playsCount += child.playsCount;
+                            root.lossCount += child.lossCount;
+                            root.winCount += child.winCount;
                         }
                     }
 
