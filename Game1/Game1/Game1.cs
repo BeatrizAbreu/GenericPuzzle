@@ -92,6 +92,7 @@ namespace Game1
 
             board.boardInfo.nDirections = nDirections;
             Moves = board.GetKeysDirection(board.boardInfo.nDirections);
+            treeRootMTCS = new NodeMCTS(currentGameState);
 
             base.Initialize();
         }
@@ -108,17 +109,19 @@ namespace Game1
             pressurePlateTex = Content.Load<Texture2D>("assets/pressurePlate");
 
             GameState sourceState = currentGameState;
-            //MonteCarlo auto-player
-            for (int i = 0; i < 10; i++)
-            {
-                currentGameState = sourceState.Copy();
-                int result = currentGameState.PlayTest(500);
 
-                if (result > 0) winCount++;
-                if (result < 0) lossCount++;
-           
-                System.Console.WriteLine($"{winCount} vs {lossCount} ({currentGameState.player.nMoves})");
-            }
+            //MonteCarlo auto-player
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    currentGameState = sourceState.Copy();
+            //    int result = currentGameState.PlayTest(500);
+
+            //    if (result > 0) winCount++;
+            //    if (result < 0) lossCount++;
+
+            //    System.Console.WriteLine($"{winCount} vs {lossCount} ({currentGameState.player.nMoves})");
+            //}
+            treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS);
         }
 
         protected override void UnloadContent()
