@@ -53,7 +53,7 @@ namespace Game1.Scripts
                 foreach (var key in neighborKeys)
                 {
                     //if the node doesn't have children yet or its direction hasn't yet been visited
-                    if (!children.ContainsKey(key))
+                    if (!root.children.ContainsKey(key))
                     {
                         //if the player can move towards that direction, it moves
                         if (rootCopy.gameState.player.Move(key))
