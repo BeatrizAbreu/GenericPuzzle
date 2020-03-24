@@ -122,7 +122,7 @@ namespace Game1
             //    System.Console.WriteLine($"{winCount} vs {lossCount} ({currentGameState.player.nMoves})");
             //}
             treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS, 0, 10);
-            System.Console.WriteLine($"{treeRootMTCS.winCount} vs {treeRootMTCS.lossCount} ({treeRootMTCS.gameState.player.nMoves})");
+            System.Console.WriteLine($"{treeRootMTCS.winCount} vs {treeRootMTCS.lossCount} ({treeRootMTCS.playsCount})");
         }
 
         protected override void UnloadContent()

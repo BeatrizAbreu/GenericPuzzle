@@ -153,16 +153,57 @@ namespace Game1.Scripts
                     //find the best path using the formula
                     bestPath = GetBestPath(root);
 
+                    bool res = Iterate(bestPath, firstRoot, iNow, iTotal);
+                    FindParent(ref bestPath, ref firstRoot);
+                    
                     //iterate through the bestPath's children and expand the tree
-                    if(Iterate(bestPath, firstRoot, iNow, iTotal))
+                    if (res)
+                    {
+                        UpdateParentValues(ref firstRoot);
                         return true;
+                    }                       
                 }
                
                 //go through the root again 
                 if (Iterate(firstRoot, firstRoot, iNow, iTotal))
+                {
+                    UpdateParentValues(ref firstRoot);
                     return true;
+                }
             }
             return false;
+        }
+
+        private NodeMCTS FindParent(ref NodeMCTS best, ref NodeMCTS root)
+        {
+            foreach (KeyValuePair<Direction, NodeMCTS> child in root.children)
+            {
+                //encontrei o best
+                if(child.Value == best)
+                {
+                    //encontrei o pai e atualizo-o
+                    UpdateParentValues(ref root);
+                    return root;
+                }
+            }
+
+            foreach (KeyValuePair<Direction, NodeMCTS> child in root.children)
+            {
+                NodeMCTS childVal = child.Value;
+                FindParent(ref childVal, ref root);
+            }
+
+            return new NodeMCTS();
+        }
+
+        private void UpdateParentValues(ref NodeMCTS root)
+        {
+            foreach (KeyValuePair<Direction, NodeMCTS> child in root.children)
+            {
+                root.winCount += child.Value.winCount;
+                root.lossCount += child.Value.lossCount;
+                root.playsCount += child.Value.playsCount;
+            }
         }
 
         private NodeMCTS GetBestPath(NodeMCTS root)
