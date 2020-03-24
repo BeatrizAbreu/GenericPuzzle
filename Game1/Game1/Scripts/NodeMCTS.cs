@@ -82,10 +82,7 @@ namespace Game1.Scripts
                 //if the tree is expanding through evaluation
                 if (isExpanding)
                 {
-                    /*FIX ME: BESTPATH IS NULL AT SOME POINT. 
-                     1ST IT ITERATES THROUGH THE ROOT AND CREATES CHILDREN
-                     2ND IT ITERATES THE ROOT'S CHILDREN AND CHOOSES THE BEST CHILD. THEN EXPANDS THAT CHILD
-                     3RD - FAILS!! IT SHOULD RETURN TO THE ORIGINAL ROOT AND FIND THE BEST CHILD AGAIN */
+                    //find the best path using the formula
                     bestPath = GetBestPath(root);
 
                     //iterate through the bestPath's children and expand the tree
@@ -95,6 +92,77 @@ namespace Game1.Scripts
                 //go through the root again 
                 Iterate(firstRoot, firstRoot);
             }
+        }
+
+        public bool Iterate(NodeMCTS root, NodeMCTS firstRoot, int iNow, int iTotal)
+        {
+            int x = (int)root.gameState.player.position.X, y = (int)root.gameState.player.position.Y;
+
+            //if the node has a neighbor list, iterate through each neighbor
+            if (root.gameState.board.nodes[x, y].neighbors != null)
+            {
+                //shuffle the neighbors keys so the order is random (not really a necessary step)
+                var neighborKeys = root.gameState.board.Node(new Microsoft.Xna.Framework.Vector2(x, y)).neighbors.Keys.Shuffle().ToList();
+
+                //saves the best path given the formula
+                NodeMCTS bestPath = new NodeMCTS();
+
+                NodeMCTS rootCopy = root.Copy();
+
+                bool isExpanding = false;
+
+                foreach (var key in neighborKeys)
+                {
+                    if (iNow == iTotal)
+                        return true;
+
+                    //if the node doesn't have children yet or its direction hasn't yet been visited
+                    if (!root.children.ContainsKey(key))
+                    {
+                        //if the player can move towards that direction, it moves
+                        if (rootCopy.gameState.player.Move(key))
+                        {
+                            //create the child node and executes a random run
+                            NodeMCTS child = new NodeMCTS(rootCopy.gameState);
+
+                            //add the child to the children list
+                            root.children.Add(key, child);
+
+                            //update the parent's win/loss/plays values
+                            root.playsCount += child.playsCount;
+                            root.lossCount += child.lossCount;
+                            root.winCount += child.winCount;
+                            iNow++;
+                        }
+                    }
+
+                    //this node has already been visited
+                    else
+                    {
+                        isExpanding = true;
+                        break;
+                    }
+                }
+
+                if (iNow == iTotal)
+                    return true;
+
+                //if the tree is expanding through evaluation
+                if (isExpanding)
+                {
+                    //find the best path using the formula
+                    bestPath = GetBestPath(root);
+
+                    //iterate through the bestPath's children and expand the tree
+                    if(Iterate(bestPath, firstRoot, iNow, iTotal))
+                        return true;
+                }
+               
+                //go through the root again 
+                if (Iterate(firstRoot, firstRoot, iNow, iTotal))
+                    return true;
+            }
+            return false;
         }
 
         private NodeMCTS GetBestPath(NodeMCTS root)
