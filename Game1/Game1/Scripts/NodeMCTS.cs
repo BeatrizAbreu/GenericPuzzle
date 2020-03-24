@@ -8,6 +8,8 @@ namespace Game1.Scripts
 {
     class NodeMCTS
     {
+        const int MCRuns = 500;
+        const float C = 1;
         public Dictionary<Direction, NodeMCTS> children;
         public GameState gameState;
         public int winCount;
@@ -20,18 +22,73 @@ namespace Game1.Scripts
             this.children = new Dictionary<Direction, NodeMCTS>();
             this.gameState = gameState;
 
-            GameState copy = gameState.Copy();
+            GameState copy = gameState; //.Copy(); or we will be copying twice, one in Iterate/Run, another here
             //make random run
-            int result = copy.PlayTest(500);
+            int result = copy.PlayTest(MCRuns);
             playsCount++;
             if (result > 0) winCount++;
             if (result < 0) lossCount++;
         }
 
-        public NodeMCTS()
+        public NodeMCTS() { children = new Dictionary<Direction, NodeMCTS>(); }
+
+        public void Run()
         {
-            this.children = new Dictionary<Direction, NodeMCTS>();
+            // get all possible moves
+            List<Direction> possibleMoves = gameState.board.Node(gameState.player.position).neighbors.Keys.ToList();
+            foreach (Direction move in possibleMoves)
+            {
+                if (!children.ContainsKey(move))
+                {
+                    GameState childState = gameState.Copy();
+                    if (childState.player.Move(move)) {
+                        NodeMCTS child = new NodeMCTS(childState);
+                        winCount += child.winCount;
+                        lossCount += child.lossCount;
+                        children[move] = child;
+                        return; // Our work is done here, one node was expanded!
+                    } 
+                }
+            }
+
+            // If we got here, all moves were tested.
+            // Decide which move should be explored.
+            int N = children.Values.Select( node => node.playsCount ).Sum(); 
+
+            Direction? bestDirection = null;
+            float uBest = 0f;
+            foreach (Direction direction in children.Keys) {
+                NodeMCTS node = children[direction]; 
+                float u = (node.winCount / node.playsCount) + C * MathF.Sqrt( 2 * MathF.Log(N) / node.playsCount);
+                if (u > uBest) {
+                    uBest = u; bestDirection = direction;
+                }
+            }
+
+            if (bestDirection.HasValue) {
+                // Save child counts
+                int childLosses = children[bestDirection.Value].lossCount;
+                int childWins = children[bestDirection.Value].winCount;
+                int childPlays = children[bestDirection.Value].playsCount;
+                children[bestDirection.Value].Run();
+                // Recompute counts
+                playsCount = playsCount - childPlays + children[bestDirection.Value].playsCount;
+                winCount = winCount - childWins + children[bestDirection.Value].winCount;
+                lossCount = lossCount - childLosses + children[bestDirection.Value].lossCount;
+
+                return; // Our work is done, we iterated down once
+            }
+            
+            // If we got here, we were unable to expand, and there were no childs
+            // check:
+            // - if this is a win position, sum one to wins count
+            // - if this is a lose position,   sum one to lost count
+            // either way, increment  
+            // FIXME!!!
+
+
         }
+
 
         public void Iterate(NodeMCTS root, NodeMCTS firstRoot)
         {
