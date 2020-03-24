@@ -154,8 +154,12 @@ namespace Game1.Scripts
                     bestPath = GetBestPath(root);
 
                     bool res = Iterate(bestPath, firstRoot, iNow, iTotal);
-                    FindParent(ref bestPath, ref firstRoot);
-                    
+                    //   FindParent(ref bestPath, ref firstRoot);
+
+                    root.playsCount += bestPath.playsCount;
+                    root.lossCount += bestPath.lossCount;
+                    root.winCount += bestPath.winCount;
+
                     //iterate through the bestPath's children and expand the tree
                     if (res)
                     {
@@ -163,9 +167,15 @@ namespace Game1.Scripts
                         return true;
                     }                       
                 }
-               
+
+                bool result = Iterate(firstRoot, firstRoot, iNow, iTotal);
+
+                //root.playsCount += bestPath.playsCount;
+                //root.lossCount += bestPath.lossCount;
+                //root.winCount += bestPath.winCount;
+
                 //go through the root again 
-                if (Iterate(firstRoot, firstRoot, iNow, iTotal))
+                if (result)
                 {
                     UpdateParentValues(ref firstRoot);
                     return true;
