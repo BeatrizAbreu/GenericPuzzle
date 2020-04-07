@@ -40,12 +40,32 @@ namespace Game1.Scripts
             {
                 if (!children.ContainsKey(move))
                 {
+                    bool isCopy = false;
                     GameState childState = gameState.Copy();
                     if (childState.player.Move(move)) {
-                        NodeMCTS child = new NodeMCTS(childState);
-                        winCount += child.winCount;
-                        lossCount += child.lossCount;
-                        children[move] = child;
+                        //if the gamestate exists, don't make a new child
+                        foreach (KeyValuePair<Direction, NodeMCTS> c in children)
+                        {
+                            if(c.Value.gameState == childState)
+                            {
+                                GameState copy = gameState; 
+                                //make random run
+                                int result = copy.PlayTest(MCRuns);
+                                playsCount++;
+                                if (result > 0) winCount++;
+                                if (result < 0) lossCount++;
+                                isCopy = true;
+                                break;
+                            }
+                        }
+                        //create a new child
+                        if(!isCopy)
+                        {
+                            NodeMCTS child = new NodeMCTS(childState);
+                            winCount += child.winCount;
+                            lossCount += child.lossCount;
+                            children[move] = child;
+                        }
                         return; // Our work is done here, one node was expanded!
                     } 
                 }
@@ -59,7 +79,7 @@ namespace Game1.Scripts
             float uBest = 0f;
             foreach (Direction direction in children.Keys) {
                 NodeMCTS node = children[direction]; 
-                float u = (node.winCount / node.playsCount) + C * MathF.Sqrt( 2 * MathF.Log(N) / node.playsCount);
+                float u = (node.winCount / node.playsCount) + C * (float)Math.Sqrt( 2 * Math.Log(N) / node.playsCount);
                 if (u > uBest) {
                     uBest = u; bestDirection = direction;
                 }
