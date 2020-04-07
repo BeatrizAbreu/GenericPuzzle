@@ -1,0 +1,27 @@
+
+==== Regras abrstratas para a colocação de Caixas/Pressure plates ==== 
+
+1. As caixas não podem estar presas no momento da sua colocação.
+
+2. Num mapeamento com 6 direções, as caixas estão presas se:
+	2.1 - estão num dos 4 cantos do tabuleiro.
+	2.2 - estão numa célula da primeira/última linha em que a coluna é é ímpar e não há uma pressure plate na mesma célula.
+	2.3 - estão numa célula da primeira/última coluna e não há um caminho possível (sem armadilhas ou caixas) até uma pressure plate nessa mesma coluna.
+	2.4 - não têm 2 células anexas e opostas livres em que pelo menos uma delas acessível ao jogador (ex (em relação à caixa): UP/DOWN, UPRIGHT/DOWNLEFT, etc.).
+	2.5 - não há um caminho livre entre a caixa e uma pressure plate.
+	
+3. Num mapeamento com 4 direções, as caixas estão presas se:
+	3.1 - estão num dos 4 cantos do tabuleiro.
+	3.2 - estão numa das 4 linhas/colunas do rebordo e não há uma pressure plate nessa mesma linha/coluna.
+	3.3 - estão numa das 4 linhas/colunas do rebordo e não há um caminho possível (sem armadilhas ou caixas) até uma pressure plate nessa mesma linha/coluna.
+	3.4 - não há um caminho livre entre a caixa e uma pressure plate.
+
+3. Garantir que há caminho entre cada par caixa/pressure plate colocado.
+
+4. O número de pressure plates deve ser igual ao número de caixas.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+==== Regras abstratas para avaliação da posição das caixas a cada estado de jogo ==== 
+
+1. As caixas não podem estar numa célula onde estejam presas, a menos que estejam sob uma pressure plate.
