@@ -379,7 +379,7 @@ namespace Game1
         }
 
         //verifies if any box is unreachable -> lost game (returns false)
-        private bool CheckBoxesReach()
+        private bool BoxCanMove()
         {
             foreach (Obstacle obstacle in obstacles)
             {
@@ -412,7 +412,7 @@ namespace Game1
                     WinObject[] nearbyPPs = GetClosestWinObjects(obstacle.position, 3);
                     foreach (WinObject pp in nearbyPPs)
                     {
-                        if (CheckReach(nodes[(int)obstacle.position.X, (int)obstacle.position.Y], pp.position))
+                        if (ValidPath(nodes[(int)obstacle.position.X, (int)obstacle.position.Y], pp.position))
                         {
                             return true;
                         }
@@ -424,7 +424,7 @@ namespace Game1
             return true;
         }
 
-        public bool CheckReach(Node currentNode, Vector2 ppPos)
+        public bool ValidPath(Node currentNode, Vector2 destination)
         {
             foreach (KeyValuePair<Direction, Node> neighbor in currentNode.neighbors)
             {
@@ -433,11 +433,10 @@ namespace Game1
                     return false;
 
                 //if the current neighbor has the closest pressure plate
-                if (ppPos == neighbor.Value.position)
+                if (destination == neighbor.Value.position)
                 {
                     return true;
                 }
-
 
                 //if the current neighbor has an enemy 
                 foreach (EnemyObject enemyObj in enemyObjects)
@@ -447,7 +446,7 @@ namespace Game1
                 }
 
                 //if the current neighbor is reachable 
-                CheckReach(neighbor.Value, ppPos);
+                ValidPath(neighbor.Value, destination);
             }
             return false;
         }
