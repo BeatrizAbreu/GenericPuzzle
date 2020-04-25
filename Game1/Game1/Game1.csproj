@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Scripts\Board.cs" />
     <Compile Include="Scripts\GameState.cs" />
+    <Compile Include="Scripts\Orb.cs" />
     <Compile Include="Scripts\RNG.cs" />
     <Compile Include="Scripts\HexaBoard.cs" />
     <Compile Include="Game1.cs" />

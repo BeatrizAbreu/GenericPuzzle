@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    class PressurePlate : WinObject
+    class Orb : WinObject
     {
         public static int activeObjectCount;
         public static int objectCount;
 
-        public PressurePlate()
+        public Orb()
         {
-            tag = "pp";
+            tag = "orb";
             objectCount++;
         }
 
@@ -22,12 +21,6 @@ namespace Game1.Scripts
         {
             isTriggered = true;
             activeObjectCount++;
-        }
-
-        public override void Deactivate()
-        {
-            isTriggered = false;
-            activeObjectCount--;
         }
     }
 }

@@ -64,8 +64,17 @@ namespace Game1.Scripts
                     enemyObj.Action();
                     break;
                 }
-            }          
-            return true;
+            }
+
+            foreach (WinObject winObject in board.winObjects)
+            {
+                //orb ahead!
+                if (winObject.tag == "orb" && winObject.position == position)
+                {
+                    winObject.Action();
+                }
+            }
+                return true;
         }
     }
 }

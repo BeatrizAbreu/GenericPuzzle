@@ -48,6 +48,7 @@ namespace Game1
         public int nHoles;
         public int nBoxes;
         public int nEnemies;
+        public int nOrbs;
     }
 
     //Creates and manages the game's board
@@ -69,7 +70,7 @@ namespace Game1
 
         private Vector2[] holesPosition;
 
-        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies)
+        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nOrbs)
         {
             //set board info params
             boardInfo = new BoardInfo();
@@ -78,6 +79,7 @@ namespace Game1
             boardInfo.nHoles = nHoles;
             boardInfo.nBoxes = nBoxes;
             boardInfo.nEnemies = nEnemies;
+            boardInfo.nOrbs = nOrbs;
 
             nodes = new Node[boardInfo.width, boardInfo.height];
 
@@ -160,6 +162,7 @@ namespace Game1
         public void CreateWinObjects()
         {
             int objCount = 0;
+            int orbCount = 0;
             int rand;
 
             //go through the nodes
@@ -167,28 +170,44 @@ namespace Game1
             {
                 for (int x = 0; x < boardInfo.width; x++)
                 {
-                    //while there's still objects to place
-                    if (nodes[x, y] != null
-                        &&objCount < boardInfo.nBoxes)
-                    {
-                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
-                        rand = RNG.Next(100);
+                    rand = RNG.Next(100);
 
-                        foreach (Obstacle obstacle in obstacles)
+                    if(nodes[x, y] != null)
+                    {
+                        //place orb
+                        if (orbCount < boardInfo.nOrbs && rand > 50)
                         {
-                            //if the node is not a hole and the random rolls over 30
-                            //and there's a box in the same line or column but not on the same cell
-                            if (nodes[x, y].isEmpty
-                                && !(x == 0 && y == 0)
-                                && (x == obstacle.position.X || y == obstacle.position.Y)
-                                && rand > placementChance)
+                            if (nodes[x, y].isEmpty)
                             {
-                                //create and place the object
-                                WinObject winObject = new WinObject();
+                                Orb winObject = new Orb();
                                 winObject.position = nodes[x, y].position;
                                 winObjects.Add(winObject);
-                                objCount++;
-                                break;
+                                orbCount++;
+                            }
+                        }
+                        //while there's still pps to place
+                        else if (nodes[x, y] != null
+                        && objCount < boardInfo.nBoxes)
+                        {
+                            placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
+                            rand = RNG.Next(100);
+
+                            foreach (Obstacle obstacle in obstacles)
+                            {
+                                //if the node is not a hole and the random rolls over 30
+                                //and there's a box in the same line or column but not on the same cell
+                                if (nodes[x, y].isEmpty
+                                    && !(x == 0 && y == 0)
+                                    && (x == obstacle.position.X || y == obstacle.position.Y)
+                                    && rand > placementChance)
+                                {
+                                    //create and place the object
+                                    PressurePlate winObject = new PressurePlate();
+                                    winObject.position = nodes[x, y].position;
+                                    winObjects.Add(winObject);
+                                    objCount++;
+                                    break;
+                                }
                             }
                         }
                     }

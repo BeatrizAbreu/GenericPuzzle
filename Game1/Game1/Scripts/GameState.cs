@@ -9,7 +9,7 @@ namespace Game1.Scripts
 {
     public class GameState
     {
-        public Board board  {get; private set;}
+        public Board board  {get; set;}
         public Player player {get; private set;}
         public List<Obstacle>    obstacles     {get; private set;}
         public List<EnemyObject> enemyObjects  {get; private set;}

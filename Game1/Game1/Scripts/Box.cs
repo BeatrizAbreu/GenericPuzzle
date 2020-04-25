@@ -27,15 +27,16 @@ namespace Game1.Scripts
                 position = targetNode.position;
 
                 foreach (WinObject winObject in board.winObjects)
-                {
+                {                 
                     //if a pressure plate is found in the same position, the box is placed on the pressure plate
-                    if (winObject.position == position)
+                    if (winObject.tag == "pp" && winObject.position == position)
                     {
                         winObject.Action();
                         //inObject.isTriggered = true;
                     }
+
                     //if the box was in a pressure plate
-                    if (winObject.position == currentNode.position)
+                    if (winObject.tag == "pp" && winObject.position == currentNode.position)
                     {
                         winObject.Deactivate();
                     }
