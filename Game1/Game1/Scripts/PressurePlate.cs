@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    class PressurePlate : WinObject
+    class Toggle : WinObject
     {
         public static int activeObjectCount;
         public static int objectCount;
 
-        public PressurePlate()
+        public Toggle()
         {
-            tag = "pp";
+            tag = "Toggle";
             objectCount++;
         }
 

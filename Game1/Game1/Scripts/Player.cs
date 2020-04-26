@@ -68,8 +68,8 @@ namespace Game1.Scripts
 
             foreach (WinObject winObject in board.winObjects)
             {
-                //orb ahead!
-                if (winObject.tag == "orb" && winObject.position == position)
+                //Collectible ahead!
+                if (winObject.tag == "Collectible" && winObject.position == position)
                 {
                     winObject.Action();
                 }

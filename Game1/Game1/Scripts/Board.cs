@@ -48,7 +48,7 @@ namespace Game1
         public int nHoles;
         public int nBoxes;
         public int nEnemies;
-        public int nOrbs;
+        public int nCollectibles;
     }
 
     //Creates and manages the game's board
@@ -70,7 +70,7 @@ namespace Game1
 
         private Vector2[] holesPosition;
 
-        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nOrbs)
+        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles)
         {
             //set board info params
             boardInfo = new BoardInfo();
@@ -79,7 +79,7 @@ namespace Game1
             boardInfo.nHoles = nHoles;
             boardInfo.nBoxes = nBoxes;
             boardInfo.nEnemies = nEnemies;
-            boardInfo.nOrbs = nOrbs;
+            boardInfo.nCollectibles = nCollectibles;
 
             nodes = new Node[boardInfo.width, boardInfo.height];
 
@@ -162,7 +162,7 @@ namespace Game1
         public void CreateWinObjects()
         {
             int objCount = 0;
-            int orbCount = 0;
+            int CollectibleCount = 0;
             int rand;
 
             //go through the nodes
@@ -174,18 +174,18 @@ namespace Game1
 
                     if(nodes[x, y] != null)
                     {
-                        //place orb
-                        if (orbCount < boardInfo.nOrbs && rand > 50)
+                        //place Collectible
+                        if (CollectibleCount < boardInfo.nCollectibles && rand > 50)
                         {
                             if (nodes[x, y].isEmpty)
                             {
-                                Orb winObject = new Orb();
+                                Collectible winObject = new Collectible();
                                 winObject.position = nodes[x, y].position;
                                 winObjects.Add(winObject);
-                                orbCount++;
+                                CollectibleCount++;
                             }
                         }
-                        //while there's still pps to place
+                        //while there's still Toggles to place
                         else if (nodes[x, y] != null
                         && objCount < boardInfo.nBoxes)
                         {
@@ -202,7 +202,7 @@ namespace Game1
                                     && rand > placementChance)
                                 {
                                     //create and place the object
-                                    PressurePlate winObject = new PressurePlate();
+                                    Toggle winObject = new Toggle();
                                     winObject.position = nodes[x, y].position;
                                     winObjects.Add(winObject);
                                     objCount++;
@@ -428,10 +428,10 @@ namespace Game1
                     {
                         return false; //box is unpushable
                     }
-                    WinObject[] nearbyPPs = GetClosestWinObjects(obstacle.position, 3);
-                    foreach (WinObject pp in nearbyPPs)
+                    WinObject[] nearbyToggles = GetClosestWinObjects(obstacle.position, 3);
+                    foreach (WinObject toggle in nearbyToggles)
                     {
-                        if (ValidPath(nodes[(int)obstacle.position.X, (int)obstacle.position.Y], pp.position))
+                        if (ValidPath(nodes[(int)obstacle.position.X, (int)obstacle.position.Y], toggle.position))
                         {
                             return true;
                         }

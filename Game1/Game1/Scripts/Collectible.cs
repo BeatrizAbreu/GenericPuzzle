@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    class Orb : WinObject
+    class Collectible : WinObject
     {
         public static int activeObjectCount;
         public static int objectCount;
 
-        public Orb()
+        public Collectible()
         {
-            tag = "orb";
+            tag = "Collectible";
             objectCount++;
         }
 

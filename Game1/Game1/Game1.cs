@@ -21,7 +21,7 @@ namespace Game1
         //Board making information
         static int nHoles = 0;
         static int nBoxes = 3;
-        static int nOrbs = 3;
+        static int nCollectibles = 3;
         static int nEnemies = 2;
         static int width = 5;
         static int height = 5;
@@ -79,7 +79,7 @@ namespace Game1
             else
             {
                 //Create a game board
-                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nOrbs);
+                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles);
 
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
@@ -117,8 +117,8 @@ namespace Game1
             //Loading sprites
             foreach (WinObject winObj in board.winObjects)
             {
-               winObj.texture = winObj.tag == "orb" ? 
-                    Content.Load<Texture2D>("assets/orb") : Content.Load<Texture2D>("assets/pressurePlate");
+               winObj.texture = winObj.tag == "Collectible" ? 
+                    Content.Load<Texture2D>("assets/collectible") : Content.Load<Texture2D>("assets/toggle");
             }
 
             boxTex           = Content.Load<Texture2D>("assets/box");
@@ -290,7 +290,7 @@ namespace Game1
                 bool occupied = false;
                 foreach (WinObject winObject in currentGameState.winObjects)
                 {
-                    if (winObject.position == obstacle.position)
+                    if (winObject.tag == "Toggle" && winObject.position == obstacle.position)
                     {
                         spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.Green);
                         occupied = true;
@@ -431,7 +431,7 @@ namespace Game1
                 }
             }
 
-            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nOrbs);
+            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nCollectibles);
             Vector2[] holesPosition = new Vector2[holesCount];
             holesCount = 0;
 
@@ -456,9 +456,9 @@ namespace Game1
                     //Pressure plate
                     else if (file[y][x] == '.')
                     {                       
-                        PressurePlate pp = new PressurePlate();
-                        pp.position = new Vector2(x, y);
-                        winObjects.Add(pp);
+                        Toggle toggle = new Toggle();
+                        toggle.position = new Vector2(x, y);
+                        winObjects.Add(toggle);
                     }
                     //Hole
                     else if (file[y][x] == '#')

@@ -21,25 +21,28 @@ namespace Game1.Scripts
 
             if (currentNode.position == targetNode.position) return false;
 
-            if (targetNode.isEmpty) {
+            if (targetNode.isEmpty)
+            {
                 targetNode.isEmpty = false;
                 currentNode.isEmpty = true;
                 position = targetNode.position;
 
                 foreach (WinObject winObject in board.winObjects)
-                {                 
-                    //if a pressure plate is found in the same position, the box is placed on the pressure plate
-                    if (winObject.tag == "pp" && winObject.position == position)
+                {                                    
+                    if (winObject.tag == "Toggle")
                     {
-                        winObject.Action();
-                        //inObject.isTriggered = true;
+                        //if a pressure plate is found in the same position, the box is placed on the pressure plate
+                        if (winObject.position == position)
+                            winObject.Action();
+
+                        //if the box was in a pressure plate
+                        if (winObject.position == currentNode.position)
+                        {
+                            winObject.Deactivate();
+                        }
                     }
 
-                    //if the box was in a pressure plate
-                    if (winObject.tag == "pp" && winObject.position == currentNode.position)
-                    {
-                        winObject.Deactivate();
-                    }
+
                 }
                 return true;
             }

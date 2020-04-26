@@ -8,7 +8,7 @@ namespace Game1
     public static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        /// The main entry point for the aTogglelication.
         /// </summary>
         [STAThread]
         static void Main()
