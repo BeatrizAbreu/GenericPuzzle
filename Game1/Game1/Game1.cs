@@ -26,13 +26,10 @@ namespace Game1
         static int width = 5;
         static int height = 5;
         static int nDirections = 6;
-        Board board;
-        public Vector2[] baseObstaclePos;
-        Player player;
+        Vector2[] baseObstaclePos;
 
         //Keyboard
-        KeyboardState previousState, state;
-        bool realPlayer = true;
+        KeyboardState previousState, state;       
 
         //Time
         public static readonly TimeSpan timer = TimeSpan.FromMilliseconds(300);
@@ -45,7 +42,11 @@ namespace Game1
         public static int lossCount, winCount;
         public static int playsCount;
         public static int movesCount = 0;
-        bool MCTSisON = false;
+
+        //Player type
+        bool realPlayer = false;
+        bool MCTSPlayer = false;
+        bool randomPlayer = true;
 
         //Board from file
         private bool fileON = false;
@@ -59,6 +60,8 @@ namespace Game1
         protected override void Initialize()
         {
             playsCount = lossCount = winCount = 0;
+            Board board;
+            Player player;
             new RNG(3);
             lossCount = winCount = 0;
             //setting first keyboard states
@@ -97,7 +100,7 @@ namespace Game1
             board.boardInfo.nDirections = nDirections;
             Moves = board.GetKeysDirection(board.boardInfo.nDirections);
 
-            if(MCTSisON)
+            if(MCTSPlayer)
                treeRootMTCS = new NodeMCTS(currentGameState);
 
             baseObstaclePos = new Vector2[board.obstacles.Count];
@@ -113,9 +116,9 @@ namespace Game1
         protected override void LoadContent()
         {        
             GameTime gameTime = new GameTime();
-
+            
             //Loading sprites
-            foreach (WinObject winObj in board.winObjects)
+            foreach (WinObject winObj in currentGameState.board.winObjects)
             {
                winObj.texture = winObj.tag == "Collectible" ? 
                     Content.Load<Texture2D>("assets/collectible") : Content.Load<Texture2D>("assets/toggle");
@@ -126,22 +129,9 @@ namespace Game1
             playerTex        = Content.Load<Texture2D>("assets/player");
             boardNodeTex     = Content.Load<Texture2D>("assets/node");
 
-
             GameState sourceState = currentGameState;
 
-            //MonteCarlo auto-player
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    currentGameState = sourceState.Copy();
-            //    int result = currentGameState.PlayTest(500);
-
-            //    if (result > 0) winCount++;
-            //    if (result < 0) lossCount++;
-
-            //    System.Console.WriteLine($"{winCount} vs {lossCount} ({currentGameState.player.nMoves})");
-            //}
-
-            if(MCTSisON)
+            if(MCTSPlayer)
             {
                 treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS, 0, 10);
                 System.Console.WriteLine($"{treeRootMTCS.winCount} vs {treeRootMTCS.lossCount} ({treeRootMTCS.playsCount})");
@@ -164,100 +154,57 @@ namespace Game1
                 RestartGame();
             }
 
-            if (realPlayer)
+            //Respawn the player when he loses/wins and give the info to the father node
+            if (currentGameState.board.EvaluateVictory(currentGameState) != 0)
             {
-                //Respawn the player when he loses/wins and give the info to the father node
-                if (board.EvaluateVictory(currentGameState) != 0)
+                if (currentGameState.board.EvaluateVictory(currentGameState) == -1)
                 {
-                    if (board.EvaluateVictory(currentGameState) == -1)
-                    {
-                        lossCount++;
-                    }
-                    else
-                    {
-                        winCount++;
-                    }
-                    //drawCount = root.children.Count - root.lossCount - root.winCount;
-
-                    Respawn(gameTime);
+                    lossCount++;
+                }
+                else
+                {
+                    winCount++;
                 }
 
+                //drawCount = root.children.Count - root.lossCount - root.winCount;
+
+                Respawn(gameTime);
+            }
+
+            if (realPlayer)
+            {               
                 foreach (Keys k in Moves.Keys)
                 {
                     if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
-                        player.Move(Moves[k]);
+                        currentGameState.player.Move(Moves[k]);
                 }
 
                 previousState = state;
                 state = Keyboard.GetState();
             }        
        
+            if(randomPlayer)
+            {
+                //plays 500 times or until it loses/wins
+                for (int i = 0; i < 500; i++)
+                {
+                    //Autoplay
+                    if (timerStartTime + timer < gameTime.TotalGameTime)
+                    {
+                        //if the player moved
+                        if (currentGameState.player.AutoPlay(currentGameState.obstacles, currentGameState.enemyObjects, currentGameState.winObjects, currentGameState))
+                        {
+                            timerStartTime = gameTime.TotalGameTime;
+                            movesCount++;
+                            if (Math.Abs(currentGameState.board.EvaluateVictory(currentGameState)) != 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
-            ////Respawn the player when he loses/wins and give the info to the father node
-            // if (board.EvaluateVictory(currentGameState) != 0)
-            // {
-            //     if (board.EvaluateVictory(currentGameState) == -1)
-            //     {
-            //         lossCount++;
-            //     }
-            //     else
-            //     {
-            //         winCount++;
-            //     }
-            //     //drawCount = root.children.Count - root.lossCount - root.winCount;
-
-            //     Respawn(gameTime);
-            // }
-
-            // else
-            // {
-            //     state = Keyboard.GetState();
-            //MonteCarloTreeSearch(gameTime, treeRootMTCS);
-
-            ////plays 500 times or until it loses/wins
-            //for (int i = 0; i < 500; i++)
-            //{
-            //    //Autoplay
-            //   // if (timerStartTime + timer < gameTime.TotalGameTime)
-            //    {
-            //        //if the player moved
-            //        if(player.AutoPlay(obstacles, enemyObjects, winObjects, ref currentGameState))
-            //        {
-            //            //  timerStartTime = gameTime.TotalGameTime;
-            //            if (Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
-            //            {
-            //                break;
-            //            }
-            //            movesCount++;
-            //        }
-            //    }
-            //}
-
-            //if (movesCount == 500 || Math.Abs(board.EvaluateVictory(currentGameState)) == 1)
-            //{
-            //    playsCount++;
-            //    movesCount = 0;
-            //}
-
-            //if(playsCount == 100)
-            //{
-            //    Console.WriteLine(playsCount + "  :" + winCount + " vs " + lossCount);
-            //}
-
-            //Restart the game upon clicking R
-            //     if (state.IsKeyDown(Keys.R) && !previousState.IsKeyDown(Keys.R))
-            //     {
-            //         RestartGame();
-            //     }
-
-            //     foreach (Keys k in Moves.Keys)
-            //     {
-            //         if (state.IsKeyDown(k) && !previousState.IsKeyDown(k))
-            //             player.Move(Moves[k]);
-            //     }
-
-            //     previousState = state;
-            // }
             base.Update(gameTime);
         }
 
@@ -328,25 +275,23 @@ namespace Game1
 
         public void RestartGame()
         {
-            Board board = currentGameState.board;
-
             //reset player position & the currentNode
-            if (board[0, 0] != null)
+            if (currentGameState.board[0, 0] != null)
             {
-                currentGameState.player.position = board[0, 0].position;
+                currentGameState.player.position = currentGameState.board[0, 0].position;
             }
             else
             {
-                currentGameState.player.position = board[1, 0].position;
+                currentGameState.player.position = currentGameState.board[1, 0].position;
             }
 
             //reseting objects' position
-            for (int i = 0; i < board.obstacles.Count; i++)
+            for (int i = 0; i < currentGameState.board.obstacles.Count; i++)
             {
-                board.obstacles[i].position = baseObstaclePos[i];
+                currentGameState.board.obstacles[i].position = baseObstaclePos[i];
             }
 
-            currentGameState.board = RestartBoard(board);
+            currentGameState.board = RestartBoard(currentGameState.board);
         }
 
         //Set the node states to the starter states
@@ -389,7 +334,12 @@ namespace Game1
 
         public void Respawn(GameTime gameTime)
         {
-            if (timerStartTime + spawnTimer < gameTime.TotalGameTime)
+            if(randomPlayer)
+            {
+                RestartGame();
+                Player.hasLost = false;
+            }
+            else if(timerStartTime + spawnTimer < gameTime.TotalGameTime)
             {
                 RestartGame();
                 Player.hasLost = false;
@@ -407,7 +357,7 @@ namespace Game1
             List<WinObject> winObjects = new List<WinObject>();
             List<EnemyObject> enemyObjects = new List<EnemyObject>();
             Vector2 playerPos = new Vector2();
-            int holesCount = 0, boxCount = 0, enemyCount = 0;      
+            int holesCount = 0, boxCount = 0, enemyCount = 0, collectibleCount = 0;      
 
             for (int i = 0; i < height; i++)
             {
@@ -424,9 +374,14 @@ namespace Game1
                         boxCount++;
                     }
                     //Enemy
-                    else if (file[i][j] == 'X')
+                    else if (file[i][j] == 'E')
                     {
                         enemyCount++;
+                    }
+                    //Collectible
+                    else if (file[i][j] == 'C')
+                    {
+                        collectibleCount++; 
                     }
                 }
             }
@@ -453,12 +408,19 @@ namespace Game1
                         };
                         obstacles.Add(box);
                     }
-                    //Pressure plate
-                    else if (file[y][x] == '.')
+                    //Toggle
+                    else if (file[y][x] == 'T')
                     {                       
                         Toggle toggle = new Toggle();
                         toggle.position = new Vector2(x, y);
                         winObjects.Add(toggle);
+                    }
+                    //Collectible
+                    else if (file[y][x] == 'C')
+                    {
+                        Collectible collectible = new Collectible();
+                        collectible.position = new Vector2(x, y);
+                        winObjects.Add(collectible);
                     }
                     //Hole
                     else if (file[y][x] == '#')
@@ -467,7 +429,7 @@ namespace Game1
                         holesCount++;
                     }
                     //Enemy
-                    else if(file[y][x] == 'X')
+                    else if(file[y][x] == 'E')
                     {
                         Spike spike = new Spike();
                         spike.position = new Vector2(x, y);

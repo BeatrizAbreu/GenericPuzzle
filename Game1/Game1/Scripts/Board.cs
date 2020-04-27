@@ -92,6 +92,8 @@ namespace Game1
             CreateObstacles();
             CreateWinObjects();
             CreateEnemyObjects();
+
+            CheckEachNewBox();
         }
 
         public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects)
@@ -263,6 +265,7 @@ namespace Game1
                     }
                 }
             }
+
             //Update the nBoxes var so there aren't too many win objects for the amount of boxes
             boardInfo.nBoxes = boxCount;
         }
@@ -302,8 +305,33 @@ namespace Game1
             CreateNeighbors();
         }
 
+        private void CheckEachNewBox()
+        {
+            foreach (Obstacle box in obstacles)
+            {
+                int i = 0;
+                if (!BoxCanMove(box))
+                {
+                    int xRand, yRand;
+                    xRand = RNG.Next(boardInfo.width - 1) + 1;
+                    yRand = RNG.Next(boardInfo.height - 1) + 1;
+                    if (nodes[xRand, yRand] != null && nodes[xRand, yRand].isEmpty)
+                    {
+                        nodes[(int)box.position.X, (int)box.position.Y].isEmpty = true;
+                        obstacles[i].position.X = xRand;
+                        obstacles[i].position.Y = yRand;
+                        nodes[xRand, yRand].isEmpty = false;
+                        CheckEachNewBox();
+                    }
+                    else
+                        CheckEachNewBox();
+                }
+                i++;
+            }
+        }
+
         //Creates all board nodes and their neighbor dictionaries
-        public void CreateBoard()
+        private void CreateBoard()
         {
             Vector2 lastHolePosition = new Vector2(0, 0);
             int holesCount = 0;
@@ -398,58 +426,54 @@ namespace Game1
         }
 
         //verifies if any box is unreachable -> lost game (returns false)
-        private bool BoxCanMove()
+        private bool BoxCanMove(Obstacle box)
         {
-            foreach (Obstacle obstacle in obstacles)
+            //if the box is on one of the four corners
+            if ((box.position.X == 0 && box.position.Y == 0)
+                || (box.position.X == boardInfo.width - 1 && box.position.Y == boardInfo.height - 1))
             {
-                //if the box is on one of the four corners
-                if ((obstacle.position.X == 0 && obstacle.position.Y == 0)
-                    || (obstacle.position.X == boardInfo.width - 1 && obstacle.position.Y == boardInfo.height - 1))
+                //is there a winObject in that position?
+                foreach (WinObject winObj in winObjects)
                 {
-                    //is there a winObject in that position?
-                    foreach (WinObject winObj in winObjects)
-                    {
-                        if (winObj.position == obstacle.position)
-                            return true; //box is reachable
-                    }
-                    return false; //the box is stuck in a corner without a pressure plate
+                    if (winObj.position == box.position)
+                        return true; //box is reachable
                 }
-
-                //if the nodes are squares and the box is in one of the four extreme lines or columns
-                //OR if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
-                if (obstacle.position.X == boardInfo.width - 1
-                   || obstacle.position.X == 0
-                   || (boardInfo.nDirections == 4
-                       && (obstacle.position.Y == boardInfo.height - 1
-                       || obstacle.position.Y == 0))
-                   || obstacle.position.Y == 0 || obstacle.position.Y == boardInfo.height - 1)
-                {
-                    if (obstacle.position.X % 2 == 0 || obstacle.position.X == boardInfo.width - 1)
-                    {
-                        return false; //box is unpushable
-                    }
-                    WinObject[] nearbyToggles = GetClosestWinObjects(obstacle.position, 3);
-                    foreach (WinObject toggle in nearbyToggles)
-                    {
-                        if (ValidPath(nodes[(int)obstacle.position.X, (int)obstacle.position.Y], toggle.position))
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-                return true; //box is reachable
+                return false; //the box is stuck in a corner without a pressure plate
             }
-            return true;
+
+            //if the nodes are squares and the box is in one of the four extreme lines or columns
+            //OR if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
+            if (box.position.X == boardInfo.width - 1
+               || box.position.X == 0
+               || (boardInfo.nDirections == 4
+                   && (box.position.Y == boardInfo.height - 1
+                   || box.position.Y == 0))
+               || box.position.Y == 0 || box.position.Y == boardInfo.height - 1)
+            {
+                if (box.position.X % 2 == 0 || box.position.X == boardInfo.width - 1)
+                {
+                    return false; //box is unpushable
+                }
+  
+                foreach (WinObject toggle in winObjects)
+                {
+                    if (toggle.tag == "Toggle" && ValidPath(nodes[(int)box.position.X, (int)box.position.Y], toggle.position))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return true; //box is reachable
         }
 
-        public bool ValidPath(Node currentNode, Vector2 destination)
+        private bool ValidPath(Node currentNode, Vector2 destination)
         {
             foreach (KeyValuePair<Direction, Node> neighbor in currentNode.neighbors)
             {
                 //if the current neighbor has a box 
                 if (!neighbor.Value.isEmpty)
-                    return false;
+                    break;
 
                 //if the current neighbor has the closest pressure plate
                 if (destination == neighbor.Value.position)
@@ -457,67 +481,63 @@ namespace Game1
                     return true;
                 }
 
+                bool stop = false;
+
                 //if the current neighbor has an enemy 
                 foreach (EnemyObject enemyObj in enemyObjects)
-                {
+                {                 
                     if (enemyObj.position == neighbor.Value.position)
-                        return false;
+                    {
+                        stop = true;
+                        break;
+                    }     
                 }
 
+                if (stop)
+                    break;
+
                 //if the current neighbor is reachable 
-                ValidPath(neighbor.Value, destination);
+                if(neighbor.Value.neighbors != null && ValidPath(neighbor.Value, destination))
+                    return true;
             }
             return false;
         }
 
-        public WinObject[] GetClosestWinObjects(Vector2 position, int count)
-        {
-            int[] minDistance = new int[count];
-            int distance;
-            int x = 0, y = 0;
-            WinObject[] minWinObjects = new WinObject[count];
-
-            foreach (WinObject winObject in winObjects)
-            {
-                x = (int)Math.Abs(winObject.position.X - position.X);
-                y = (int)Math.Abs(winObject.position.Y - position.Y);
-                distance = x > y ? x : y;
-
-                if (minDistance[0] == 0)
-                {
-                    minDistance[0] = distance;
-                    minWinObjects[0] = winObject;
-                }
-                else
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (minDistance[i] > distance)
-                        {
-                            minDistance[i] = distance;
-                            minWinObjects[i] = winObject;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return minWinObjects;
-        }
-
-        //Dictionary<Direction, NodeMCTS> CreateTree(NodeMCTS root)
+        //private WinObject[] GetClosestWinObjects(Vector2 position, int count)
         //{
-        //    Dictionary<Direction, NodeMCTS> children = new Dictionary<Direction, NodeMCTS>();
+        //    int[] minDistance = new int[count];
+        //    int distance;
+        //    int x = 0, y = 0;
+        //    WinObject[] minWinObjects = new WinObject[count];
 
-        //    /* FIX ME: ONLY N TIMES */
-
-        //    foreach (KeyValuePair<Direction, Node> neighbor in nodes[0, 0].neighbors)
+        //    foreach (WinObject winObject in winObjects)
         //    {
-        //        NodeMCTS child = new NodeMCTS(CreateTree(root));
-        //        children.Add(neighbor.Key, child);
+        //        x = (int)Math.Abs(winObject.position.X - position.X);
+        //        y = (int)Math.Abs(winObject.position.Y - position.Y);
+        //        distance = x > y ? x : y;
+
+        //        if (minDistance[0] == 0)
+        //        {
+        //            minDistance[0] = distance;
+        //            minWinObjects[0] = winObject;
+        //        }
+        //        else
+        //        {
+        //            for (int i = 0; i < 3; i++)
+        //            {
+        //                if (minDistance[i] > distance)
+        //                {
+        //                    minDistance[i] = distance;
+        //                    minWinObjects[i] = winObject;
+        //                    break;
+        //                }
+        //            }
+        //        }
         //    }
-        //    return children;
+
+        //    return minWinObjects;
         //}
+
 
         //Returns the targetNode for each node-direction pair
         public abstract Node Move(Node currentNode, Direction direction);
