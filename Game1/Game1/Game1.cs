@@ -44,9 +44,9 @@ namespace Game1
         public static int movesCount = 0;
 
         //Player type
-        bool realPlayer = false;
+        bool realPlayer = true;
         bool MCTSPlayer = false;
-        bool randomPlayer = true;
+        bool randomPlayer = false;
 
         //Board from file
         private bool fileON = false;
@@ -62,7 +62,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(3);
+            new RNG(2);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
@@ -82,7 +82,7 @@ namespace Game1
             else
             {
                 //Create a game board
-                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles);
+                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections);
 
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
@@ -97,7 +97,6 @@ namespace Game1
                 currentGameState = new GameState(board, player);
             }
 
-            board.boardInfo.nDirections = nDirections;
             Moves = board.GetKeysDirection(board.boardInfo.nDirections);
 
             if(MCTSPlayer)
@@ -386,7 +385,7 @@ namespace Game1
                 }
             }
 
-            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nCollectibles);
+            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nCollectibles, nDirections);
             Vector2[] holesPosition = new Vector2[holesCount];
             holesCount = 0;
 

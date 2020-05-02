@@ -70,7 +70,7 @@ namespace Game1
 
         private Vector2[] holesPosition;
 
-        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles)
+        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections)
         {
             //set board info params
             boardInfo = new BoardInfo();
@@ -79,6 +79,7 @@ namespace Game1
             boardInfo.nHoles = nHoles;
             boardInfo.nBoxes = nBoxes;
             boardInfo.nEnemies = nEnemies;
+            boardInfo.nDirections = nDirections;
             boardInfo.nCollectibles = nCollectibles;
 
             nodes = new Node[boardInfo.width, boardInfo.height];
@@ -92,8 +93,6 @@ namespace Game1
             CreateObstacles();
             CreateWinObjects();
             CreateEnemyObjects();
-
-            CheckEachNewBox();
         }
 
         public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects)
@@ -227,47 +226,122 @@ namespace Game1
                 for (int x = 0; x < boardInfo.width; x++)
                 {
                     if (nodes[x, y] != null
-                        &&boxCount < boardInfo.nBoxes)
+                        && boxCount < boardInfo.nBoxes)
                     {
                         placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
                         rand = RNG.Next(100);
 
-                        if (x != boardInfo.width - 1 && x != 0
-                            && rand > placementChance)
+                        //it's not the first or last line/collumn
+                        if (y != boardInfo.height - 1 && y > 0 
+                            && x > 0 && x != boardInfo.width - 1)
                         {
                             //if there's 2 free nodes next to the box (above and below)
-                            if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
-                                 && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
-                            {
-                                //create and place the box
-                                Box box = new Box(this);
-                                box.position = nodes[x, y].position;
-                                nodes[x, y].isEmpty = false;
-                                obstacles.Add(box);
-                                boxCount++;
-                            }
-                        }
-                        else if (y != boardInfo.height - 1 && y != 0
-                            && rand > placementChance)
-                        {
-                            //if there's 2 free nodes next to the box (to the right and left)
                             if (nodes[x, y + 1] != null && nodes[x, y - 1] != null
-                                 && nodes[x, y + 1].isEmpty && nodes[x, y - 1].isEmpty)
+                                 && nodes[x, y + 1].isEmpty && nodes[x, y - 1].isEmpty
+                                 && rand > placementChance)
                             {
                                 //create and place the box
                                 Box box = new Box(this);
                                 box.position = nodes[x, y].position;
                                 nodes[x, y].isEmpty = false;
-                                obstacles.Add(box);
-                                boxCount++;
+                                if (BoxRules(box))
+                                {
+                                    obstacles.Add(box);
+                                    boxCount++;
+                                }
+                            }
+
+                            else if (boardInfo.nDirections == 6)
+                            {
+                                rand = RNG.Next(100);
+
+                                if (rand > placementChance)
+                                {
+                                    //check the first diagonals - free nodes to the upper right/lower left
+                                    //&& check the second diagonals - free nodes to the lower right/upper left          
+                                    if ((nodes[x + 1, y] != null && nodes[x - 1, y - 1] != null
+                                     && nodes[x + 1, y].isEmpty && nodes[x - 1, y - 1].isEmpty)
+                                     || (nodes[x + 1, y - 1] != null && nodes[x - 1, y] != null
+                                     && nodes[x + 1, y - 1].isEmpty && nodes[x - 1, y].isEmpty))
+                                    {
+                                        //create and place the box
+                                        Box box = new Box(this);
+                                        box.position = nodes[x, y].position;
+                                        nodes[x, y].isEmpty = false;
+                                        if (BoxRules(box))
+                                        {
+                                            obstacles.Add(box);
+                                            boxCount++;
+                                        }
+                                    }
+                                }
+                            }
+
+                            else if (boardInfo.nDirections == 4)
+                            {
+                                //it's not the first or last column
+                                if (x != boardInfo.width - 1 && x != 0
+                                    && rand > placementChance)
+                                {
+                                    //if there's 2 free nodes next to the box (to the right and left)
+                                    if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
+                                         && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
+                                    {
+                                        //create and place the box
+                                        Box box = new Box(this);
+                                        box.position = nodes[x, y].position;
+                                        nodes[x, y].isEmpty = false;
+                                        if (BoxRules(box))
+                                        {
+                                            obstacles.Add(box);
+                                            boxCount++;
+                                        }
+                                    }
+                                }
                             }
                         }
+
+                        
+
                     }
                 }
             }
 
             //Update the nBoxes var so there aren't too many win objects for the amount of boxes
             boardInfo.nBoxes = boxCount;
+        }
+
+        //Checks if a newly created box is ready for placement (not in a bad position)
+        private bool BoxRules(Obstacle box)
+        {
+            //if the box is on one of the four corners
+            if ((box.position.X == 0 && box.position.Y == 0)
+                || (box.position.X == boardInfo.width - 1 && box.position.Y == boardInfo.height - 1))
+            {
+                //is there a winObject in that position?
+                foreach (WinObject winObj in winObjects)
+                {
+                    if (winObj.position == box.position)
+                        return true; //box is reachable
+                }
+                return false; //the box is stuck in a corner without a pressure plate
+            }
+
+            //if the nodes are squares and the box is in one of the four extreme lines or columns
+            //OR if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
+            if (box.position.X == boardInfo.width - 1
+               || box.position.X == 0
+               || (boardInfo.nDirections == 4
+                   && (box.position.Y == boardInfo.height - 1
+                   || box.position.Y == 0))
+               || box.position.Y == 0 || box.position.Y == boardInfo.height - 1)
+            {
+                if (box.position.X % 2 == 0 || box.position.X == boardInfo.width - 1)
+                {
+                    return false; //box is unpushable
+                }
+            }
+            return true; //box is reachable
         }
 
         //Creates the board read from file
@@ -305,30 +379,30 @@ namespace Game1
             CreateNeighbors();
         }
 
-        private void CheckEachNewBox()
-        {
-            foreach (Obstacle box in obstacles)
-            {
-                int i = 0;
-                if (!BoxCanMove(box))
-                {
-                    int xRand, yRand;
-                    xRand = RNG.Next(boardInfo.width - 1) + 1;
-                    yRand = RNG.Next(boardInfo.height - 1) + 1;
-                    if (nodes[xRand, yRand] != null && nodes[xRand, yRand].isEmpty)
-                    {
-                        nodes[(int)box.position.X, (int)box.position.Y].isEmpty = true;
-                        obstacles[i].position.X = xRand;
-                        obstacles[i].position.Y = yRand;
-                        nodes[xRand, yRand].isEmpty = false;
-                        CheckEachNewBox();
-                    }
-                    else
-                        CheckEachNewBox();
-                }
-                i++;
-            }
-        }
+        //private void CheckEachNewBox()
+        //{
+        //    foreach (Obstacle box in obstacles)
+        //    {
+        //        int i = 0;
+        //        if (!BoxCanMove(box))
+        //        {
+        //            int xRand, yRand;
+        //            xRand = RNG.Next(boardInfo.width - 1) + 1;
+        //            yRand = RNG.Next(boardInfo.height - 1) + 1;
+        //            if (nodes[xRand, yRand] != null && nodes[xRand, yRand].isEmpty)
+        //            {
+        //                nodes[(int)box.position.X, (int)box.position.Y].isEmpty = true;
+        //                obstacles[i].position.X = xRand;
+        //                obstacles[i].position.Y = yRand;
+        //                nodes[xRand, yRand].isEmpty = false;
+        //                CheckEachNewBox();
+        //            }
+        //            else
+        //                CheckEachNewBox();
+        //        }
+        //        i++;
+        //    }
+        //}
 
         //Creates all board nodes and their neighbor dictionaries
         private void CreateBoard()
@@ -425,83 +499,82 @@ namespace Game1
             return r = triggeredCount == gameState.winObjects.Count ? 1 : 0;
         }
 
-        //verifies if any box is unreachable -> lost game (returns false)
-        private bool BoxCanMove(Obstacle box)
-        {
-            //if the box is on one of the four corners
-            if ((box.position.X == 0 && box.position.Y == 0)
-                || (box.position.X == boardInfo.width - 1 && box.position.Y == boardInfo.height - 1))
-            {
-                //is there a winObject in that position?
-                foreach (WinObject winObj in winObjects)
-                {
-                    if (winObj.position == box.position)
-                        return true; //box is reachable
-                }
-                return false; //the box is stuck in a corner without a pressure plate
-            }
+        ////verifies if any box is unreachable -> lost game (returns false)
+        //private bool BoxCanMove(Obstacle box)
+        //{
+        //    //if the box is on one of the four corners
+        //    if ((box.position.X == 0 && box.position.Y == 0)
+        //        || (box.position.X == boardInfo.width - 1 && box.position.Y == boardInfo.height - 1))
+        //    {
+        //        //is there a winObject in that position?
+        //        foreach (WinObject winObj in winObjects)
+        //        {
+        //            if (winObj.position == box.position)
+        //                return true; //box is reachable
+        //        }
+        //        return false; //the box is stuck in a corner without a pressure plate
+        //    }
 
-            //if the nodes are squares and the box is in one of the four extreme lines or columns
-            //OR if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
-            if (box.position.X == boardInfo.width - 1
-               || box.position.X == 0
-               || (boardInfo.nDirections == 4
-                   && (box.position.Y == boardInfo.height - 1
-                   || box.position.Y == 0))
-               || box.position.Y == 0 || box.position.Y == boardInfo.height - 1)
-            {
-                if (box.position.X % 2 == 0 || box.position.X == boardInfo.width - 1)
-                {
-                    return false; //box is unpushable
-                }
-  
-                foreach (WinObject toggle in winObjects)
-                {
-                    if (toggle.tag == "Toggle" && ValidPath(nodes[(int)box.position.X, (int)box.position.Y], toggle.position))
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            return true; //box is reachable
-        }
+        //    //if the nodes are squares and the box is in one of the four extreme lines or columns
+        //    //OR if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
+        //    if (box.position.X == boardInfo.width - 1
+        //       || box.position.X == 0
+        //       || (boardInfo.nDirections == 4
+        //           && (box.position.Y == boardInfo.height - 1
+        //           || box.position.Y == 0))
+        //       || box.position.Y == 0 || box.position.Y == boardInfo.height - 1)
+        //    {
+        //        if (box.position.X % 2 == 0 || box.position.X == boardInfo.width - 1)
+        //        {
+        //            return false; //box is unpushable
+        //        }
 
-        private bool ValidPath(Node currentNode, Vector2 destination)
-        {
-            foreach (KeyValuePair<Direction, Node> neighbor in currentNode.neighbors)
-            {
-                //if the current neighbor has a box 
-                if (!neighbor.Value.isEmpty)
-                    break;
+        //        foreach (WinObject toggle in winObjects)
+        //        {
+        //            if (toggle.tag == "Toggle" && ValidPath(nodes[(int)box.position.X, (int)box.position.Y], toggle.position, nodes[(int)box.position.X, (int)box.position.Y]))
+        //            {
+        //                return true;
+        //            }
+        //        }
+        //        return false;
+        //    }
+        //    return true; //box is reachable
+        //}
 
-                //if the current neighbor has the closest pressure plate
-                if (destination == neighbor.Value.position)
-                {
-                    return true;
-                }
+        //private bool ValidPath(Node currentNode, Vector2 destination, Node previousNode)
+        //{
+        //    int c = 1;
+        //    foreach (KeyValuePair<Direction, Node> neighbor in currentNode.neighbors)
+        //    {
+        //        bool enemy = false;
 
-                bool stop = false;
+        //        if (neighbor.Value != previousNode
+        //            && neighbor.Value.isEmpty)
+        //        {
+        //            //if it has a
+        //            if (destination == neighbor.Value.position)
+        //                return true;
 
-                //if the current neighbor has an enemy 
-                foreach (EnemyObject enemyObj in enemyObjects)
-                {                 
-                    if (enemyObj.position == neighbor.Value.position)
-                    {
-                        stop = true;
-                        break;
-                    }     
-                }
+        //            //if the current neighbor doesn't have an enemy 
+        //            foreach (EnemyObject enemyObj in enemyObjects)
+        //            {
+        //                if (enemyObj.position == neighbor.Value.position)
+        //                {
+        //                    enemy = true;
+        //                    break;
+        //                }
+        //            }
 
-                if (stop)
-                    break;
+        //            if(c > currentNode.neighbors.Count)
+        //            if (!enemy
+        //                && neighbor.Value.neighbors.Count >0 && ValidPath(neighbor.Value, destination, currentNode))
+        //                return true;
 
-                //if the current neighbor is reachable 
-                if(neighbor.Value.neighbors != null && ValidPath(neighbor.Value, destination))
-                    return true;
-            }
-            return false;
-        }
+        //            c++;
+        //        }
+        //    }
+        //    return false;
+        //}
 
         //private WinObject[] GetClosestWinObjects(Vector2 position, int count)
         //{

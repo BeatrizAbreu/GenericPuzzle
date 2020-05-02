@@ -12,9 +12,8 @@ namespace Game1
     //Creates and manages the game's board
     public class HexaBoard : Board
     {    
-        public HexaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles) : base(width, height, nHoles, nBoxes, nEnemies, nCollectibles)
+        public HexaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections) : base(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections)
         {
-            /* nothing specific to hexaboard for now */
         }
 
         public HexaBoard(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects) 
