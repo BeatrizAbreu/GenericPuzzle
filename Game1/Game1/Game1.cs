@@ -62,7 +62,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(2);
+            new RNG(1);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();

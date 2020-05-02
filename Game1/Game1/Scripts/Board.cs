@@ -180,17 +180,33 @@ namespace Game1
                 {
                     rand = RNG.Next(100);
 
-                    if (nodes[x, y] != null)
+                    if (nodes[x, y] != null && !(x == 0 && y == 0))
                     {
                         //place Collectible
                         if (CollectibleCount < boardInfo.nCollectibles && rand > 50)
                         {
                             if (nodes[x, y].isEmpty)
                             {
-                                Collectible winObject = new Collectible();
-                                winObject.position = nodes[x, y].position;
-                                winObjects.Add(winObject);
-                                CollectibleCount++;
+                                bool placeCollectible = true;
+
+                                foreach (WinObject c in winObjects)
+                                {
+                                    if(c.tag == "Collectible" 
+                                        && (c.position.X == x || c.position.Y == y))
+                                    {
+                                        placeCollectible = false;
+                                        break;
+                                    }
+                                }
+
+                                if(placeCollectible)
+                                {
+                                    Collectible winObject = new Collectible();
+                                    winObject.position = nodes[x, y].position;
+                                    winObjects.Add(winObject);
+                                    CollectibleCount++;
+                                }
+
                             }
                         }
                         //while there's still Toggles to place
@@ -204,7 +220,6 @@ namespace Game1
                                 //if the node is not a hole and the random rolls over 30
                                 //and there's a box in the same line or column but not on the same cell
                                 if (nodes[x, y].isEmpty
-                                    && !(x == 0 && y == 0)
                                     && ((x == obstacle.position.X && x != 0) || (y == obstacle.position.Y && y != 0))
                                     && rand > placementChance)
                                 {
@@ -384,6 +399,18 @@ namespace Game1
             //create and place the box
             Box box = new Box(this);
             box.position = nodes[x, y].position;
+
+            //Check all the previously created boxes
+            foreach (Obstacle obstacle in obstacles)
+            {
+                //Check the neighbors to said box
+                foreach (var neighbor in nodes[(int)box.position.X, (int)box.position.Y].neighbors)
+                {
+                    //there's already a box in a neighbor
+                    if (!neighbor.Value.isEmpty)
+                        return false;
+                }
+            }
 
             if (BoxRules(box))
             {
