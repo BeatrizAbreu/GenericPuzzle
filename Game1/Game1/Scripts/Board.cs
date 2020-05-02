@@ -133,14 +133,21 @@ namespace Game1
                         placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
                         rand = RNG.Next(100);
 
+                        int winObjCount = 0;
+
                         foreach (WinObject winObj in winObjects)
                         {
                             //if the node is taken by a winObject, jump to the next node
                             if (nodes[x, y].position == winObj.position)
+                            {
                                 break;
+                            }
+
+                            winObjCount++;
 
                             //if the node is empty and is not the first, second or third position
-                            if (nodes[x, y].isEmpty
+                            if (winObjCount == winObjects.Count
+                                && nodes[x, y].isEmpty
                                 && rand > placementChance
                                 && (x != 0 || y != 0)
                                 && !(x == 1 || y == 0)
@@ -173,7 +180,7 @@ namespace Game1
                 {
                     rand = RNG.Next(100);
 
-                    if(nodes[x, y] != null)
+                    if (nodes[x, y] != null)
                     {
                         //place Collectible
                         if (CollectibleCount < boardInfo.nCollectibles && rand > 50)
@@ -187,8 +194,7 @@ namespace Game1
                             }
                         }
                         //while there's still Toggles to place
-                        else if (nodes[x, y] != null
-                        && objCount < boardInfo.nBoxes)
+                        else if (nodes[x, y] != null && objCount < boardInfo.nBoxes)
                         {
                             placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
                             rand = RNG.Next(100);
@@ -199,12 +205,90 @@ namespace Game1
                                 //and there's a box in the same line or column but not on the same cell
                                 if (nodes[x, y].isEmpty
                                     && !(x == 0 && y == 0)
-                                    && (x == obstacle.position.X || y == obstacle.position.Y)
+                                    && ((x == obstacle.position.X && x != 0) || (y == obstacle.position.Y && y != 0))
                                     && rand > placementChance)
                                 {
                                     //create and place the object
                                     Toggle winObject = new Toggle();
                                     winObject.position = nodes[x, y].position;
+                                    winObjects.Add(winObject);
+                                    objCount++;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void NEWCreateWinObjects()
+        {
+            int objCount = 0;
+            int CollectibleCount = 0;
+            int rand;
+
+            //go through the nodes
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                for (int x = 0; x < boardInfo.width; x++)
+                {
+                    rand = RNG.Next(100);
+
+                    if (nodes[x, y] != null)
+                    {
+                        //place Collectible while there's still collectibles to place and the node is empty
+                        if (CollectibleCount < boardInfo.nCollectibles
+                            && rand > 70
+                            && nodes[x, y].isEmpty)
+                        {
+                            //Create collectible
+                            Collectible winObject = new Collectible();
+                            winObject.position = nodes[x, y].position;
+                            winObjects.Add(winObject);
+                            CollectibleCount++;
+                        }
+
+                        //while there's still Toggles to place
+                        else if (nodes[x, y] != null && objCount < boardInfo.nBoxes)
+                        {
+                            placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
+                            rand = RNG.Next(100);
+
+                            //go through every obstacle
+                            foreach (Obstacle obstacle in obstacles)
+                            {
+                                //if the node is not a hole and the random rolls over 30
+                                //and there's a box in the same line or column but not on the same cell
+                                if ((x != 0 || y != 0)
+                                    && nodes[x, y].isEmpty
+                                    && nodes[x, y].position != obstacle.position)
+                                {
+                                    //create and place the object
+                                    Toggle winObject = new Toggle();
+
+                                    if (boardInfo.nDirections == 4 || (boardInfo.nDirections == 6 && x % 2 == obstacle.position.X % 2) && rand > placementChance)
+                                    {
+                                        //the box is in an extreme collumn - the win object must be in that same column
+                                        if ((x == 0 || x == boardInfo.width - 1) && (obstacle.position.X == 0 || obstacle.position.X == boardInfo.width - 1))
+                                        {
+                                            winObject.position.X = obstacle.position.X;
+                                            winObject.position.Y = y;
+                                        }
+                                        //the box is in an extreme line - the win object must be in that same line
+                                        else if ((y == 0 || y == boardInfo.height - 1) && (obstacle.position.Y == 0 || obstacle.position.Y == boardInfo.height - 1))
+                                        {
+                                            winObject.position.Y = obstacle.position.Y;
+                                            winObject.position.X = x;
+                                        }
+                                    }
+
+                                    else if (x != 0 && y != 0
+                                        && (x == obstacle.position.X || y == obstacle.position.Y))
+                                    {
+                                        winObject.position = nodes[x, y].position;
+                                    }
+
                                     winObjects.Add(winObject);
                                     objCount++;
                                     break;
@@ -232,7 +316,7 @@ namespace Game1
                         rand = RNG.Next(100);
 
                         //it's not the first or last line/collumn
-                        if (y != boardInfo.height - 1 && y > 0 
+                        if (y != boardInfo.height - 1 && y > 0
                             && x > 0 && x != boardInfo.width - 1)
                         {
                             //if there's 2 free nodes next to the box (above and below)
@@ -240,15 +324,7 @@ namespace Game1
                                  && nodes[x, y + 1].isEmpty && nodes[x, y - 1].isEmpty
                                  && rand > placementChance)
                             {
-                                //create and place the box
-                                Box box = new Box(this);
-                                box.position = nodes[x, y].position;
-                                nodes[x, y].isEmpty = false;
-                                if (BoxRules(box))
-                                {
-                                    obstacles.Add(box);
-                                    boxCount++;
-                                }
+                                CreateBox(x, y, ref boxCount);
                             }
 
                             else if (boardInfo.nDirections == 6)
@@ -264,51 +340,59 @@ namespace Game1
                                      || (nodes[x + 1, y - 1] != null && nodes[x - 1, y] != null
                                      && nodes[x + 1, y - 1].isEmpty && nodes[x - 1, y].isEmpty))
                                     {
-                                        //create and place the box
-                                        Box box = new Box(this);
-                                        box.position = nodes[x, y].position;
-                                        nodes[x, y].isEmpty = false;
-                                        if (BoxRules(box))
-                                        {
-                                            obstacles.Add(box);
-                                            boxCount++;
-                                        }
-                                    }
-                                }
-                            }
-
-                            else if (boardInfo.nDirections == 4)
-                            {
-                                //it's not the first or last column
-                                if (x != boardInfo.width - 1 && x != 0
-                                    && rand > placementChance)
-                                {
-                                    //if there's 2 free nodes next to the box (to the right and left)
-                                    if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
-                                         && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
-                                    {
-                                        //create and place the box
-                                        Box box = new Box(this);
-                                        box.position = nodes[x, y].position;
-                                        nodes[x, y].isEmpty = false;
-                                        if (BoxRules(box))
-                                        {
-                                            obstacles.Add(box);
-                                            boxCount++;
-                                        }
+                                        CreateBox(x, y, ref boxCount);
                                     }
                                 }
                             }
                         }
 
-                        
+                        //if this is a 4 direction board, the box can be placed on a node as long as it can be pushed to the right/left
+                        else if ((x != 0 || y != 0) && boardInfo.nDirections == 4)
+                        {
+                            rand = RNG.Next(100);
 
+                            //it's not the first or last column
+                            if (x != boardInfo.width - 1 && x != 0
+                                && rand > placementChance)
+                            {
+                                //if there's 2 free nodes next to the box (to the right and left)
+                                if (nodes[x + 1, y] != null && nodes[x - 1, y] != null
+                                     && nodes[x + 1, y].isEmpty && nodes[x - 1, y].isEmpty)
+                                {
+                                    CreateBox(x, y, ref boxCount);
+                                }
+                            }
+                        }
+
+                        //we're in the 4 extreme lines/collumns
+                        else
+                        {
+                            rand = RNG.Next(100);
+
+                            CreateBox(x, y, ref boxCount);
+                        }
                     }
                 }
             }
 
             //Update the nBoxes var so there aren't too many win objects for the amount of boxes
             boardInfo.nBoxes = boxCount;
+        }
+
+        private bool CreateBox(int x, int y, ref int boxCount)
+        {
+            //create and place the box
+            Box box = new Box(this);
+            box.position = nodes[x, y].position;
+
+            if (BoxRules(box))
+            {
+                nodes[x, y].isEmpty = false;
+                obstacles.Add(box);
+                boxCount++;
+                return true;
+            }
+            return false;
         }
 
         //Checks if a newly created box is ready for placement (not in a bad position)
