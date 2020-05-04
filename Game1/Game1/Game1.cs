@@ -16,7 +16,7 @@ namespace Game1
         public SpriteBatch spriteBatch { get; private set; }
 
         //Textures
-        private Texture2D playerTex, boardNodeTex, boxTex, spikeTex;
+        private Texture2D playerTex;
 
         //Board making information
         static int nHoles = 0;
@@ -49,7 +49,7 @@ namespace Game1
         bool randomPlayer = false;
 
         //Board from file
-        private bool fileON = false;
+        private bool fileON = true;
 
         public Game1()
         {
@@ -62,7 +62,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(1);
+            new RNG(2);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
@@ -82,7 +82,7 @@ namespace Game1
             else
             {
                 //Create a game board
-                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections);
+                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
 
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
@@ -114,19 +114,8 @@ namespace Game1
 
         protected override void LoadContent()
         {        
-            GameTime gameTime = new GameTime();
-            
-            //Loading sprites
-            foreach (WinObject winObj in currentGameState.board.winObjects)
-            {
-               winObj.texture = winObj.tag == "Collectible" ? 
-                    Content.Load<Texture2D>("assets/collectible") : Content.Load<Texture2D>("assets/toggle");
-            }
-
-            boxTex           = Content.Load<Texture2D>("assets/box");
-            spikeTex         = Content.Load<Texture2D>("assets/spike");
-            playerTex        = Content.Load<Texture2D>("assets/player");
-            boardNodeTex     = Content.Load<Texture2D>("assets/node");
+            GameTime gameTime = new GameTime();           
+            playerTex = Content.Load<Texture2D>("assets/player");
 
             GameState sourceState = currentGameState;
 
@@ -215,20 +204,22 @@ namespace Game1
 
             Board board= currentGameState.board;
 
+            int height = board.nodeTexture.Height;
+
             //draw the board's nodes
             foreach (Node node in currentGameState.board.nodes)
-                if (node != null) spriteBatch.Draw(boardNodeTex, board.DrawPosition(node.position) * boardNodeTex.Height, Color.White);
+                if (node != null) spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * height, Color.White);
 
             //draw the winobjects' sprites
             foreach (WinObject winObject in currentGameState.winObjects)
             {
                 if (!winObject.isTriggered)
-                    spriteBatch.Draw(winObject.texture, board.DrawPosition(winObject.position) * boardNodeTex.Height, Color.White);
+                    spriteBatch.Draw(winObject.texture, board.DrawPosition(winObject.position) * height, Color.White);
             }
 
             //draw the spikes' sprites
             foreach (EnemyObject enemyObject in currentGameState.enemyObjects)
-                spriteBatch.Draw(spikeTex, board.DrawPosition(enemyObject.position)* boardNodeTex.Height, Color.White);
+                spriteBatch.Draw(enemyObject.texture, board.DrawPosition(enemyObject.position)* height, Color.White);
 
             //draw the boxes' sprites
             foreach (Obstacle obstacle in currentGameState.obstacles)
@@ -238,13 +229,13 @@ namespace Game1
                 {
                     if (winObject.tag == "Toggle" && winObject.position == obstacle.position)
                     {
-                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.Green);
+                        spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.Green);
                         occupied = true;
                         break;
                     }
                     else
                     {
-                        spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.White);
+                        spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.White);
                     }
                 }
                 if (!occupied)
@@ -253,19 +244,19 @@ namespace Game1
                     {
                         if (enemyObject.position == obstacle.position)
                         {
-                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.Red);
+                            spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.Red);
                             break;
                         }
                         else
                         {
-                            spriteBatch.Draw(boxTex, board.DrawPosition(obstacle.position)* boardNodeTex.Height, Color.White);
+                            spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.White);
                         }
                     }
                 }
             }
 
             //draw the player sprite
-            spriteBatch.Draw(playerTex, board.DrawPosition(currentGameState.player.position)* boardNodeTex.Height, Color.White);
+            spriteBatch.Draw(playerTex, board.DrawPosition(currentGameState.player.position)* board.nodeTexture.Height, Color.White);
 
             spriteBatch.End();
 
@@ -385,7 +376,7 @@ namespace Game1
                 }
             }
 
-            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nCollectibles, nDirections);
+            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nCollectibles, nDirections, this);
             Vector2[] holesPosition = new Vector2[holesCount];
             holesCount = 0;
 
@@ -401,7 +392,7 @@ namespace Game1
                     //Box
                     else if (file[y][x] == 'B')
                     {                        
-                        Box box = new Box(tempBoard)
+                        Box box = new Box(tempBoard, this)
                         {
                             position = new Vector2(x, y)
                         };
@@ -410,14 +401,14 @@ namespace Game1
                     //Toggle
                     else if (file[y][x] == 'T')
                     {                       
-                        Toggle toggle = new Toggle();
+                        Toggle toggle = new Toggle(this);
                         toggle.position = new Vector2(x, y);
                         winObjects.Add(toggle);
                     }
                     //Collectible
                     else if (file[y][x] == 'C')
                     {
-                        Collectible collectible = new Collectible();
+                        Collectible collectible = new Collectible(this);
                         collectible.position = new Vector2(x, y);
                         winObjects.Add(collectible);
                     }
@@ -430,14 +421,14 @@ namespace Game1
                     //Enemy
                     else if(file[y][x] == 'E')
                     {
-                        Spike spike = new Spike();
+                        Spike spike = new Spike(this);
                         spike.position = new Vector2(x, y);
                         enemyObjects.Add(spike);
                     }
                 }
             }
 
-            Board board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects);
+            Board board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects, this);
             player = new Player(board, playerPos);
             currentGameState = new GameState(board, player);
             return board;

@@ -54,6 +54,8 @@ namespace Game1
     //Creates and manages the game's board
     public abstract class Board
     {
+        public Texture2D nodeTexture;
+        private Game1 game;
         public Node[,] nodes;
         public virtual Node this[int i, int j]
         {
@@ -70,7 +72,7 @@ namespace Game1
 
         private Vector2[] holesPosition;
 
-        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections)
+        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections, Game1 game)
         {
             //set board info params
             boardInfo = new BoardInfo();
@@ -82,6 +84,7 @@ namespace Game1
             boardInfo.nDirections = nDirections;
             boardInfo.nCollectibles = nCollectibles;
 
+            this.game = game;
             nodes = new Node[boardInfo.width, boardInfo.height];
 
             obstacles = new List<Obstacle>();
@@ -95,13 +98,14 @@ namespace Game1
             CreateEnemyObjects();
         }
 
-        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects)
+        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Game1 game)
         {
             //set board info params
             boardInfo = new BoardInfo();
             boardInfo.width = width;
             boardInfo.height = height;
 
+            this.game = game;
             nodes = new Node[boardInfo.width, boardInfo.height];
             this.holesPosition = holesPosition;
 
@@ -154,7 +158,7 @@ namespace Game1
                                 && !(x == 1 || y == 1))
                             {
                                 //create and place the spikes
-                                Spike spike = new Spike();
+                                Spike spike = new Spike(game);
                                 spike.position = nodes[x, y].position;
                                 //nodes[x, y].isEmpty = false;
                                 enemyObjects.Add(spike);
@@ -201,7 +205,7 @@ namespace Game1
 
                                 if(placeCollectible)
                                 {
-                                    Collectible winObject = new Collectible();
+                                    Collectible winObject = new Collectible(game);
                                     winObject.position = nodes[x, y].position;
                                     winObjects.Add(winObject);
                                     CollectibleCount++;
@@ -224,7 +228,7 @@ namespace Game1
                                     && rand > placementChance)
                                 {
                                     //create and place the object
-                                    Toggle winObject = new Toggle();
+                                    Toggle winObject = new Toggle(game);
                                     winObject.position = nodes[x, y].position;
                                     winObjects.Add(winObject);
                                     objCount++;
@@ -258,7 +262,7 @@ namespace Game1
                             && nodes[x, y].isEmpty)
                         {
                             //Create collectible
-                            Collectible winObject = new Collectible();
+                            Collectible winObject = new Collectible(game);
                             winObject.position = nodes[x, y].position;
                             winObjects.Add(winObject);
                             CollectibleCount++;
@@ -280,7 +284,7 @@ namespace Game1
                                     && nodes[x, y].position != obstacle.position)
                                 {
                                     //create and place the object
-                                    Toggle winObject = new Toggle();
+                                    Toggle winObject = new Toggle(this.game);
 
                                     if (boardInfo.nDirections == 4 || (boardInfo.nDirections == 6 && x % 2 == obstacle.position.X % 2) && rand > placementChance)
                                     {
@@ -397,7 +401,7 @@ namespace Game1
         private bool CreateBox(int x, int y, ref int boxCount)
         {
             //create and place the box
-            Box box = new Box(this);
+            Box box = new Box(this, game);
             box.position = nodes[x, y].position;
 
             //Check all the previously created boxes

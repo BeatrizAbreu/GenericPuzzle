@@ -12,6 +12,7 @@ namespace Game1.Scripts
         public int nMoves;
         public static bool hasLost;
         Board board;
+
         public Player(Board board, Vector2 position)
         {
             this.board = board;

@@ -12,10 +12,11 @@ namespace Game1.Scripts
         public static int activeObjectCount;
         public static int objectCount;
 
-        public Toggle()
+        public Toggle(Game1 game)
         {
             tag = "Toggle";
             objectCount++;
+            texture = game.Content.Load<Texture2D>("assets/toggle");
         }
 
         public override void Action()

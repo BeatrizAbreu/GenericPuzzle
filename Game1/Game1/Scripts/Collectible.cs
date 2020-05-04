@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,10 +12,11 @@ namespace Game1.Scripts
         public static int activeObjectCount;
         public static int objectCount;
 
-        public Collectible()
+        public Collectible(Game1 game)
         {
             tag = "Collectible";
             objectCount++;
+            texture = game.Content.Load<Texture2D>("assets/collectible");
         }
 
         public override void Action()

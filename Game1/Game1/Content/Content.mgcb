@@ -37,7 +37,7 @@
 /processorParam:TextureFormat=Color
 /build:assets/collectible.png
 
-#begin assets/node.png
+#begin assets/hexanode.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -47,7 +47,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:assets/node.png
+/build:assets/hexanode.png
 
 #begin assets/player.png
 /importer:TextureImporter

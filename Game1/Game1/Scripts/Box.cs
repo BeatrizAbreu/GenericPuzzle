@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace Game1.Scripts
 {
     class Box : Obstacle
     {
-        public Box(Board board) : base(board)
+        public Box(Board board, Game1 game) : base(board)
         {
-            //this.tag = "box";
+            texture = game.Content.Load<Texture2D>("assets/box");
         }
 
         public override bool Move(Direction direction)

@@ -12,14 +12,15 @@ namespace Game1
     //Creates and manages the game's board
     public class HexaBoard : Board
     {    
-        public HexaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections) : base(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections)
+        public HexaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections, Game1 game) : base(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, game)
         {
+            nodeTexture = game.Content.Load<Texture2D>("assets/hexanode");
         }
 
-        public HexaBoard(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects) 
-            : base(width, height, holesPosition, obstacles, enemyObjects, winObjects)
+        public HexaBoard(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Game1 game) 
+            : base(width, height, holesPosition, obstacles, enemyObjects, winObjects, game)
         {
-            /* nothing specific to hexaboard for now */
+            nodeTexture = game.Content.Load<Texture2D>("assets/hexanode");
         }
 
         internal override void CreateNeighbors()
@@ -34,6 +35,7 @@ namespace Game1
                     // Not top
                     if (y > 0 && this[x, y-1] != null)
                         node.neighbors[Direction.Up] = this[x,y-1];
+
                     // Not bottom
                     if (y < boardInfo.height - 1 && this[x, y+1] != null)
                         node.neighbors[Direction.Down] = this[x,y+1];
