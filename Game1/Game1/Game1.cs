@@ -25,7 +25,7 @@ namespace Game1
         static int nEnemies = 2;
         static int width = 5;
         static int height = 5;
-        static int nDirections = 4;
+        static int nDirections = 6;
         Vector2[] baseObstaclePos;
 
         //Keyboard

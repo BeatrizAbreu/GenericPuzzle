@@ -2,7 +2,6 @@ using System;
 
 namespace Game1
 {
-
     public class RNG {
         static RNG rngen;
         Random rng;
