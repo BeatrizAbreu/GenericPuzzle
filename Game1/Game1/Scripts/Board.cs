@@ -222,9 +222,34 @@ namespace Game1
 
                             foreach (Obstacle obstacle in obstacles)
                             {
+                                //if there's a box in an extreme line, put a toggle nearby
+                                if (nodes[x, y].isEmpty && y == obstacle.position.Y
+                                    && (y == boardInfo.height - 1 || (y == 0 && x != 0)) && x != obstacle.position.X)
+                                {
+                                    //create and place the object
+                                    Toggle winObject = new Toggle(game);
+                                    winObject.position = nodes[x, y].position;
+                                    winObjects.Add(winObject);
+                                    objCount++;
+                                    break;
+                                }
+
+
+                                //if there's a box in an extreme collumn, put a toggle nearby
+                                else if (nodes[x, y].isEmpty && x == obstacle.position.X 
+                                    && (x == boardInfo.width - 1 || (x == 0 && y != 0)) && y != obstacle.position.Y)
+                                {
+                                    //create and place the object
+                                    Toggle winObject = new Toggle(game);
+                                    winObject.position = nodes[x, y].position;
+                                    winObjects.Add(winObject);
+                                    objCount++;
+                                    break;
+                                }
+
                                 //if the node is not a hole and the random rolls over 30
                                 //and there's a box in the same line or column but not on the same cell
-                                if (nodes[x, y].isEmpty
+                                else if (nodes[x, y].isEmpty
                                     && ((x == obstacle.position.X && x != 0) || (y == obstacle.position.Y && y != 0))
                                     && rand > placementChance)
                                 {
@@ -242,83 +267,83 @@ namespace Game1
             }
         }
 
-        public void NEWCreateWinObjects()
-        {
-            int objCount = 0;
-            int CollectibleCount = 0;
-            int rand;
+        //public void NEWCreateWinObjects()
+        //{
+        //    int objCount = 0;
+        //    int CollectibleCount = 0;
+        //    int rand;
 
-            //go through the nodes
-            for (int y = 0; y < boardInfo.height; y++)
-            {
-                for (int x = 0; x < boardInfo.width; x++)
-                {
-                    rand = RNG.Next(100);
+        //    //go through the nodes
+        //    for (int y = 0; y < boardInfo.height; y++)
+        //    {
+        //        for (int x = 0; x < boardInfo.width; x++)
+        //        {
+        //            rand = RNG.Next(100);
 
-                    if (nodes[x, y] != null)
-                    {
-                        //place Collectible while there's still collectibles to place and the node is empty
-                        if (CollectibleCount < boardInfo.nCollectibles
-                            && rand > 70
-                            && nodes[x, y].isEmpty)
-                        {
-                            //Create collectible
-                            Collectible winObject = new Collectible(game);
-                            winObject.position = nodes[x, y].position;
-                            winObjects.Add(winObject);
-                            CollectibleCount++;
-                        }
+        //            if (nodes[x, y] != null)
+        //            {
+        //                //place Collectible while there's still collectibles to place and the node is empty
+        //                if (CollectibleCount < boardInfo.nCollectibles
+        //                    && rand > 70
+        //                    && nodes[x, y].isEmpty)
+        //                {
+        //                    //Create collectible
+        //                    Collectible winObject = new Collectible(game);
+        //                    winObject.position = nodes[x, y].position;
+        //                    winObjects.Add(winObject);
+        //                    CollectibleCount++;
+        //                }
 
-                        //while there's still Toggles to place
-                        else if (nodes[x, y] != null && objCount < boardInfo.nBoxes)
-                        {
-                            placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
-                            rand = RNG.Next(100);
+        //                //while there's still Toggles to place
+        //                else if (nodes[x, y] != null && objCount < boardInfo.nBoxes)
+        //                {
+        //                    placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
+        //                    rand = RNG.Next(100);
 
-                            //go through every obstacle
-                            foreach (Obstacle obstacle in obstacles)
-                            {
-                                //if the node is not a hole and the random rolls over 30
-                                //and there's a box in the same line or column but not on the same cell
-                                if ((x != 0 || y != 0)
-                                    && nodes[x, y].isEmpty
-                                    && nodes[x, y].position != obstacle.position)
-                                {
-                                    //create and place the object
-                                    Toggle winObject = new Toggle(this.game);
+        //                    //go through every obstacle
+        //                    foreach (Obstacle obstacle in obstacles)
+        //                    {
+        //                        //if the node is not a hole and the random rolls over 30
+        //                        //and there's a box in the same line or column but not on the same cell
+        //                        if ((x != 0 || y != 0)
+        //                            && nodes[x, y].isEmpty
+        //                            && nodes[x, y].position != obstacle.position)
+        //                        {
+        //                            //create and place the object
+        //                            Toggle winObject = new Toggle(this.game);
 
-                                    if (boardInfo.nDirections == 4 || (boardInfo.nDirections == 6 && x % 2 == obstacle.position.X % 2) && rand > placementChance)
-                                    {
-                                        //the box is in an extreme collumn - the win object must be in that same column
-                                        if ((x == 0 || x == boardInfo.width - 1) && (obstacle.position.X == 0 || obstacle.position.X == boardInfo.width - 1))
-                                        {
-                                            winObject.position.X = obstacle.position.X;
-                                            winObject.position.Y = y;
-                                        }
-                                        //the box is in an extreme line - the win object must be in that same line
-                                        else if ((y == 0 || y == boardInfo.height - 1) && (obstacle.position.Y == 0 || obstacle.position.Y == boardInfo.height - 1))
-                                        {
-                                            winObject.position.Y = obstacle.position.Y;
-                                            winObject.position.X = x;
-                                        }
-                                    }
+        //                            if (boardInfo.nDirections == 4 || (boardInfo.nDirections == 6 && x % 2 == obstacle.position.X % 2) && rand > placementChance)
+        //                            {
+        //                                //the box is in an extreme collumn - the win object must be in that same column
+        //                                if ((x == 0 || x == boardInfo.width - 1) && (obstacle.position.X == 0 || obstacle.position.X == boardInfo.width - 1))
+        //                                {
+        //                                    winObject.position.X = obstacle.position.X;
+        //                                    winObject.position.Y = y;
+        //                                }
+        //                                //the box is in an extreme line - the win object must be in that same line
+        //                                else if ((y == 0 || y == boardInfo.height - 1) && (obstacle.position.Y == 0 || obstacle.position.Y == boardInfo.height - 1))
+        //                                {
+        //                                    winObject.position.Y = obstacle.position.Y;
+        //                                    winObject.position.X = x;
+        //                                }
+        //                            }
 
-                                    else if (x != 0 && y != 0
-                                        && (x == obstacle.position.X || y == obstacle.position.Y))
-                                    {
-                                        winObject.position = nodes[x, y].position;
-                                    }
+        //                            else if (x != 0 && y != 0
+        //                                && (x == obstacle.position.X || y == obstacle.position.Y))
+        //                            {
+        //                                winObject.position = nodes[x, y].position;
+        //                            }
 
-                                    winObjects.Add(winObject);
-                                    objCount++;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                            winObjects.Add(winObject);
+        //                            objCount++;
+        //                            break;
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         public void CreateObstacles()
         {
@@ -403,7 +428,8 @@ namespace Game1
         {
             //create and place the box
             Box box = new Box(this, game);
-            box.position = nodes[x, y].position;
+            box.position.X = x;
+            box.position.Y = y;  
 
             //Check all the previously created boxes
             foreach (Obstacle obstacle in obstacles)
@@ -443,20 +469,36 @@ namespace Game1
                 return false; //the box is stuck in a corner without a pressure plate
             }
 
-            //if the nodes are squares and the box is in one of the four extreme lines or columns
-            //OR if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
-            if (box.position.X == boardInfo.width - 1
-               || box.position.X == 0
-               || (boardInfo.nDirections == 4
-                   && (box.position.Y == boardInfo.height - 1
-                   || box.position.Y == 0))
-               || box.position.Y == 0 || box.position.Y == boardInfo.height - 1)
+            //if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
+            if (boardInfo.nDirections == 6 && (box.position.X == boardInfo.width - 1 || box.position.X == 0
+               || box.position.Y == 0 || box.position.Y == boardInfo.height - 1))
             {
                 if (box.position.X % 2 == 0 || box.position.X == boardInfo.width - 1)
                 {
                     return false; //box is unpushable
                 }
             }
+
+            //if the box is in an extreme collumn and there's already a box in that collumn
+            if (box.position.X == boardInfo.width - 1 || box.position.X == 0)
+            {
+                foreach (Obstacle obs in obstacles)
+                {
+                    if (obs.position.X == box.position.X)
+                        return false;
+                }
+            }
+
+            //if the box is in an extreme line and there's already a box in that line
+            if (box.position.Y == boardInfo.height - 1 || box.position.Y == 0)
+            {
+                foreach (Obstacle obs in obstacles)
+                {
+                    if (obs.position.Y == box.position.Y)
+                        return false;
+                }
+            }
+
             return true; //box is reachable
         }
 

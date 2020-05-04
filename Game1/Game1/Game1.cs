@@ -25,7 +25,7 @@ namespace Game1
         static int nEnemies = 2;
         static int width = 5;
         static int height = 5;
-        static int nDirections = 6;
+        static int nDirections = 4;
         Vector2[] baseObstaclePos;
 
         //Keyboard
@@ -49,7 +49,7 @@ namespace Game1
         bool randomPlayer = false;
 
         //Board from file
-        private bool fileON = true;
+        private bool fileON = false;
 
         public Game1()
         {
@@ -62,7 +62,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(2);
+            new RNG(1);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
