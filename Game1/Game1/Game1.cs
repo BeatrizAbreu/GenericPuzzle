@@ -83,6 +83,9 @@ namespace Game1
             {
                 //Create a game board
                 board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
+                
+                if(nDirections == 4)
+                    board = new QuadBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
 
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
@@ -208,7 +211,8 @@ namespace Game1
 
             //draw the board's nodes
             foreach (Node node in currentGameState.board.nodes)
-                if (node != null) spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * height, Color.White);
+                if (node != null)
+                    spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * height, Color.White);
 
             //draw the winobjects' sprites
             foreach (WinObject winObject in currentGameState.winObjects)
@@ -334,8 +338,7 @@ namespace Game1
                 RestartGame();
                 Player.hasLost = false;
                 timerStartTime = gameTime.TotalGameTime;
-            }
-           
+            }      
         }
 
         Board LoadLevel(out Player player)
@@ -428,7 +431,11 @@ namespace Game1
                 }
             }
 
-            Board board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects, this);
+            Board board = new HexaBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects, nDirections, this);
+
+            if (nDirections == 4)
+                board = new QuadBoard(width, height, holesPosition, obstacles, enemyObjects, winObjects, nDirections, this);
+
             player = new Player(board, playerPos);
             currentGameState = new GameState(board, player);
             return board;

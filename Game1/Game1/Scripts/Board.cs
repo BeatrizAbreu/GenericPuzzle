@@ -98,12 +98,13 @@ namespace Game1
             CreateEnemyObjects();
         }
 
-        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Game1 game)
+        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game)
         {
             //set board info params
             boardInfo = new BoardInfo();
             boardInfo.width = width;
             boardInfo.height = height;
+            boardInfo.nDirections = nDirections;
 
             this.game = game;
             nodes = new Node[boardInfo.width, boardInfo.height];

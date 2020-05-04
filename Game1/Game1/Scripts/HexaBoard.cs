@@ -17,8 +17,8 @@ namespace Game1
             nodeTexture = game.Content.Load<Texture2D>("assets/hexanode");
         }
 
-        public HexaBoard(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, Game1 game) 
-            : base(width, height, holesPosition, obstacles, enemyObjects, winObjects, game)
+        public HexaBoard(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game) 
+            : base(width, height, holesPosition, obstacles, enemyObjects, winObjects, nDirections, game)
         {
             nodeTexture = game.Content.Load<Texture2D>("assets/hexanode");
         }
