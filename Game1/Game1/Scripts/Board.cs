@@ -39,7 +39,7 @@ namespace Game1
     //Contains the board' information
     public class BoardInfo
     {
-        public int nDirections;
+        public static int nDirections;
 
         public int width;
         public int height;
@@ -81,7 +81,7 @@ namespace Game1
             boardInfo.nHoles = nHoles;
             boardInfo.nBoxes = nBoxes;
             boardInfo.nEnemies = nEnemies;
-            boardInfo.nDirections = nDirections;
+            BoardInfo.nDirections = nDirections;
             boardInfo.nCollectibles = nCollectibles;
 
             this.game = game;
@@ -104,7 +104,7 @@ namespace Game1
             boardInfo = new BoardInfo();
             boardInfo.width = width;
             boardInfo.height = height;
-            boardInfo.nDirections = nDirections;
+            BoardInfo.nDirections = nDirections;
 
             this.game = game;
             nodes = new Node[boardInfo.width, boardInfo.height];
@@ -372,7 +372,7 @@ namespace Game1
                                 CreateBox(x, y, ref boxCount);
                             }
 
-                            else if (boardInfo.nDirections == 6)
+                            else if (BoardInfo.nDirections == 6)
                             {
                                 rand = RNG.Next(100);
 
@@ -392,7 +392,7 @@ namespace Game1
                         }
 
                         //if this is a 4 direction board, the box can be placed on a node as long as it can be pushed to the right/left
-                        else if ((x != 0 || y != 0) && boardInfo.nDirections == 4)
+                        else if ((x != 0 || y != 0) && BoardInfo.nDirections == 4)
                         {
                             rand = RNG.Next(100);
 
@@ -470,7 +470,7 @@ namespace Game1
             }
 
             //if the nodes are hexagons OR octagons AND the box is on the 2 extreme columns (x == 0 || x == width-1)
-            if (boardInfo.nDirections == 6 && (box.position.X == boardInfo.width - 1 || box.position.X == 0
+            if (BoardInfo.nDirections == 6 && (box.position.X == boardInfo.width - 1 || box.position.X == 0
                || box.position.Y == 0 || box.position.Y == boardInfo.height - 1))
             {
                 if (box.position.X % 2 == 0 || box.position.X == boardInfo.width - 1)

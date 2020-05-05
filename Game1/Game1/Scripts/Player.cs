@@ -75,7 +75,18 @@ namespace Game1.Scripts
                     winObject.Action();
                 }
             }
-                return true;
+
+            //we're in a octaboard
+            if (Game1.isOctaboard)
+            {
+                //change nDirections if needed
+                if((currentNode.position.X + currentNode.position.Y) % 2 != targetNode.position.X + targetNode.position.Y % 2)
+                {
+                    BoardInfo.nDirections = BoardInfo.nDirections == 8 ? 4 : 8;
+                }
+            }
+
+            return true;
         }
     }
 }

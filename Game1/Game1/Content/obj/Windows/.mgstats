@@ -1,3 +1,2 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/quadnode.png","C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/bin/Windows/assets/quadnode.xnb","TextureProcessor","Texture2DContent",2276,31057,0,5125318
-"C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/spike.png","C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/bin/Windows/assets/spike.xnb","TextureProcessor","Texture2DContent",3357,34885,0
+"C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaquadnode2.png","C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/bin/Windows/assets/octaquadnode2.xnb","TextureProcessor","Texture2DContent",1788,10085,0,1037229

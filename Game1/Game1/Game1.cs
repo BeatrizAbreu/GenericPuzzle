@@ -17,6 +17,7 @@ namespace Game1
 
         //Textures
         private Texture2D playerTex;
+        private Texture2D quadTexture, octaTexture;
 
         //Board making information
         static int nHoles = 0;
@@ -24,9 +25,10 @@ namespace Game1
         static int nCollectibles = 3;
         static int nEnemies = 2;
         static int width = 5;
-        static int height = 5;
-        static int nDirections = 6;
+        static int height = 3;
+        static int nDirections = 8;
         Vector2[] baseObstaclePos;
+        public static bool isOctaboard = false;
 
         //Keyboard
         KeyboardState previousState, state;       
@@ -59,6 +61,9 @@ namespace Game1
 
         protected override void Initialize()
         {
+            if (nDirections == 8)
+                isOctaboard = true;
+
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
@@ -86,6 +91,8 @@ namespace Game1
                 
                 if(nDirections == 4)
                     board = new QuadBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
+                else if(nDirections == 8)
+                    board = new OctaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
 
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
@@ -100,7 +107,7 @@ namespace Game1
                 currentGameState = new GameState(board, player);
             }
 
-            Moves = board.GetKeysDirection(board.boardInfo.nDirections);
+            Moves = board.GetKeysDirection(BoardInfo.nDirections);
 
             if(MCTSPlayer)
                treeRootMTCS = new NodeMCTS(currentGameState);
@@ -119,6 +126,8 @@ namespace Game1
         {        
             GameTime gameTime = new GameTime();           
             playerTex = Content.Load<Texture2D>("assets/player");
+            quadTexture = Content.Load<Texture2D>("assets/octaquadnode");
+            octaTexture = Content.Load<Texture2D>("assets/octanode");
 
             GameState sourceState = currentGameState;
 
@@ -211,19 +220,42 @@ namespace Game1
 
             //draw the board's nodes
             foreach (Node node in currentGameState.board.nodes)
+            {
                 if (node != null)
-                    spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * height, Color.White);
+                {
+                    if (!isOctaboard)
+                        spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * height, Color.White);
+
+                    //octaboard & octa node
+                    else if ((node.position.X + node.position.Y) % 2 == 0)
+                        spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                    else
+                        spriteBatch.Draw(OctaBoard.quadTexture, board.DrawPosition(node.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                }
+            }
 
             //draw the winobjects' sprites
             foreach (WinObject winObject in currentGameState.winObjects)
             {
                 if (!winObject.isTriggered)
-                    spriteBatch.Draw(winObject.texture, board.DrawPosition(winObject.position) * height, Color.White);
+                {
+                    if (!isOctaboard)
+                        spriteBatch.Draw(winObject.texture, board.DrawPosition(winObject.position) * height, Color.White);
+                    else
+                    {
+                        Vector2 pos = winObject.position;
+                        pos.X += (winObject.position.X + winObject.position.Y) % 2 == 0 ? 0 : 118 / 2 * 0.00678f;
+                        pos.Y += (winObject.position.X + winObject.position.Y) % 2 == 0 ? 0 : 118 / 2 * 0.00678f;
+                     
+                        spriteBatch.Draw(winObject.texture, board.DrawPosition(pos) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                    }
+                }
+                    
             }
 
             //draw the spikes' sprites
             foreach (EnemyObject enemyObject in currentGameState.enemyObjects)
-                spriteBatch.Draw(enemyObject.texture, board.DrawPosition(enemyObject.position)* height, Color.White);
+                spriteBatch.Draw(enemyObject.texture, board.DrawPosition(enemyObject.position) * height, Color.White);
 
             //draw the boxes' sprites
             foreach (Obstacle obstacle in currentGameState.obstacles)
