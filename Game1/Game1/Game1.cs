@@ -17,15 +17,14 @@ namespace Game1
 
         //Textures
         private Texture2D playerTex;
-        private Texture2D quadTexture, octaTexture;
 
         //Board making information
         static int nHoles = 0;
         static int nBoxes = 3;
         static int nCollectibles = 3;
         static int nEnemies = 2;
-        static int width = 5;
-        static int height = 3;
+        static int width = 6;
+        static int height = 4;
         static int nDirections = 8;
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
@@ -126,9 +125,7 @@ namespace Game1
         {        
             GameTime gameTime = new GameTime();           
             playerTex = Content.Load<Texture2D>("assets/player");
-            quadTexture = Content.Load<Texture2D>("assets/octaquadnode");
-            octaTexture = Content.Load<Texture2D>("assets/octanode");
-
+            
             GameState sourceState = currentGameState;
 
             if(MCTSPlayer)
@@ -214,7 +211,7 @@ namespace Game1
 
             spriteBatch.Begin();
 
-            Board board= currentGameState.board;
+            Board board = currentGameState.board;
 
             int height = board.nodeTexture.Height;
 
@@ -225,12 +222,14 @@ namespace Game1
                 {
                     if (!isOctaboard)
                         spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * height, Color.White);
-
-                    //octaboard & octa node
-                    else if ((node.position.X + node.position.Y) % 2 == 0)
-                        spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
                     else
-                        spriteBatch.Draw(OctaBoard.quadTexture, board.DrawPosition(node.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                    {
+                        //octaboard & octa node
+                        if ((node.position.X + node.position.Y) % 2 == 0)
+                            spriteBatch.Draw(board.nodeTexture, board.DrawPosition(node.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                        else
+                            spriteBatch.Draw(OctaBoard.quadTexture, board.DrawPosition(node.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                    }
                 }
             }
 
@@ -242,20 +241,18 @@ namespace Game1
                     if (!isOctaboard)
                         spriteBatch.Draw(winObject.texture, board.DrawPosition(winObject.position) * height, Color.White);
                     else
-                    {
-                        Vector2 pos = winObject.position;
-                        pos.X += (winObject.position.X + winObject.position.Y) % 2 == 0 ? 0 : 118 / 2 * 0.00678f;
-                        pos.Y += (winObject.position.X + winObject.position.Y) % 2 == 0 ? 0 : 118 / 2 * 0.00678f;
-                     
-                        spriteBatch.Draw(winObject.texture, board.DrawPosition(pos) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
-                    }
+                        spriteBatch.Draw(AssignOctaTetxure(winObject.texture, winObject.tag, winObject.position), board.DrawPosition(winObject.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
                 }
-                    
             }
 
             //draw the spikes' sprites
             foreach (EnemyObject enemyObject in currentGameState.enemyObjects)
-                spriteBatch.Draw(enemyObject.texture, board.DrawPosition(enemyObject.position) * height, Color.White);
+            {
+                if (!isOctaboard)
+                    spriteBatch.Draw(enemyObject.texture, board.DrawPosition(enemyObject.position) * height, Color.White);
+                else
+                    spriteBatch.Draw(AssignOctaTetxure(enemyObject.texture, "Spike", enemyObject.position), board.DrawPosition(enemyObject.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+            }
 
             //draw the boxes' sprites
             foreach (Obstacle obstacle in currentGameState.obstacles)
@@ -265,13 +262,20 @@ namespace Game1
                 {
                     if (winObject.tag == "Toggle" && winObject.position == obstacle.position)
                     {
-                        spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.Green);
+                        if (!isOctaboard)
+                            spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position) * height, Color.Green);
+                        else
+                            spriteBatch.Draw(AssignOctaTetxure(obstacle.texture, "Box", obstacle.position), board.DrawPosition(obstacle.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.Green);
+
                         occupied = true;
                         break;
                     }
                     else
                     {
-                        spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.White);
+                        if (!isOctaboard)
+                            spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position) * height, Color.White);
+                        else
+                            spriteBatch.Draw(AssignOctaTetxure(obstacle.texture, "Box", obstacle.position), board.DrawPosition(obstacle.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
                     }
                 }
                 if (!occupied)
@@ -280,24 +284,78 @@ namespace Game1
                     {
                         if (enemyObject.position == obstacle.position)
                         {
-                            spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.Red);
+                            if (!isOctaboard)
+                                spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position) * height, Color.Red);
+                            else
+                                spriteBatch.Draw(AssignOctaTetxure(obstacle.texture, "Box", obstacle.position), board.DrawPosition(obstacle.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.Red);
                             break;
                         }
                         else
                         {
-                            spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position)* height, Color.White);
+                            if (!isOctaboard)
+                                spriteBatch.Draw(obstacle.texture, board.DrawPosition(obstacle.position) * height, Color.White);
+                            else
+                                spriteBatch.Draw(AssignOctaTetxure(obstacle.texture, "Box", obstacle.position), board.DrawPosition(obstacle.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
                         }
                     }
                 }
             }
 
             //draw the player sprite
-            spriteBatch.Draw(playerTex, board.DrawPosition(currentGameState.player.position)* board.nodeTexture.Height, Color.White);
+            if (!isOctaboard)
+                spriteBatch.Draw(playerTex, board.DrawPosition(currentGameState.player.position) * height, Color.White);
+            else
+                spriteBatch.Draw(AssignOctaTetxure(playerTex, "Player", currentGameState.player.position), board.DrawPosition(currentGameState.player.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+
 
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
+
+        public Texture2D AssignOctaTetxure(Texture2D texture, string type, Vector2 pos)
+        {
+            if (type == "Player")
+            {
+                if ((pos.X + pos.Y) % 2 == 0)
+                    return Content.Load<Texture2D>("assets/octaboard/playerOcta");
+                else
+                    return Content.Load<Texture2D>("assets/octaboard/playerOctaQuad");
+            }
+
+            else if (type == "Toggle")
+            {
+                if ((pos.X + pos.Y) % 2 == 0)
+                    return Content.Load<Texture2D>("assets/octaboard/toggleOcta");
+                else
+                    return Content.Load<Texture2D>("assets/octaboard/toggleOctaQuad");
+            }
+
+            else if (type == "Collectible")
+            {
+                if ((pos.X + pos.Y) % 2 == 0)
+                    return Content.Load<Texture2D>("assets/octaboard/collectibleOcta");
+                else
+                    return Content.Load<Texture2D>("assets/octaboard/collectibleOctaQuad");
+            }
+
+            else if (type == "Spike")
+            {
+                if ((pos.X + pos.Y) % 2 == 0)
+                    return Content.Load<Texture2D>("assets/octaboard/spikeOcta");
+                else
+                    return Content.Load<Texture2D>("assets/octaboard/spikeOctaQuad");
+            }
+
+            else //if (type == "Box")
+            {
+                if ((pos.X + pos.Y) % 2 == 0)
+                    return Content.Load<Texture2D>("assets/octaboard/boxOcta");
+                else
+                    return Content.Load<Texture2D>("assets/octaboard/boxOctaQuad");
+            }
+        }
+
 
         public void RestartGame()
         {
@@ -360,7 +418,7 @@ namespace Game1
 
         public void Respawn(GameTime gameTime)
         {
-            if(randomPlayer)
+            if (randomPlayer)
             {
                 RestartGame();
                 Player.hasLost = false;

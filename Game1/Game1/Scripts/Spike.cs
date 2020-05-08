@@ -11,12 +11,15 @@ namespace Game1.Scripts
     {
         public Spike(Game1 game)
         {
-            texture = game.Content.Load<Texture2D>("assets/spike");
+            if (Game1.isOctaboard)
+                texture = game.Content.Load<Texture2D>("assets/octaboard/spikeOcta");
+            else
+                texture = game.Content.Load<Texture2D>("assets/spike");
         }
 
         public override void Action()
         {
-            Player.hasLost = true;        
+            Player.hasLost = true;
         }
     }
 }

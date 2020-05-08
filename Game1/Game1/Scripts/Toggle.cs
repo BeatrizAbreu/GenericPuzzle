@@ -16,7 +16,11 @@ namespace Game1.Scripts
         {
             tag = "Toggle";
             objectCount++;
-            texture = game.Content.Load<Texture2D>("assets/toggle");
+
+            if (Game1.isOctaboard)
+                texture = game.Content.Load<Texture2D>("assets/octaboard/toggleOcta");
+            else
+                texture = game.Content.Load<Texture2D>("assets/toggle");
         }
 
         public override void Action()

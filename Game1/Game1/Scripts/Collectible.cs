@@ -16,7 +16,11 @@ namespace Game1.Scripts
         {
             tag = "Collectible";
             objectCount++;
-            texture = game.Content.Load<Texture2D>("assets/collectible");
+
+            if (Game1.isOctaboard)
+                texture = game.Content.Load<Texture2D>("assets/octaboard/collectibleOcta");
+            else
+                texture = game.Content.Load<Texture2D>("assets/collectible");
         }
 
         public override void Action()

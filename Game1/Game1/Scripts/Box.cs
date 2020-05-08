@@ -12,7 +12,10 @@ namespace Game1.Scripts
     {
         public Box(Board board, Game1 game) : base(board)
         {
-            texture = game.Content.Load<Texture2D>("assets/box");
+            if (Game1.isOctaboard)
+                texture = game.Content.Load<Texture2D>("assets/octaboard/boxOcta");
+            else
+                texture = game.Content.Load<Texture2D>("assets/box");
         }
 
         public override bool Move(Direction direction)

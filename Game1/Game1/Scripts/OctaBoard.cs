@@ -14,15 +14,15 @@ namespace Game1.Scripts
 
         public OctaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections, Game1 game) : base(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, game)
         {
-            nodeTexture = game.Content.Load<Texture2D>("assets/octanode");
-            quadTexture = game.Content.Load<Texture2D>("assets/octaquadnode2");
+            nodeTexture = game.Content.Load<Texture2D>("assets/octanode2");
+            quadTexture = game.Content.Load<Texture2D>("assets/octaquadnode3");
         }
 
         public OctaBoard(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game)
             : base(width, height, holesPosition, obstacles, enemyObjects, winObjects, nDirections, game)
         {
-            nodeTexture = game.Content.Load<Texture2D>("assets/octanode");
-            quadTexture = game.Content.Load<Texture2D>("assets/octaquadnode2");
+            nodeTexture = game.Content.Load<Texture2D>("assets/octanode2");
+            quadTexture = game.Content.Load<Texture2D>("assets/octaquadnode3");
         }
 
         internal override void CreateNeighbors()
@@ -104,8 +104,8 @@ namespace Game1.Scripts
 
         public override Vector2 DrawPosition(Vector2 cellPos)
         {
-            float yDelta = (cellPos.X + cellPos.Y) % 2 == 0 ? 0 : 118/2 * 0.00678f;
-            float xDelta = (cellPos.X + cellPos.Y) % 2 == 0 ? 0 : 118/2 * 0.00678f;
+            float yDelta = (cellPos.X + cellPos.Y) % 2 == 0 ? 0 : 125/2 * 0.00678f;
+            float xDelta = (cellPos.X + cellPos.Y) % 2 == 0 ? 0 : 125/2 * 0.00678f;
 
             return new Vector2(cellPos.X + xDelta, cellPos.Y + yDelta);
         }
