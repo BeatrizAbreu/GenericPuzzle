@@ -19,7 +19,7 @@ namespace Game1
         private Texture2D playerTex;
 
         //Board making information
-        static int nHoles = 0;
+        static int nHoles = 2;
         static int nBoxes = 3;
         static int nCollectibles = 3;
         static int nEnemies = 2;
@@ -66,7 +66,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(1);
+            new RNG(2);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
