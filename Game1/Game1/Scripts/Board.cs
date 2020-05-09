@@ -267,84 +267,6 @@ namespace Game1
             }
         }
 
-        //public void NEWCreateWinObjects()
-        //{
-        //    int objCount = 0;
-        //    int CollectibleCount = 0;
-        //    int rand;
-
-        //    //go through the nodes
-        //    for (int y = 0; y < boardInfo.height; y++)
-        //    {
-        //        for (int x = 0; x < boardInfo.width; x++)
-        //        {
-        //            rand = RNG.Next(100);
-
-        //            if (nodes[x, y] != null)
-        //            {
-        //                //place Collectible while there's still collectibles to place and the node is empty
-        //                if (CollectibleCount < boardInfo.nCollectibles
-        //                    && rand > 70
-        //                    && nodes[x, y].isEmpty)
-        //                {
-        //                    //Create collectible
-        //                    Collectible winObject = new Collectible(game);
-        //                    winObject.position = nodes[x, y].position;
-        //                    winObjects.Add(winObject);
-        //                    CollectibleCount++;
-        //                }
-
-        //                //while there's still Toggles to place
-        //                else if (nodes[x, y] != null && objCount < boardInfo.nBoxes)
-        //                {
-        //                    placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
-        //                    rand = RNG.Next(100);
-
-        //                    //go through every obstacle
-        //                    foreach (Obstacle obstacle in obstacles)
-        //                    {
-        //                        //if the node is not a hole and the random rolls over 30
-        //                        //and there's a box in the same line or column but not on the same cell
-        //                        if ((x != 0 || y != 0)
-        //                            && nodes[x, y].isEmpty
-        //                            && nodes[x, y].position != obstacle.position)
-        //                        {
-        //                            //create and place the object
-        //                            Toggle winObject = new Toggle(this.game);
-
-        //                            if (boardInfo.nDirections == 4 || (boardInfo.nDirections == 6 && x % 2 == obstacle.position.X % 2) && rand > placementChance)
-        //                            {
-        //                                //the box is in an extreme collumn - the win object must be in that same column
-        //                                if ((x == 0 || x == boardInfo.width - 1) && (obstacle.position.X == 0 || obstacle.position.X == boardInfo.width - 1))
-        //                                {
-        //                                    winObject.position.X = obstacle.position.X;
-        //                                    winObject.position.Y = y;
-        //                                }
-        //                                //the box is in an extreme line - the win object must be in that same line
-        //                                else if ((y == 0 || y == boardInfo.height - 1) && (obstacle.position.Y == 0 || obstacle.position.Y == boardInfo.height - 1))
-        //                                {
-        //                                    winObject.position.Y = obstacle.position.Y;
-        //                                    winObject.position.X = x;
-        //                                }
-        //                            }
-
-        //                            else if (x != 0 && y != 0
-        //                                && (x == obstacle.position.X || y == obstacle.position.Y))
-        //                            {
-        //                                winObject.position = nodes[x, y].position;
-        //                            }
-
-        //                            winObjects.Add(winObject);
-        //                            objCount++;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
         public void CreateObstacles()
         {
             int boxCount = 0;
@@ -536,31 +458,6 @@ namespace Game1
 
             CreateNeighbors();
         }
-
-        //private void CheckEachNewBox()
-        //{
-        //    foreach (Obstacle box in obstacles)
-        //    {
-        //        int i = 0;
-        //        if (!BoxCanMove(box))
-        //        {
-        //            int xRand, yRand;
-        //            xRand = RNG.Next(boardInfo.width - 1) + 1;
-        //            yRand = RNG.Next(boardInfo.height - 1) + 1;
-        //            if (nodes[xRand, yRand] != null && nodes[xRand, yRand].isEmpty)
-        //            {
-        //                nodes[(int)box.position.X, (int)box.position.Y].isEmpty = true;
-        //                obstacles[i].position.X = xRand;
-        //                obstacles[i].position.Y = yRand;
-        //                nodes[xRand, yRand].isEmpty = false;
-        //                CheckEachNewBox();
-        //            }
-        //            else
-        //                CheckEachNewBox();
-        //        }
-        //        i++;
-        //    }
-        //}
 
         //Creates all board nodes and their neighbor dictionaries
         private void CreateBoard()

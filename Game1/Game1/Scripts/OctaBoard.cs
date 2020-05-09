@@ -63,41 +63,21 @@ namespace Game1.Scripts
                         //DOWNRIGHT & UPRIGHT
                         if (x < boardInfo.width - 1)
                         {
-                            if (x % 2 == 0)
-                            {
-                                if (this[x + 1, y] != null)
-                                    node.neighbors[Direction.DownRight] = this[x + 1, y];
-                                if (y > 0 && this[x + 1, y - 1] != null)
-                                    node.neighbors[Direction.UpRight] = this[x + 1, y - 1];
-                            }
-                            else
-                            {
-                                if (this[x + 1, y] != null)
-                                    node.neighbors[Direction.UpRight] = this[x + 1, y];
-                                if (y < boardInfo.height - 1 && this[x + 1, y + 1] != null)
-                                    node.neighbors[Direction.DownRight] = this[x + 1, y + 1];
-                            }
+                            if (y + 1 < boardInfo.height - 1 && this[x + 1, y + 1] != null)
+                                node.neighbors[Direction.DownRight] = this[x + 1, y + 1];
+                            if (y > 0 && this[x + 1, y - 1] != null)
+                                node.neighbors[Direction.UpRight] = this[x + 1, y - 1];
                         }
 
                         //DOWNLEFT & UPLEFT
                         if (x > 0)
                         {
-                            if (x % 2 == 0)
-                            {
-                                if (this[x - 1, y] != null)
-                                    node.neighbors[Direction.DownLeft] = this[x - 1, y];
-                                if (y > 0 && this[x - 1, y - 1] != null)
-                                    node.neighbors[Direction.UpLeft] = this[x - 1, y - 1];
-                            }
-                            else
-                            {
-                                if (this[x - 1, y] != null)
-                                    node.neighbors[Direction.UpLeft] = this[x - 1, y];
-                                if (y < boardInfo.height - 1 && this[x - 1, y + 1] != null)
-                                    node.neighbors[Direction.DownLeft] = this[x - 1, y + 1];
-                            }
+                            if (y + 1 < boardInfo.height - 1 && this[x - 1, y + 1] != null)
+                                node.neighbors[Direction.DownLeft] = this[x - 1, y + 1];
+                            if (y > 0 && this[x - 1, y - 1] != null)
+                                node.neighbors[Direction.UpLeft] = this[x - 1, y - 1];
                         }
-                    }            
+                    }
                 }
             }
         }
