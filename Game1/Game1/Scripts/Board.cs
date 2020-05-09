@@ -229,11 +229,25 @@ namespace Game1
                                     //create and place the object
                                     Toggle winObject = new Toggle(game);
                                     winObject.position = nodes[x, y].position;
-                                    winObjects.Add(winObject);
-                                    objCount++;
-                                    break;
-                                }
+                                    bool canCreate = true;
 
+                                    foreach (WinObject obj in winObjects)
+                                    {
+                                        if(winObject.tag == obj.tag 
+                                            && ((winObject.position.X == obj.position.X && Math.Abs(winObject.position.Y - obj.position.Y) < 3) 
+                                            || (winObject.position.Y == obj.position.Y && Math.Abs(winObject.position.X - obj.position.X) < 3)))
+                                        {
+                                            canCreate = false;
+                                        }
+                                    }
+
+                                    if(canCreate)
+                                    {
+                                        winObjects.Add(winObject);
+                                        objCount++;
+                                        break;
+                                    }
+                                }
 
                                 //if there's a box in an extreme collumn, put a toggle nearby
                                 else if (nodes[x, y].isEmpty && x == obstacle.position.X 
@@ -314,9 +328,11 @@ namespace Game1
                         }
 
                         //if this is a 4 direction board, the box can be placed on a node as long as it can be pushed to the right/left
-                        else if ((x != 0 || y != 0) && BoardInfo.nDirections == 4)
+                        else if ((x != 0 || y != 0) && (BoardInfo.nDirections == 4 || BoardInfo.nDirections == 8))
                         {
                             rand = RNG.Next(100);
+                            if (BoardInfo.nDirections == 8)
+                                rand -= 20;
 
                             //it's not the first or last column
                             if (x != boardInfo.width - 1 && x != 0
