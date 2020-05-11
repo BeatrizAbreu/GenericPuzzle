@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    abstract class TriggerObject
+    public abstract class TriggerObject
     {
         //ex: Portal (teleport from pos1 to pos2) / Laser + Toggle (pos1 triggers pos2) / Key + Door (pos1 deletes pos2 object)? / Slippery tiles from pos1 to pos2
-        Vector2 pos1;
-        Vector2 pos2;
+        public Vector2 pos1;
+        public Vector2 pos2;
 
-        Texture2D texture1;
-        Texture2D texture2;
+        public Texture2D texture1;
+        public Texture2D texture2;
 
-        TriggerObject(Vector2 pos1, Vector2 pos2)
+        //Basic trigger function
+        public virtual void Trigger()
         {
-            this.pos1 = pos1;
-            this.pos2 = pos2;
+
         }
 
-        //Trigger function
-        public void Trigger()
+        //Player-based trigger function
+        public virtual void Trigger(Player player, Direction dir)
         {
 
         }

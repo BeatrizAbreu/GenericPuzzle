@@ -25,7 +25,7 @@ namespace Game1
         static int nEnemies = 2;
         static int width = 6;
         static int height = 4;
-        static int nDirections = 8;
+        static int nDirections = 4;
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
 

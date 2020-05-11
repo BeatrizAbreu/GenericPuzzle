@@ -241,6 +241,18 @@
 /processorParam:TextureFormat=Color
 /build:assets/player.png
 
+#begin assets/portal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:assets/portal.png
+
 #begin assets/quadnode.png
 /importer:TextureImporter
 /processor:TextureProcessor

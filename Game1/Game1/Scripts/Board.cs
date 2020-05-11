@@ -68,6 +68,7 @@ namespace Game1
         public List<Obstacle> obstacles;
         public List<WinObject> winObjects;
         public List<EnemyObject> enemyObjects;
+        public List<Portal> portals;
         private int placementChance;
 
         private Vector2[] holesPosition;
@@ -90,12 +91,76 @@ namespace Game1
             obstacles = new List<Obstacle>();
             winObjects = new List<WinObject>();
             enemyObjects = new List<EnemyObject>();
+            portals = new List<Portal>();
 
             //create the board graph with all the information
             CreateBoard();
             CreateObstacles();
             CreateWinObjects();
             CreateEnemyObjects();
+            CreatePortals();
+        }
+
+        private void CreatePortals()
+        {
+            Color[] colors = new Color[7] {Color.Blue, Color.Aquamarine, Color.Green, Color.Yellow, Color.Violet, Color.Magenta, Color.Orange};
+            Vector2 pos1 = CreatePortal(Vector2.One);
+            Vector2 pos2 = CreatePortal(pos1);
+
+            Portal portal = new Portal(pos1, pos2, colors[portals.Count], game);
+            portals.Add(portal);
+        }
+
+        private Vector2 CreatePortal(Vector2 pos)
+        {
+            for (int y = 0; y < boardInfo.height; y++)
+            {
+                for (int x = 0; x < boardInfo.width; x++)
+                {
+                    if (nodes[x, y] != null)
+                    {
+                        if (nodes[x, y].isEmpty
+                            && x != 0 && y != 0
+                            && x != boardInfo.width - 1 && y != boardInfo.height - 1)
+                        {
+                            Vector2 pos1 = new Vector2(x, y);
+                            bool occupied = false;
+
+                            foreach (EnemyObject enemy in enemyObjects)
+                            {
+                                if (enemy.position == pos1)
+                                    occupied = true;
+                            }
+
+                            if (!occupied)
+                            {
+                                foreach (WinObject winObj in winObjects)
+                                {
+                                    if (winObj.position == pos1)
+                                        occupied = true;
+                                }
+
+                                if (!occupied)
+                                {
+                                    //second portal
+                                    if (pos != Vector2.One)
+                                    {
+                                        if (Math.Abs(pos.X - pos1.X) >= 3
+                                            && Math.Abs(pos.Y - pos1.Y) >= 3)
+                                            return pos1;
+                                        else
+                                            return Vector2.One;
+                                    }
+
+                                    return pos1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return Vector2.One;
         }
 
         public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game)
