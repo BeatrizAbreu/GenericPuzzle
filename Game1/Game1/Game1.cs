@@ -22,10 +22,12 @@ namespace Game1
         static int nHoles = 2;
         static int nBoxes = 3;
         static int nCollectibles = 3;
+        static int nPortals = 2;
         static int nEnemies = 2;
         static int width = 9;
         static int height = 5;
-        static int nDirections = 6;
+        static int nDirections = 4;
+
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
 
@@ -87,11 +89,11 @@ namespace Game1
             {
                 //Create a game board
                 if (nDirections == 6) //Hexaboard
-                    board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);               
+                    board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, this);               
                 else if(nDirections == 4) //Quadboard
-                    board = new QuadBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
+                    board = new QuadBoard(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, this);
                 else //Octaboard
-                    board = new OctaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
+                    board = new OctaBoard(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, this);
 
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
@@ -477,7 +479,7 @@ namespace Game1
                 }
             }
 
-            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nCollectibles, nDirections, this);
+            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nPortals, nCollectibles, nDirections, this);
             Vector2[] holesPosition = new Vector2[holesCount];
             holesCount = 0;
 

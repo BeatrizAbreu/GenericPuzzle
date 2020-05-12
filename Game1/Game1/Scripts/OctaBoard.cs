@@ -12,7 +12,7 @@ namespace Game1.Scripts
     {
         public static Texture2D quadTexture;
 
-        public OctaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections, Game1 game) : base(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, game)
+        public OctaBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nPortals, int nDirections, Game1 game) : base(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, game)
         {
             nodeTexture = game.Content.Load<Texture2D>("assets/octanode2");
             quadTexture = game.Content.Load<Texture2D>("assets/octaquadnode3");

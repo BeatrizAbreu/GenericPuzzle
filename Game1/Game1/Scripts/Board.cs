@@ -49,6 +49,7 @@ namespace Game1
         public int nBoxes;
         public int nEnemies;
         public int nCollectibles;
+        public int nPortals;
     }
 
     //Creates and manages the game's board
@@ -73,7 +74,7 @@ namespace Game1
 
         private Vector2[] holesPosition;
 
-        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nDirections, Game1 game)
+        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nPortals, int nDirections, Game1 game)
         {
             //set board info params
             boardInfo = new BoardInfo();
@@ -84,6 +85,7 @@ namespace Game1
             boardInfo.nEnemies = nEnemies;
             BoardInfo.nDirections = nDirections;
             boardInfo.nCollectibles = nCollectibles;
+            boardInfo.nPortals = nPortals;
 
             this.game = game;
             nodes = new Node[boardInfo.width, boardInfo.height];
@@ -103,12 +105,19 @@ namespace Game1
 
         private void CreatePortals()
         {
-            Color[] colors = new Color[7] {Color.Blue, Color.Aquamarine, Color.Green, Color.Yellow, Color.Violet, Color.Magenta, Color.Orange};
-            Vector2 pos1 = CreatePortal(Vector2.One); //FIX ME!!! RETORNAR VETOR2.ONE É MAU
-            Vector2 pos2 = CreatePortal(pos1);
+            for (int i = 0; i < boardInfo.nPortals; i++)
+            {
+                Color[] colors = new Color[7] { Color.Blue, Color.Aquamarine, Color.Green, Color.Yellow, Color.Violet, Color.Magenta, Color.Orange };
+                Vector2 pos1 = CreatePortal(Vector2.One); 
+                Vector2 pos2 = CreatePortal(pos1);
 
-            Portal portal = new Portal(pos1, pos2, colors[portals.Count], game);
-            portals.Add(portal);
+                //If we can't place both portals, we don't place any of the pair
+                if(!(i > 0 && pos2 == Vector2.One))
+                {
+                    Portal portal = new Portal(pos1, pos2, colors[portals.Count], game);
+                    portals.Add(portal);
+                }
+            }
         }
 
         private Vector2 CreatePortal(Vector2 pos)
@@ -117,56 +126,84 @@ namespace Game1
             {
                 for (int x = 1; x < boardInfo.width - 1; x++)
                 {
-                    if (nodes[x, y] != null && !(y== 1 && x == 1))
+                    //If the node is not a hole and not the first cell
+                    if (nodes[x, y] != null && !(y == 1 && x == 1))
                     {
+                        //If the node is empty
                         if (nodes[x, y].isEmpty)
                         {
+                            //Create a vector
                             Vector2 pos1 = new Vector2(x, y);
                             bool occupied = false;
 
+                            //Check all the enemies
                             foreach (EnemyObject enemy in enemyObjects)
                             {
+                                //this node is already taken!
                                 if (enemy.position == pos1)
+                                {
                                     occupied = true;
+                                    break;
+                                }
                             }
 
                             if (!occupied)
                             {
+                                //Check all the win objects
                                 foreach (WinObject winObj in winObjects)
                                 {
+                                    //this node is already taken!
                                     if (winObj.position == pos1)
+                                    {
                                         occupied = true;
+                                        break;
+                                    }
                                 }
 
                                 if (!occupied)
                                 {
+                                    //Check all the obstacles
                                     foreach (Obstacle box in obstacles)
                                     {
-                                        if (BoardInfo.nDirections == 4)
+                                        //this node is already taken!
+                                        if (box.position == pos1)
                                         {
-                                            if (box.position.X == x && box.position.Y - 1 == y)
-                                            {
-                                                occupied = true;
-                                            }
-                                        }
-
-                                        else if (box.position.X == x && box.position.Y == y)
                                             occupied = true;
+                                            break;
+                                        }
                                     }
-
 
                                     if (!occupied)
                                     {
-                                        //second portal
-                                        if (pos != Vector2.One)
+                                        if (portals.Count > 0)
                                         {
-                                            if (Math.Abs(pos.X - pos1.X) >= 2
-                                                && Math.Abs(pos.Y - pos1.Y) >= 2)
-                                                return pos1;
+                                            //Check all the previously created portals
+                                            foreach (Portal port in portals)
+                                            {
+                                                //this node can't be taken - it's too close to another portal!
+                                                if ((Math.Abs(port.pos1.X - pos1.X) < 2 && Math.Abs(port.pos1.Y - pos1.Y) < 2)
+                                                    || (Math.Abs(port.pos2.X - pos1.X) < 2 && Math.Abs(port.pos2.Y - pos1.Y) < 2))
+                                                {
+                                                    occupied = true;
+                                                    break;
+                                                }
+                                            }
                                         }
 
-                                        else
-                                            return pos1;
+                                        if (!occupied)
+                                        {
+                                            //If this is the second portal
+                                            if (pos != Vector2.One)
+                                            {
+                                                //this node can be taken - it's not too close to another portal!
+                                                if (Math.Abs(pos.X - pos1.X) >= 3
+                                                    || Math.Abs(pos.Y - pos1.Y) >= 3)
+                                                    return pos1;
+                                            }
+
+                                            else
+                                                return pos1;
+                                        }
                                     }
                                 }
                             }
