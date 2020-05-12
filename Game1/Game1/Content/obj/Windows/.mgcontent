@@ -4,6 +4,7 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/spike.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/box.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/collectible.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/hexanode.png</File>
@@ -25,32 +26,9 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/player.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/portal.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/quadnode.png</File>
-    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/spike.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/toggle.png</File>
   </SourceFiles>
   <DestFiles>
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>
 </SourceFileCollection>
