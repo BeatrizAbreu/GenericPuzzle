@@ -22,11 +22,11 @@ namespace Game1
         static int nHoles = 2;
         static int nBoxes = 3;
         static int nCollectibles = 3;
-        static int nPortals = 2;
+        static int nPortals = 1;
         static int nEnemies = 2;
-        static int width = 9;
-        static int height = 5;
-        static int nDirections = 4;
+        static int width = 6;
+        static int height = 4;
+        static int nDirections = 8;
 
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
@@ -68,7 +68,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(2);
+            new RNG(1);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
@@ -235,11 +235,19 @@ namespace Game1
                 }
             }
 
-            //portals
+            //draw the portals' sprites
             foreach (var portal in currentGameState.board.portals)
             {
-                spriteBatch.Draw(portal.texture1, board.DrawPosition(portal.pos1) * height, portal.color);
-                spriteBatch.Draw(portal.texture2, board.DrawPosition(portal.pos2) * height, portal.color);
+                if(!isOctaboard)
+                {
+                    spriteBatch.Draw(portal.texture1, board.DrawPosition(portal.pos1) * height, portal.color);
+                    spriteBatch.Draw(portal.texture2, board.DrawPosition(portal.pos2) * height, portal.color);
+                }              
+                else
+                {
+                    spriteBatch.Draw(AssignOctaTetxure(portal.texture1, "Portal", portal.pos1), board.DrawPosition(portal.pos1) * (height / 2 + OctaBoard.quadTexture.Height / 2), portal.color);
+                    spriteBatch.Draw(AssignOctaTetxure(portal.texture1, "Portal", portal.pos2), board.DrawPosition(portal.pos2) * (height / 2 + OctaBoard.quadTexture.Height / 2), portal.color);                   
+                }
             }
 
 
@@ -325,44 +333,41 @@ namespace Game1
 
         public Texture2D AssignOctaTetxure(Texture2D texture, string type, Vector2 pos)
         {
-            if (type == "Player")
+            if (type == "Player" && (pos.X + pos.Y) % 2 == 0)
+                return Content.Load<Texture2D>("assets/octaboard/playerOcta");
+
+            if ((pos.X + pos.Y) % 2 == 0)
+                return texture;
+
+            else if (type == "Player")
             {
-                if ((pos.X + pos.Y) % 2 == 0)
-                    return Content.Load<Texture2D>("assets/octaboard/playerOcta");
-                else
-                    return Content.Load<Texture2D>("assets/octaboard/playerOctaQuad");
+                return Content.Load<Texture2D>("assets/octaboard/playerOctaQuad");
             }
 
             else if (type == "Toggle")
             {
-                if ((pos.X + pos.Y) % 2 == 0)
-                    return Content.Load<Texture2D>("assets/octaboard/toggleOcta");
-                else
-                    return Content.Load<Texture2D>("assets/octaboard/toggleOctaQuad");
+                return Content.Load<Texture2D>("assets/octaboard/toggleOctaQuad");
             }
 
             else if (type == "Collectible")
             {
-                if ((pos.X + pos.Y) % 2 == 0)
-                    return Content.Load<Texture2D>("assets/octaboard/collectibleOcta");
-                else
-                    return Content.Load<Texture2D>("assets/octaboard/collectibleOctaQuad");
+                return Content.Load<Texture2D>("assets/octaboard/collectibleOctaQuad");
             }
 
             else if (type == "Spike")
             {
-                if ((pos.X + pos.Y) % 2 == 0)
-                    return Content.Load<Texture2D>("assets/octaboard/spikeOcta");
-                else
-                    return Content.Load<Texture2D>("assets/octaboard/spikeOctaQuad");
+                return Content.Load<Texture2D>("assets/octaboard/spikeOctaQuad");
+            }
+
+
+            else if (type == "Portal")
+            {
+                return Content.Load<Texture2D>("assets/octaboard/portalOctaQuad");
             }
 
             else //if (type == "Box")
             {
-                if ((pos.X + pos.Y) % 2 == 0)
-                    return Content.Load<Texture2D>("assets/octaboard/boxOcta");
-                else
-                    return Content.Load<Texture2D>("assets/octaboard/boxOctaQuad");
+                return Content.Load<Texture2D>("assets/octaboard/boxOctaQuad");
             }
         }
 

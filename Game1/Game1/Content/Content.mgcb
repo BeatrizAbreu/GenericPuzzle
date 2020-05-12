@@ -121,6 +121,30 @@
 /processorParam:TextureFormat=Color
 /build:assets/octaboard/playerOctaQuad.png
 
+#begin assets/octaboard/portalOcta.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:assets/octaboard/portalOcta.png
+
+#begin assets/octaboard/portalOctaQuad.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:assets/octaboard/portalOctaQuad.png
+
 #begin assets/octaboard/spikeOcta.png
 /importer:TextureImporter
 /processor:TextureProcessor

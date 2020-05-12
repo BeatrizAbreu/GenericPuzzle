@@ -13,6 +13,8 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/collectibleOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/playerOcta.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/playerOctaQuad.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/portalOcta.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/portalOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/spikeOcta.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/spikeOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/toggleOcta.png</File>
@@ -29,6 +31,8 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/toggle.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

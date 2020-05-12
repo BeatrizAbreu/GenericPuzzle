@@ -103,16 +103,42 @@ namespace Game1
             CreatePortals();
         }
 
+        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game)
+        {
+            //set board info params
+            boardInfo = new BoardInfo();
+            boardInfo.width = width;
+            boardInfo.height = height;
+            BoardInfo.nDirections = nDirections;
+
+            this.game = game;
+            nodes = new Node[boardInfo.width, boardInfo.height];
+            this.holesPosition = holesPosition;
+
+            this.obstacles = obstacles;
+            this.winObjects = winObjects;
+            this.enemyObjects = enemyObjects;
+
+            //create the board graph with all the information
+            CreateBoardFromFile();
+        }
+
+        public Node Node(Vector2 pos)
+        {
+            return this[(int)pos.X, (int)pos.Y];
+        }
+
+        //Creates all the needed Portal pairs
         private void CreatePortals()
         {
             for (int i = 0; i < boardInfo.nPortals; i++)
             {
                 Color[] colors = new Color[7] { Color.Blue, Color.Aquamarine, Color.Green, Color.Yellow, Color.Violet, Color.Magenta, Color.Orange };
-                Vector2 pos1 = CreatePortal(Vector2.One); 
+                Vector2 pos1 = CreatePortal(Vector2.One);
                 Vector2 pos2 = CreatePortal(pos1);
 
                 //If we can't place both portals, we don't place any of the pair
-                if(!(i > 0 && pos2 == Vector2.One))
+                if (!(i > 0 && pos2 == Vector2.One))
                 {
                     Portal portal = new Portal(pos1, pos2, colors[portals.Count], game);
                     portals.Add(portal);
@@ -120,6 +146,7 @@ namespace Game1
             }
         }
 
+        //Creates a valid position for a portal pair
         private Vector2 CreatePortal(Vector2 pos)
         {
             for (int y = 1; y < boardInfo.height - 1; y++)
@@ -215,31 +242,7 @@ namespace Game1
             return Vector2.One;
         }
 
-        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game)
-        {
-            //set board info params
-            boardInfo = new BoardInfo();
-            boardInfo.width = width;
-            boardInfo.height = height;
-            BoardInfo.nDirections = nDirections;
-
-            this.game = game;
-            nodes = new Node[boardInfo.width, boardInfo.height];
-            this.holesPosition = holesPosition;
-
-            this.obstacles = obstacles;
-            this.winObjects = winObjects;
-            this.enemyObjects = enemyObjects;
-
-            //create the board graph with all the information
-            CreateBoardFromFile();
-        }
-
-        public Node Node(Vector2 pos)
-        {
-            return this[(int)pos.X, (int)pos.Y];
-        }
-
+        //Creates all enemy objects
         public void CreateEnemyObjects()
         {
             int objCount = 0;
@@ -280,6 +283,7 @@ namespace Game1
                                 spike.position = nodes[x, y].position;
                                 bool error = false;
 
+                                //confirms if the enemy is separated from the other enemies by at least X units
                                 foreach (EnemyObject enemy in enemyObjects)
                                 {
                                     if (Math.Abs(enemy.position.X - spike.position.X) < 2
@@ -290,6 +294,7 @@ namespace Game1
                                     }
                                 }
 
+                                //Place the spike
                                 if(!error)
                                 {
                                     enemyObjects.Add(spike);
@@ -303,6 +308,7 @@ namespace Game1
             }
         }
 
+        //Creates win objects
         public void CreateWinObjects()
         {
             int objCount = 0;
@@ -323,19 +329,21 @@ namespace Game1
                         {
                             if (nodes[x, y].isEmpty)
                             {
-                                bool placeCollectible = true;
+                                bool canPlace = true;
 
                                 foreach (WinObject c in winObjects)
                                 {
-                                    if(c.tag == "Collectible" 
+                                    //if there's already a collectible in that cell, it can't be used again
+                                    if (c.tag == "Collectible"
                                         && (c.position.X == x || c.position.Y == y))
                                     {
-                                        placeCollectible = false;
+                                        canPlace = false;
                                         break;
                                     }
                                 }
 
-                                if(placeCollectible)
+                                //the node cell is empty
+                                if (canPlace)
                                 {
                                     Collectible winObject = new Collectible(game);
                                     winObject.position = nodes[x, y].position;
@@ -346,7 +354,7 @@ namespace Game1
                             }
                         }
                         //while there's still Toggles to place
-                        else if (nodes[x, y] != null && objCount < boardInfo.nBoxes)
+                        else if (objCount < boardInfo.nBoxes)
                         {
                             placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
                             rand = RNG.Next(100);
@@ -364,15 +372,15 @@ namespace Game1
 
                                     foreach (WinObject obj in winObjects)
                                     {
-                                        if(winObject.tag == obj.tag 
-                                            && ((winObject.position.X == obj.position.X && Math.Abs(winObject.position.Y - obj.position.Y) < 3) 
+                                        if (winObject.tag == obj.tag
+                                            && ((winObject.position.X == obj.position.X && Math.Abs(winObject.position.Y - obj.position.Y) < 3)
                                             || (winObject.position.Y == obj.position.Y && Math.Abs(winObject.position.X - obj.position.X) < 3)))
                                         {
                                             canCreate = false;
                                         }
                                     }
 
-                                    if(canCreate)
+                                    if (canCreate)
                                     {
                                         winObjects.Add(winObject);
                                         objCount++;
@@ -381,7 +389,7 @@ namespace Game1
                                 }
 
                                 //if there's a box in an extreme collumn, put a toggle nearby
-                                else if (nodes[x, y].isEmpty && x == obstacle.position.X 
+                                else if (nodes[x, y].isEmpty && x == obstacle.position.X
                                     && (x == boardInfo.width - 1 || (x == 0 && y != 0)) && y != obstacle.position.Y)
                                 {
                                     //create and place the object
