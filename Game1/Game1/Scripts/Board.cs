@@ -160,9 +160,8 @@ namespace Game1
                                         //second portal
                                         if (pos != Vector2.One)
                                         {
-                                            if (pos1 != pos
-                                                /*Math.Abs(pos.X - pos1.X) >= 2
-                                                && Math.Abs(pos.Y - pos1.Y) >= 2*/)
+                                            if (Math.Abs(pos.X - pos1.X) >= 2
+                                                && Math.Abs(pos.Y - pos1.Y) >= 2)
                                                 return pos1;
                                         }
 
@@ -242,10 +241,24 @@ namespace Game1
                                 //create and place the spikes
                                 Spike spike = new Spike(game);
                                 spike.position = nodes[x, y].position;
-                                //nodes[x, y].isEmpty = false;
-                                enemyObjects.Add(spike);
-                                objCount++;
-                                break;
+                                bool error = false;
+
+                                foreach (EnemyObject enemy in enemyObjects)
+                                {
+                                    if (Math.Abs(enemy.position.X - spike.position.X) < 2
+                                        || Math.Abs(enemy.position.Y - spike.position.Y) < 2)
+                                    {
+                                        error = true;
+                                        break;
+                                    }
+                                }
+
+                                if(!error)
+                                {
+                                    enemyObjects.Add(spike);
+                                    objCount++;
+                                    break;
+                                }
                             }
                         }
                     }
