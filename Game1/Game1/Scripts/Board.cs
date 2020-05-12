@@ -104,7 +104,7 @@ namespace Game1
         private void CreatePortals()
         {
             Color[] colors = new Color[7] {Color.Blue, Color.Aquamarine, Color.Green, Color.Yellow, Color.Violet, Color.Magenta, Color.Orange};
-            Vector2 pos1 = CreatePortal(Vector2.One);
+            Vector2 pos1 = CreatePortal(Vector2.One); //FIX ME!!! RETORNAR VETOR2.ONE É MAU
             Vector2 pos2 = CreatePortal(pos1);
 
             Portal portal = new Portal(pos1, pos2, colors[portals.Count], game);
@@ -113,15 +113,13 @@ namespace Game1
 
         private Vector2 CreatePortal(Vector2 pos)
         {
-            for (int y = 0; y < boardInfo.height; y++)
+            for (int y = 1; y < boardInfo.height - 1; y++)
             {
-                for (int x = 0; x < boardInfo.width; x++)
+                for (int x = 1; x < boardInfo.width - 1; x++)
                 {
-                    if (nodes[x, y] != null)
+                    if (nodes[x, y] != null && !(y== 1 && x == 1))
                     {
-                        if (nodes[x, y].isEmpty
-                            && x != 0 && y != 0
-                            && x != boardInfo.width - 1 && y != boardInfo.height - 1)
+                        if (nodes[x, y].isEmpty)
                         {
                             Vector2 pos1 = new Vector2(x, y);
                             bool occupied = false;
@@ -142,17 +140,35 @@ namespace Game1
 
                                 if (!occupied)
                                 {
-                                    //second portal
-                                    if (pos != Vector2.One)
+                                    foreach (Obstacle box in obstacles)
                                     {
-                                        if (Math.Abs(pos.X - pos1.X) >= 3
-                                            && Math.Abs(pos.Y - pos1.Y) >= 3)
-                                            return pos1;
-                                        else
-                                            return Vector2.One;
+                                        if (BoardInfo.nDirections == 4)
+                                        {
+                                            if (box.position.X == x && box.position.Y - 1 == y)
+                                            {
+                                                occupied = true;
+                                            }
+                                        }
+
+                                        else if (box.position.X == x && box.position.Y == y)
+                                            occupied = true;
                                     }
 
-                                    return pos1;
+
+                                    if (!occupied)
+                                    {
+                                        //second portal
+                                        if (pos != Vector2.One)
+                                        {
+                                            if (pos1 != pos
+                                                /*Math.Abs(pos.X - pos1.X) >= 2
+                                                && Math.Abs(pos.Y - pos1.Y) >= 2*/)
+                                                return pos1;
+                                        }
+
+                                        else
+                                            return pos1;
+                                    }
                                 }
                             }
                         }

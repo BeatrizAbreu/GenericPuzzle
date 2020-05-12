@@ -23,10 +23,10 @@ namespace Game1.Scripts
 
         }
 
-        //Player-based trigger function
-        public virtual void Trigger(Player player, Direction dir)
+        //Player and box-based trigger function
+        public virtual Vector2 Trigger(Vector2 position, Vector2 dir, Vector2 pos)
         {
-
+            return Vector2.One;
         }
     }
 }

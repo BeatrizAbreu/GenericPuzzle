@@ -23,9 +23,9 @@ namespace Game1
         static int nBoxes = 3;
         static int nCollectibles = 3;
         static int nEnemies = 2;
-        static int width = 6;
-        static int height = 4;
-        static int nDirections = 4;
+        static int width = 9;
+        static int height = 5;
+        static int nDirections = 6;
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
 
@@ -86,11 +86,11 @@ namespace Game1
             else
             {
                 //Create a game board
-                board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
-                
-                if(nDirections == 4)
+                if (nDirections == 6) //Hexaboard
+                    board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);               
+                else if(nDirections == 4) //Quadboard
                     board = new QuadBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
-                else if(nDirections == 8)
+                else //Octaboard
                     board = new OctaBoard(width, height, nHoles, nBoxes, nEnemies, nCollectibles, nDirections, this);
 
                 //player is placed on the first tile if it isn't a hole
@@ -232,6 +232,14 @@ namespace Game1
                     }
                 }
             }
+
+            //portals
+            foreach (var portal in currentGameState.board.portals)
+            {
+                spriteBatch.Draw(portal.texture1, board.DrawPosition(portal.pos1) * height, portal.color);
+                spriteBatch.Draw(portal.texture2, board.DrawPosition(portal.pos2) * height, portal.color);
+            }
+
 
             //draw the winobjects' sprites
             foreach (WinObject winObject in currentGameState.winObjects)

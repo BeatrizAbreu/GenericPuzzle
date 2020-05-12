@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Game1.Scripts
 {
-    class Box : Obstacle
+    public class Box : Obstacle
     {
         public Box(Board board, Game1 game) : base(board)
         {
@@ -22,6 +22,26 @@ namespace Game1.Scripts
         {
             Node currentNode = board.Node(position);
             Node targetNode = board.Move(currentNode, direction);
+
+            foreach (Portal portal in board.portals)
+            {
+                // portal ahead!
+                if (portal.pos1 == targetNode.position || portal.pos2 == targetNode.position)
+                {
+                    Vector2 dir = targetNode.position - currentNode.position;
+
+                    if (BoardInfo.nDirections == 6)
+                    {
+                        if ((targetNode.position.X % 2 == 0 && currentNode.position.X % 2 != 0)
+                            || (targetNode.position.X % 2 != 0 && currentNode.position.X % 2 == 0))
+                            dir.Y += 1;
+                    }
+
+                    Vector2 pos = portal.Trigger(this.position, dir, targetNode.position);
+                    targetNode = board.nodes[(int)pos.X, (int)pos.Y];
+                    break;
+                }
+            }
 
             if (currentNode.position == targetNode.position) return false;
 
@@ -45,8 +65,6 @@ namespace Game1.Scripts
                             winObject.Deactivate();
                         }
                     }
-
-
                 }
                 return true;
             }

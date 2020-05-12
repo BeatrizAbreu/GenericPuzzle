@@ -25,34 +25,65 @@ namespace Game1.Scripts
             var keys = board.Node(position).neighbors.Keys.Shuffle().ToList();
             // Useful for debug
             // System.Console.WriteLine("Available movements: {0}", String.Join(",", keys.Select((k)=>k.ToString())));
-            
+
             // Bangs the wall until a movement succeeds
-            foreach (var movement in keys) {
+            foreach (var movement in keys)
+            {
                 if (Move(movement)) return true;
             }
             return false;
         }
 
         public bool Move(Direction direction)
-        {                        
+        {
             Node currentNode = board.Node(position);
             Node targetNode = board.Move(currentNode, direction);
+            bool isTeleporting = false;
+            Vector2 teleportPos = new Vector2();
 
-            if (currentNode == targetNode) 
+            if (currentNode == targetNode)
                 return false;
+
+            foreach (Portal portal in board.portals)
+            {
+                // Obstacle ahead!
+                if (portal.pos1 == targetNode.position || portal.pos2 == targetNode.position)
+                {
+                    Vector2 dir = targetNode.position - currentNode.position;
+
+                    if (BoardInfo.nDirections == 6)
+                    {
+                        if ((targetNode.position.X % 2 == 0 && currentNode.position.X % 2 != 0)
+                            || (targetNode.position.X % 2 != 0 && currentNode.position.X % 2 == 0))
+                            dir.Y += 1;
+                    }
+
+                    teleportPos = portal.Trigger(this.position, dir, targetNode.position);
+
+                    if (board.Node(teleportPos) == null)
+                        return false;
+
+                    targetNode = board.Node(teleportPos);
+                    isTeleporting = true;
+                    break;
+                }
+            }
 
             foreach (Obstacle obstacle in board.obstacles)
             {
                 // Obstacle ahead!
                 if (obstacle.position == targetNode.position && !obstacle.Move(direction))
                 {
-                    return false;                        
-                }              
+                    return false;
+                }
             }
-            
+
             // First we move
             nMoves++;
-            position = targetNode.position;
+            if (isTeleporting)
+                position = teleportPos;
+            else
+                position = targetNode.position;
 
             // then we might die
             // find the next node's enemy
@@ -80,7 +111,7 @@ namespace Game1.Scripts
             if (Game1.isOctaboard)
             {
                 //change nDirections if needed
-                if((currentNode.position.X + currentNode.position.Y) % 2 != targetNode.position.X + targetNode.position.Y % 2)
+                if ((currentNode.position.X + currentNode.position.Y) % 2 != targetNode.position.X + targetNode.position.Y % 2)
                 {
                     BoardInfo.nDirections = BoardInfo.nDirections == 8 ? 4 : 8;
                 }

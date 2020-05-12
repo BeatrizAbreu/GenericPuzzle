@@ -14,14 +14,16 @@ namespace Game1.Scripts
         public List<Obstacle>    obstacles     {get; private set;}
         public List<EnemyObject> enemyObjects  {get; private set;}
         public List<WinObject>   winObjects    {get; private set;}
+        public List<Portal> portals { get; private set; }
 
         public GameState(Board board, Player player)
         {
             this.player = player;
             this.board  = board;
-            this.obstacles    = board.obstacles;
-            this.enemyObjects = board.enemyObjects;
-            this.winObjects   = board.winObjects;
+            obstacles   = board.obstacles;
+            enemyObjects= board.enemyObjects;
+            winObjects  = board.winObjects;
+            portals     = board.portals;
         }
 
         public int PlayTest(int plays)

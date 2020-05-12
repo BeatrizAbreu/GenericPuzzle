@@ -10,13 +10,10 @@ namespace Game1.Scripts
 {
     public class Portal : TriggerObject
     {
-        bool isUsed;
         public Color color;
 
         public Portal(Vector2 pos1, Vector2 pos2, Color color, Game1 game)
         {
-            isUsed = false;
-
             this.pos1 = pos1;
             this.pos2 = pos2;
             this.color = color;
@@ -24,25 +21,20 @@ namespace Game1.Scripts
             if (Game1.isOctaboard)
                 texture1 = texture2 = game.Content.Load<Texture2D>("assets/octaboard/portalOcta");
             else
-                texture1 = texture2 = game.Content.Load<Texture2D>("assets/portal");           
+                texture1 = texture2 = game.Content.Load<Texture2D>("assets/portal");
         }
 
         //Trigger function - Player teleport
-        public override void Trigger(Player player, Direction dir)
+        public override Vector2 Trigger(Vector2 position, Vector2 direction, Vector2 pos)
         {
-            isUsed = !isUsed;
-            Vector2 playerPos = player.position;
+            Vector2 endPos = position;
 
-            if (!isUsed)
-                player.position = pos2;
+            if (pos == pos1)
+                endPos = pos2 + direction;
             else
-                player.position = pos1;
+                endPos = pos1 + direction;
 
-            if(!player.Move(dir))
-            {
-                isUsed = !isUsed;
-                player.position = playerPos;
-            }
+            return endPos;
         }
     }
 }
