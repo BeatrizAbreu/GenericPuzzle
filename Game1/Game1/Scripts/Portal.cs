@@ -34,6 +34,10 @@ namespace Game1.Scripts
             else
                 endPos = pos1 + direction;
 
+            //doesn't move diagonally on square nodes
+            if (Game1.isOctaboard && direction.Y != 0 && direction.X != 0 && (endPos.X + endPos.Y) % 2 != 0)
+                return position;
+
             return endPos;
         }
     }

@@ -359,7 +359,6 @@ namespace Game1
                 return Content.Load<Texture2D>("assets/octaboard/spikeOctaQuad");
             }
 
-
             else if (type == "Portal")
             {
                 return Content.Load<Texture2D>("assets/octaboard/portalOctaQuad");
@@ -370,7 +369,6 @@ namespace Game1
                 return Content.Load<Texture2D>("assets/octaboard/boxOctaQuad");
             }
         }
-
 
         public void RestartGame()
         {
