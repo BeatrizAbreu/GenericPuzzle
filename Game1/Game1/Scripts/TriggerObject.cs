@@ -23,7 +23,7 @@ namespace Game1.Scripts
 
         }
 
-        //Player and box-based trigger function
+        //Player/Box-based trigger function through movement
         public virtual Vector2 Trigger(Vector2 position, Vector2 dir, Vector2 pos)
         {
             return Vector2.One;

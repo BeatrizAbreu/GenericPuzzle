@@ -76,6 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\EnemyObject.cs" />
     <Compile Include="Scripts\Spike.cs" />
+    <Compile Include="Scripts\Wall.cs" />
     <Compile Include="Scripts\WinObject.cs" />
   </ItemGroup>
   <ItemGroup>
