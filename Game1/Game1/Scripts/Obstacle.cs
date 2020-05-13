@@ -14,11 +14,6 @@ namespace Game1
             this.board = board;
         }
 
-        public Obstacle(Vector2 position)
-        {
-            this.position = position;
-        }
-
         public virtual bool Move(Direction direction)
         {
             return false;

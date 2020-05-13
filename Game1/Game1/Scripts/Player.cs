@@ -44,9 +44,16 @@ namespace Game1.Scripts
             if (currentNode == targetNode)
                 return false;
 
+            //laser toggle ahead!
+            foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
+            {
+                if (position == laser.Key.position)
+                    laser.Key.Action(laser.Value);
+            }
+
             foreach (Portal portal in board.portals)
             {
-                // Obstacle ahead!
+                // Portal ahead!
                 if (portal.pos1 == targetNode.position || portal.pos2 == targetNode.position)
                 {
                     Vector2 dir = targetNode.position - currentNode.position;
@@ -69,13 +76,19 @@ namespace Game1.Scripts
                 }
             }
 
-            foreach (Obstacle obstacle in board.obstacles)
+            if(!targetNode.isEmpty)
             {
-                // Obstacle ahead!
-                if (obstacle.position == targetNode.position && !obstacle.Move(direction))
+                foreach (Obstacle obstacle in board.obstacles)
                 {
-                    return false;
+                    // Obstacle ahead!
+                    if (obstacle.position == targetNode.position && !obstacle.Move(direction))
+                    {
+                        return false;
+                    }
                 }
+
+                //Wall ahead!
+                return false;
             }
 
             // First we move
