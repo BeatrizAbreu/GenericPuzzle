@@ -18,10 +18,10 @@ namespace Game1.Scripts
             if (Game1.isOctaboard)
             {
                 textures = new Texture2D[4];
-                textures[0] = game.Content.Load<Texture2D>("assets/octaboard/wallOctaOn");
-                textures[1] = game.Content.Load<Texture2D>("assets/octaboard/wallOctaOff");
-                textures[2] = game.Content.Load<Texture2D>("assets/octaboard/wallOctaQuadOn");
-                textures[3] = game.Content.Load<Texture2D>("assets/octaboard/wallOctaQuadOff");
+                textures[0] = game.Content.Load<Texture2D>("assets/octaboard/laserOnOcta");
+                textures[1] = game.Content.Load<Texture2D>("assets/octaboard/laserOffOcta");
+                textures[2] = game.Content.Load<Texture2D>("assets/octaboard/laserOnOctaQuad");
+                textures[3] = game.Content.Load<Texture2D>("assets/octaboard/laserOffOctaQuad");
             }
 
             else

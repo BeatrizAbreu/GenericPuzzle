@@ -44,14 +44,6 @@ namespace Game1.Scripts
             if (currentNode == targetNode)
                 return false;
 
-            //laser toggle ahead!
-            foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
-            {
-                //Trigger the laser's toggle
-                if (targetNode.position == laser.Key.position)
-                    laser.Key.Action(laser.Value);
-            }
-
             foreach (Portal portal in board.portals)
             {
                 // Portal ahead!
@@ -104,6 +96,13 @@ namespace Game1.Scripts
             else
                 position = targetNode.position;
 
+            //laser toggle ahead!
+            foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
+            {
+                //Trigger the laser's toggle
+                if (position == laser.Key.position)
+                    laser.Key.Action(laser.Value);
+            }
 
             // then we might die
             // find the next node's enemy

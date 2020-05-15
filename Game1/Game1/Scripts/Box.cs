@@ -45,6 +45,16 @@ namespace Game1.Scripts
 
             if (currentNode.position == targetNode.position) return false;
 
+            //Can't move through lasers!
+            foreach (var laser in board.lasers)
+            {
+                if(targetNode.position == laser.Value.position)
+                {
+                    targetNode.isEmpty = laser.Key.isTriggered;
+                    break;
+                }
+            }
+
             if (targetNode.isEmpty)
             {
                 targetNode.isEmpty = false;

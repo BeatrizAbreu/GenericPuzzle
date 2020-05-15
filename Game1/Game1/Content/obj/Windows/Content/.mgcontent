@@ -15,6 +15,14 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/boxOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/collectibleOcta.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/collectibleOctaQuad.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/laserOffOcta.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/laserOffOctaQuad.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/laserOnOcta.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/laserOnOctaQuad.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/lasertoggleOffOcta.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/lasertoggleOffOctaQuad.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/lasertoggleOnOcta.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/lasertoggleOnOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/playerOcta.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/playerOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/portalOcta.png</File>
@@ -23,10 +31,7 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/spikeOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/toggleOcta.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/toggleOctaQuad.png</File>
-    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octanode.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octanode2.png</File>
-    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaquadnode.png</File>
-    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaquadnode2.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaquadnode3.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/player.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/portal.png</File>
@@ -35,6 +40,11 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/toggle.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

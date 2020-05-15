@@ -21,13 +21,13 @@ namespace Game1
         //Board making information
         static int nHoles = 0;
         static int nBoxes = 3;
-        static int nCollectibles = 0;
-        static int nPortals = 0;
-        static int nLasers = 9;
+        static int nCollectibles = 4;
+        static int nPortals = 1;
+        static int nLasers = 3;
         static int nEnemies = 2;
         static int width = 9;
         static int height = 5;
-        static int nDirections = 6;
+        static int nDirections = 4;
 
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
@@ -69,7 +69,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(1);
+            new RNG(2);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
@@ -265,31 +265,29 @@ namespace Game1
                     /*FIX ME: ADICIONAR CORES DIFERENTES COMO FIZ PARA OS PORTAIS*/
                 }
 
-                /*FIX ME: OCTABOARD SPRITES*/
                 else
                 {
                     //toggle on & laser off
                     if (laser.Key.isTriggered)
                     {
                         spriteBatch.Draw(AssignOctaTetxure(laser.Key.texture, "LaserToggleOn", laser.Key.position),
-                            board.DrawPosition(laser.Key.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                            board.DrawPosition(laser.Key.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), laser.Value.color);
 
                         spriteBatch.Draw(AssignOctaTetxure(laser.Value.texture, "LaserOff", laser.Value.position),
-                            board.DrawPosition(laser.Value.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                            board.DrawPosition(laser.Value.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), laser.Value.color);
                     }
 
                     //toggle off & laser on
                     else
                     {
                         spriteBatch.Draw(AssignOctaTetxure(laser.Key.texture, "LaserToggleOff", laser.Key.position),
-                            board.DrawPosition(laser.Key.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                            board.DrawPosition(laser.Key.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), laser.Value.color);
 
                         spriteBatch.Draw(AssignOctaTetxure(laser.Value.texture, "LaserOn", laser.Value.position),
-                            board.DrawPosition(laser.Value.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                            board.DrawPosition(laser.Value.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), laser.Value.color);
                     }
                 }
             }
-
 
             //draw the winobjects' sprites
             foreach (WinObject winObject in currentGameState.winObjects)

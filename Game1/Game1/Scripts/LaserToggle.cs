@@ -16,8 +16,8 @@ namespace Game1.Scripts
             if (Game1.isOctaboard)
             {
                 textures = new Texture2D[2];
-                textures[0] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOctaOff");
-                textures[1] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOctaOn");
+                textures[0] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOffOcta");
+                textures[1] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOnOcta");
             }
 
             else
