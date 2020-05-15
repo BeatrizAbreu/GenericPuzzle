@@ -9,22 +9,20 @@ namespace Game1.Scripts
 {
     public class LaserToggle : WinObject
     {
-        private Texture2D[] textures;
+        public Texture2D[] textures;
 
         public LaserToggle(Game1 game)
         {
             if (Game1.isOctaboard)
             {
-                textures = new Texture2D[4];
+                textures = new Texture2D[2];
                 textures[0] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOctaOff");
                 textures[1] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOctaOn");
-                textures[2] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOctaQuadOff");
-                textures[3] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOctaQuadOn");
             }
 
             else
             {
-                textures = new Texture2D[4];
+                textures = new Texture2D[2];
                 textures[0] = game.Content.Load<Texture2D>("assets/lasertoggleOff");
                 textures[1] = game.Content.Load<Texture2D>("assets/lasertoggleOn");
             }
@@ -39,12 +37,7 @@ namespace Game1.Scripts
                 isTriggered = !isTriggered;
                 wall.board.Node(wall.position).isEmpty = isTriggered;
 
-                int index = 0;
-
-                if (Game1.isOctaboard)
-                    index += 2;
-
-                index += isTriggered ? 1 : 0;
+                int index = isTriggered ? 1 : 0;
 
                 wall.texture = wall.textures[index];
                 texture = textures[index];

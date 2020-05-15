@@ -11,6 +11,7 @@ namespace Game1.Scripts
     public class Wall : Obstacle
     {
         public Texture2D[] textures;
+        public Color color;
 
         public Wall(Board board, Game1 game) : base(board)
         {

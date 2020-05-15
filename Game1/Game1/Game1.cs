@@ -19,14 +19,14 @@ namespace Game1
         private Texture2D playerTex;
 
         //Board making information
-        static int nHoles = 2;
+        static int nHoles = 0;
         static int nBoxes = 3;
         static int nCollectibles = 0;
         static int nPortals = 0;
-        static int nLasers = 1;
+        static int nLasers = 9;
         static int nEnemies = 2;
-        static int width = 6;
-        static int height = 4;
+        static int width = 9;
+        static int height = 5;
         static int nDirections = 6;
 
         Vector2[] baseObstaclePos;
@@ -258,9 +258,9 @@ namespace Game1
                 if (!isOctaboard)
                 {
                     //toggle
-                    spriteBatch.Draw(laser.Key.texture, board.DrawPosition(laser.Key.position) * height, Color.White);
+                    spriteBatch.Draw(laser.Key.texture, board.DrawPosition(laser.Key.position) * height, laser.Value.color);
                     //laser
-                    spriteBatch.Draw(laser.Value.texture, board.DrawPosition(laser.Value.position) * height, Color.White);
+                    spriteBatch.Draw(laser.Value.texture, board.DrawPosition(laser.Value.position) * height, laser.Value.color);
 
                     /*FIX ME: ADICIONAR CORES DIFERENTES COMO FIZ PARA OS PORTAIS*/
                 }
@@ -449,6 +449,15 @@ namespace Game1
             }
 
             currentGameState.board = RestartBoard(currentGameState.board);
+
+            //reseting lasers' state
+            foreach (var laser in currentGameState.board.lasers)
+            {
+                laser.Key.isTriggered = false;
+                laser.Key.texture = laser.Key.textures[0];
+                laser.Value.texture = laser.Value.textures[0];
+                currentGameState.board.Node(laser.Value.position).isEmpty = false;
+            }
         }
 
         //Set the node states to the starter states

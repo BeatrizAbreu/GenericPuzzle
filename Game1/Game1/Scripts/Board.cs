@@ -111,13 +111,40 @@ namespace Game1
                 CreateLasers();
         }
 
+        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game)
+        {
+            //set board info params
+            boardInfo = new BoardInfo();
+            boardInfo.width = width;
+            boardInfo.height = height;
+            BoardInfo.nDirections = nDirections;
+
+            this.game = game;
+            nodes = new Node[boardInfo.width, boardInfo.height];
+            this.holesPosition = holesPosition;
+
+            this.obstacles = obstacles;
+            this.winObjects = winObjects;
+            this.enemyObjects = enemyObjects;
+
+            //create the board graph with all the information
+            CreateBoardFromFile();
+        }
+
+        public Node Node(Vector2 pos)
+        {
+            return this[(int)pos.X, (int)pos.Y];
+        }
+
         //Create Laser + Toggle pairs
         private void CreateLasers()
         {
+            Wall laser;
+            Color[] colors = new Color[11] { Color.Plum, Color.Gold, Color.LightGreen, Color.Tomato, Color.Orange, Color.Orchid,
+                                            Color.PaleTurquoise, Color.Purple, Color.RoyalBlue, Color.SkyBlue, Color.YellowGreen};
             int laserCount = 0;
             bool hasToggle = false;
 
-            Wall laser;
             LaserToggle toggle = new LaserToggle(game);
 
             for (int y = 1; y < boardInfo.height - 1; y++)
@@ -187,15 +214,22 @@ namespace Game1
                                                     toggle.position = new Vector2(x, y);
                                                     hasToggle = true;
                                                 }
-                                                else /*if(Math.Abs(toggle.position.X - x) > 1 || Math.Abs(toggle.position.Y - y) > 1)*/
+                                                else 
                                                 {
+                                                    LaserToggle toggleCopy = new LaserToggle(game);
+                                                    toggleCopy.position = toggle.position;
+
                                                     //Create laser
                                                     laser = new Wall(this, game);
-                                                    laser.position = new Vector2(x, y);
+                                                    laser.position = new Vector2(x,y);
+                                                    laser.color = colors[lasers.Count];
                                                     this.Node(laser.position).isEmpty = false;
 
                                                     //Create Laser-Toggle pair
-                                                    lasers.Add(toggle, laser);
+                                                    lasers.Add(toggleCopy, laser);
+                                                    laserCount++;
+
+                                                    hasToggle = false;
                                                 }
                                             }
                                         }
@@ -211,31 +245,6 @@ namespace Game1
                 else
                     break;
             }
-        }
-
-        public Board(int width, int height, Vector2[] holesPosition, List<Obstacle> obstacles, List<EnemyObject> enemyObjects, List<WinObject> winObjects, int nDirections, Game1 game)
-        {
-            //set board info params
-            boardInfo = new BoardInfo();
-            boardInfo.width = width;
-            boardInfo.height = height;
-            BoardInfo.nDirections = nDirections;
-
-            this.game = game;
-            nodes = new Node[boardInfo.width, boardInfo.height];
-            this.holesPosition = holesPosition;
-
-            this.obstacles = obstacles;
-            this.winObjects = winObjects;
-            this.enemyObjects = enemyObjects;
-
-            //create the board graph with all the information
-            CreateBoardFromFile();
-        }
-
-        public Node Node(Vector2 pos)
-        {
-            return this[(int)pos.X, (int)pos.Y];
         }
 
         //Creates all the needed Portal pairs
