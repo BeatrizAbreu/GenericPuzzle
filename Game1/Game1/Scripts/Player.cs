@@ -47,11 +47,7 @@ namespace Game1.Scripts
             //laser toggle ahead!
             foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
             {
-                //Can't walk through lasers
-              //  if (targetNode.position == laser.Value.position)
-                //    return false;
-
-                //Trigger laser toggle
+                //Trigger the laser's toggle
                 if (targetNode.position == laser.Key.position)
                     laser.Key.Action(laser.Value);
             }

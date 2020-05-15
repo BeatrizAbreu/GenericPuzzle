@@ -266,10 +266,28 @@ namespace Game1
                 }
 
                 /*FIX ME: OCTABOARD SPRITES*/
-               // else
-                //{
-                  //  spriteBatch.Draw(AssignOctaTetxure(portal.texture1, "Laser", portal.pos1), board.DrawPosition(portal.pos1) * (height / 2 + OctaBoard.quadTexture.Height / 2), portal.color);                
-               // }
+                else
+                {
+                    //toggle on & laser off
+                    if (laser.Key.isTriggered)
+                    {
+                        spriteBatch.Draw(AssignOctaTetxure(laser.Key.texture, "LaserToggleOn", laser.Key.position),
+                            board.DrawPosition(laser.Key.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+
+                        spriteBatch.Draw(AssignOctaTetxure(laser.Value.texture, "LaserOff", laser.Value.position),
+                            board.DrawPosition(laser.Value.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                    }
+
+                    //toggle off & laser on
+                    else
+                    {
+                        spriteBatch.Draw(AssignOctaTetxure(laser.Key.texture, "LaserToggleOff", laser.Key.position),
+                            board.DrawPosition(laser.Key.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+
+                        spriteBatch.Draw(AssignOctaTetxure(laser.Value.texture, "LaserOn", laser.Value.position),
+                            board.DrawPosition(laser.Value.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                    }
+                }
             }
 
 
@@ -384,6 +402,26 @@ namespace Game1
             else if (type == "Portal")
             {
                 return Content.Load<Texture2D>("assets/octaboard/portalOctaQuad");
+            }
+
+            else if (type == "LaserOn")
+            {
+                return Content.Load<Texture2D>("assets/octaboard/laserOnOctaQuad");
+            }
+
+            else if (type == "LaserOff")
+            {
+                return Content.Load<Texture2D>("assets/octaboard/laserOffOctaQuad");
+            }
+
+            else if (type == "LaserToggleOn")
+            {
+                return Content.Load<Texture2D>("assets/octaboard/lasertoggleOnOctaQuad");
+            }
+
+            else if (type == "LaserToggleOff")
+            {
+                return Content.Load<Texture2D>("assets/octaboard/lasertoggleOffOctaQuad");
             }
 
             else //if (type == "Box")
