@@ -47,7 +47,12 @@ namespace Game1.Scripts
             //laser toggle ahead!
             foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
             {
-                if (position == laser.Key.position)
+                //Can't walk through lasers
+              //  if (targetNode.position == laser.Value.position)
+                //    return false;
+
+                //Trigger laser toggle
+                if (targetNode.position == laser.Key.position)
                     laser.Key.Action(laser.Value);
             }
 
@@ -78,17 +83,22 @@ namespace Game1.Scripts
 
             if(!targetNode.isEmpty)
             {
+                bool hasWall = true;
+
                 foreach (Obstacle obstacle in board.obstacles)
                 {
                     // Obstacle ahead!
-                    if (obstacle.position == targetNode.position && !obstacle.Move(direction))
+                    if (obstacle.position == targetNode.position)
                     {
+                        if(!obstacle.Move(direction))
                         return false;
+
+                        hasWall = false;
                     }
                 }
 
-                //Wall ahead!
-                return false;
+                if (hasWall)
+                    return false;
             }
 
             // First we move
@@ -97,6 +107,7 @@ namespace Game1.Scripts
                 position = teleportPos;
             else
                 position = targetNode.position;
+
 
             // then we might die
             // find the next node's enemy

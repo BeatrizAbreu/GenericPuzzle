@@ -10,7 +10,7 @@ namespace Game1.Scripts
 {
     public class Wall : Obstacle
     {
-        private Texture2D[] textures;
+        public Texture2D[] textures;
 
         public Wall(Board board, Game1 game) : base(board)
         {
@@ -26,8 +26,8 @@ namespace Game1.Scripts
             else
             {
                 textures = new Texture2D[4];
-                textures[0] = game.Content.Load<Texture2D>("assets/octaboard/wallOn");
-                textures[1] = game.Content.Load<Texture2D>("assets/octaboard/wallOff");
+                textures[0] = game.Content.Load<Texture2D>("assets/laserOn");
+                textures[1] = game.Content.Load<Texture2D>("assets/laserOff");
             }
 
             texture = textures[0];

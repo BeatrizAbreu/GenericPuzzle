@@ -21,12 +21,13 @@ namespace Game1
         //Board making information
         static int nHoles = 2;
         static int nBoxes = 3;
-        static int nCollectibles = 3;
-        static int nPortals = 1;
+        static int nCollectibles = 0;
+        static int nPortals = 0;
+        static int nLasers = 1;
         static int nEnemies = 2;
         static int width = 6;
         static int height = 4;
-        static int nDirections = 8;
+        static int nDirections = 6;
 
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
@@ -89,11 +90,11 @@ namespace Game1
             {
                 //Create a game board
                 if (nDirections == 6) //Hexaboard
-                    board = new HexaBoard(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, this);               
+                    board = new HexaBoard(width, height, nHoles, nBoxes, nCollectibles, nEnemies, nPortals, nLasers, nDirections, this);               
                 else if(nDirections == 4) //Quadboard
-                    board = new QuadBoard(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, this);
+                    board = new QuadBoard(width, height, nHoles, nBoxes, nCollectibles, nEnemies, nPortals, nLasers, nDirections, this);
                 else //Octaboard
-                    board = new OctaBoard(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, this);
+                    board = new OctaBoard(width, height, nHoles, nBoxes, nCollectibles, nEnemies, nPortals, nLasers, nDirections, this);
 
                 //player is placed on the first tile if it isn't a hole
                 if (board[0, 0] != null)
@@ -248,6 +249,27 @@ namespace Game1
                     spriteBatch.Draw(AssignOctaTetxure(portal.texture1, "Portal", portal.pos1), board.DrawPosition(portal.pos1) * (height / 2 + OctaBoard.quadTexture.Height / 2), portal.color);
                     spriteBatch.Draw(AssignOctaTetxure(portal.texture1, "Portal", portal.pos2), board.DrawPosition(portal.pos2) * (height / 2 + OctaBoard.quadTexture.Height / 2), portal.color);                   
                 }
+            }
+
+
+            //draw the lasers' sprites
+            foreach (var laser in currentGameState.board.lasers)
+            {
+                if (!isOctaboard)
+                {
+                    //toggle
+                    spriteBatch.Draw(laser.Key.texture, board.DrawPosition(laser.Key.position) * height, Color.White);
+                    //laser
+                    spriteBatch.Draw(laser.Value.texture, board.DrawPosition(laser.Value.position) * height, Color.White);
+
+                    /*FIX ME: ADICIONAR CORES DIFERENTES COMO FIZ PARA OS PORTAIS*/
+                }
+
+                /*FIX ME: OCTABOARD SPRITES*/
+               // else
+                //{
+                  //  spriteBatch.Draw(AssignOctaTetxure(portal.texture1, "Laser", portal.pos1), board.DrawPosition(portal.pos1) * (height / 2 + OctaBoard.quadTexture.Height / 2), portal.color);                
+               // }
             }
 
 
@@ -482,7 +504,7 @@ namespace Game1
                 }
             }
 
-            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nPortals, nCollectibles, nDirections, this);
+            Board tempBoard = new HexaBoard(width, height, holesCount, boxCount, enemyCount, nPortals, nLasers, nCollectibles, nDirections, this);
             Vector2[] holesPosition = new Vector2[holesCount];
             holesCount = 0;
 

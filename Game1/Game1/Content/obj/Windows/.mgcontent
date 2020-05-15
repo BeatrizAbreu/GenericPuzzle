@@ -7,6 +7,10 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/box.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/collectible.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/hexanode.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/laserOff.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/laserOn.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/lasertoggleOff.png</File>
+    <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/lasertoggleOn.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/boxOcta.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/boxOctaQuad.png</File>
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/octaboard/collectibleOcta.png</File>
@@ -31,6 +35,10 @@
     <File>C:/Users/beatr/OneDrive/Documentos/GitHub/GenericPuzzle/Game1/Game1/Content/assets/toggle.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

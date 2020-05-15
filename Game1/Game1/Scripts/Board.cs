@@ -76,7 +76,7 @@ namespace Game1
 
         private Vector2[] holesPosition;
 
-        public Board(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nPortals, int nDirections, Game1 game)
+        public Board(int width, int height, int nHoles, int nBoxes, int nCollectibles, int nEnemies, int nPortals, int nLasers, int nDirections, Game1 game)
         {
             //set board info params
             boardInfo = new BoardInfo();
@@ -88,6 +88,7 @@ namespace Game1
             BoardInfo.nDirections = nDirections;
             boardInfo.nCollectibles = nCollectibles;
             boardInfo.nPortals = nPortals;
+            boardInfo.nLasers = nLasers;
 
             this.game = game;
             nodes = new Node[boardInfo.width, boardInfo.height];
@@ -96,14 +97,18 @@ namespace Game1
             winObjects = new List<WinObject>();
             enemyObjects = new List<EnemyObject>();
             portals = new List<Portal>();
+            lasers = new Dictionary<LaserToggle, Wall>();
 
             //create the board graph with all the information
             CreateBoard();
             CreateObstacles();
             CreateWinObjects();
-            CreateEnemyObjects();
-            CreatePortals();
-            CreateLasers();
+            if (nEnemies > 0)
+                CreateEnemyObjects();
+            if (nPortals > 0)
+                CreatePortals();
+            if (nLasers > 0)
+                CreateLasers();
         }
 
         //Create Laser + Toggle pairs
@@ -117,38 +122,27 @@ namespace Game1
 
             for (int y = 1; y < boardInfo.height - 1; y++)
             {
-                for (int x = 1; x < boardInfo.width - 1; x++)
+                if (laserCount < boardInfo.nLasers)
                 {
-                    if (laserCount < boardInfo.nLasers)
+                    for (int x = 1; x < boardInfo.width - 1; x++)
                     {
-                        //If the node is not a hole and not the first cell
-                        if (nodes[x, y] != null && !(y == 1 && x == 1))
+                        if (laserCount < boardInfo.nLasers)
                         {
-                            //If the node is empty
-                            if (nodes[x, y].isEmpty)
+                            //If the node is not a hole and not the first cell
+                            if (nodes[x, y] != null && !(y == 1 && x == 1))
                             {
-                                //Create a vector
-                                Vector2 pos1 = new Vector2(x, y);
-                                bool occupied = false;
-
-                                //Check all the enemies
-                                foreach (EnemyObject enemy in enemyObjects)
+                                //If the node is empty
+                                if (nodes[x, y].isEmpty)
                                 {
-                                    //this node is already taken!
-                                    if (enemy.position == pos1)
-                                    {
-                                        occupied = true;
-                                        break;
-                                    }
-                                }
+                                    //Create a vector
+                                    Vector2 pos1 = new Vector2(x, y);
+                                    bool occupied = false;
 
-                                if (!occupied)
-                                {
-                                    //Check all the win objects
-                                    foreach (WinObject winObj in winObjects)
+                                    //Check all the enemies
+                                    foreach (EnemyObject enemy in enemyObjects)
                                     {
                                         //this node is already taken!
-                                        if (winObj.position == pos1)
+                                        if (enemy.position == pos1)
                                         {
                                             occupied = true;
                                             break;
@@ -157,48 +151,65 @@ namespace Game1
 
                                     if (!occupied)
                                     {
-                                        if (portals.Count > 0)
+                                        //Check all the win objects
+                                        foreach (WinObject winObj in winObjects)
                                         {
-                                            //Check all the previously created portals
-                                            foreach (Portal port in portals)
+                                            //this node is already taken!
+                                            if (winObj.position == pos1)
                                             {
-                                                //this node can't be taken - it's too close to another portal!
-                                                if ((Math.Abs(port.pos1.X - pos1.X) < 2 && Math.Abs(port.pos1.Y - pos1.Y) < 2)
-                                                    || (Math.Abs(port.pos2.X - pos1.X) < 2 && Math.Abs(port.pos2.Y - pos1.Y) < 2))
-                                                {
-                                                    occupied = true;
-                                                    break;
-                                                }
+                                                occupied = true;
+                                                break;
                                             }
                                         }
 
                                         if (!occupied)
                                         {
-                                            if(!hasToggle)
+                                            if (portals.Count > 0)
                                             {
-                                                //Create toggle
-                                                toggle.position = new Vector2(x, y);
-                                                hasToggle = true;
+                                                //Check all the previously created portals
+                                                foreach (Portal port in portals)
+                                                {
+                                                    //this node can't be taken - it's too close to another portal!
+                                                    if ((Math.Abs(port.pos1.X - pos1.X) < 2 && Math.Abs(port.pos1.Y - pos1.Y) < 2)
+                                                        || (Math.Abs(port.pos2.X - pos1.X) < 2 && Math.Abs(port.pos2.Y - pos1.Y) < 2))
+                                                    {
+                                                        occupied = true;
+                                                        break;
+                                                    }
+                                                }
                                             }
-                                            else
-                                            {
-                                                //Create laser
-                                                laser = new Wall(this,game);
-                                                laser.position = new Vector2(x, y);
 
-                                                //Create Laser-Toggle pair
-                                                lasers.Add(toggle, laser);
+                                            if (!occupied)
+                                            {
+                                                if (!hasToggle)
+                                                {
+                                                    //Create toggle
+                                                    toggle.position = new Vector2(x, y);
+                                                    hasToggle = true;
+                                                }
+                                                else /*if(Math.Abs(toggle.position.X - x) > 1 || Math.Abs(toggle.position.Y - y) > 1)*/
+                                                {
+                                                    //Create laser
+                                                    laser = new Wall(this, game);
+                                                    laser.position = new Vector2(x, y);
+                                                    this.Node(laser.position).isEmpty = false;
+
+                                                    //Create Laser-Toggle pair
+                                                    lasers.Add(toggle, laser);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    else
-                        break;
+                        else
+                            break;
+                    }
                 }
+                else
+                    break;
             }
         }
 
@@ -230,11 +241,13 @@ namespace Game1
         //Creates all the needed Portal pairs
         private void CreatePortals()
         {
+            Color[] colors = new Color[7] { Color.Blue, Color.Aquamarine, Color.Green, Color.Yellow, Color.Violet, Color.Magenta, Color.Orange };
+            Vector2 pos1, pos2;
+
             for (int i = 0; i < boardInfo.nPortals; i++)
             {
-                Color[] colors = new Color[7] { Color.Blue, Color.Aquamarine, Color.Green, Color.Yellow, Color.Violet, Color.Magenta, Color.Orange };
-                Vector2 pos1 = CreatePortal(Vector2.One);
-                Vector2 pos2 = CreatePortal(pos1);
+                pos1 = CreatePortal(Vector2.One);
+                pos2 = CreatePortal(pos1);
 
                 //If we can't place both portals, we don't place any of the pair
                 if (!(i > 0 && pos2 == Vector2.One))
@@ -248,80 +261,98 @@ namespace Game1
         //Creates a valid position for a portal pair
         private Vector2 CreatePortal(Vector2 pos)
         {
+            int portalsCount = 0;
+
             for (int y = 1; y < boardInfo.height - 1; y++)
             {
-                for (int x = 1; x < boardInfo.width - 1; x++)
+                if (portalsCount / 2 < boardInfo.nPortals)
                 {
-                    //If the node is not a hole and not the first cell
-                    if (nodes[x, y] != null && !(y == 1 && x == 1))
+                    for (int x = 1; x < boardInfo.width - 1; x++)
                     {
-                        //If the node is empty
-                        if (nodes[x, y].isEmpty)
+                        if (portalsCount / 2 < boardInfo.nPortals)
                         {
-                            //Create a vector
-                            Vector2 pos1 = new Vector2(x, y);
-                            bool occupied = false;
-
-                            //Check all the enemies
-                            foreach (EnemyObject enemy in enemyObjects)
+                            //If the node is not a hole and not the first cell
+                            if (nodes[x, y] != null && !(y == 1 && x == 1))
                             {
-                                //this node is already taken!
-                                if (enemy.position == pos1)
+                                //If the node is empty
+                                if (nodes[x, y].isEmpty)
                                 {
-                                    occupied = true;
-                                    break;
-                                }
-                            }
+                                    //Create a vector
+                                    Vector2 pos1 = new Vector2(x, y);
+                                    bool occupied = false;
 
-                            if (!occupied)
-                            {
-                                //Check all the win objects
-                                foreach (WinObject winObj in winObjects)
-                                {
-                                    //this node is already taken!
-                                    if (winObj.position == pos1)
+                                    //Check all the enemies
+                                    foreach (EnemyObject enemy in enemyObjects)
                                     {
-                                        occupied = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!occupied)
-                                {
-                                    if (portals.Count > 0)
-                                    {
-                                        //Check all the previously created portals
-                                        foreach (Portal port in portals)
+                                        //this node is already taken!
+                                        if (enemy.position == pos1)
                                         {
-                                            //this node can't be taken - it's too close to another portal!
-                                            if ((Math.Abs(port.pos1.X - pos1.X) < 2 && Math.Abs(port.pos1.Y - pos1.Y) < 2)
-                                                || (Math.Abs(port.pos2.X - pos1.X) < 2 && Math.Abs(port.pos2.Y - pos1.Y) < 2))
-                                            {
-                                                occupied = true;
-                                                break;
-                                            }
+                                            occupied = true;
+                                            break;
                                         }
                                     }
 
                                     if (!occupied)
                                     {
-                                        //If this is the second portal
-                                        if (pos != Vector2.One)
+                                        //Check all the win objects
+                                        foreach (WinObject winObj in winObjects)
                                         {
-                                            //this node can be taken - it's not too close to another portal!
-                                            if (Math.Abs(pos.X - pos1.X) >= 3
-                                                || Math.Abs(pos.Y - pos1.Y) >= 3)
-                                                return pos1;
+                                            //this node is already taken!
+                                            if (winObj.position == pos1)
+                                            {
+                                                occupied = true;
+                                                break;
+                                            }
                                         }
 
-                                        else
-                                            return pos1;
+                                        if (!occupied)
+                                        {
+                                            if (portals.Count > 0)
+                                            {
+                                                //Check all the previously created portals
+                                                foreach (Portal port in portals)
+                                                {
+                                                    //this node can't be taken - it's too close to another portal!
+                                                    if ((Math.Abs(port.pos1.X - pos1.X) < 2 && Math.Abs(port.pos1.Y - pos1.Y) < 2)
+                                                        || (Math.Abs(port.pos2.X - pos1.X) < 2 && Math.Abs(port.pos2.Y - pos1.Y) < 2))
+                                                    {
+                                                        occupied = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            if (!occupied)
+                                            {
+                                                //If this is the second portal
+                                                if (pos != Vector2.One)
+                                                {
+                                                    //this node can be taken - it's not too close to another portal!
+                                                    if (Math.Abs(pos.X - pos1.X) >= 3
+                                                        || Math.Abs(pos.Y - pos1.Y) >= 3)
+                                                    {
+                                                        portalsCount++;
+                                                        return pos1;
+                                                    }
+                                                }
+
+                                                else
+                                                {
+                                                    portalsCount++;
+                                                    return pos1;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+                        else
+                            break;
                     }
                 }
+                else
+                    break;
             }
 
             return Vector2.One;
@@ -335,61 +366,70 @@ namespace Game1
 
             for (int y = 0; y < boardInfo.height; y++)
             {
-                for (int x = 0; x < boardInfo.width; x++)
+                if (objCount < boardInfo.nEnemies)
                 {
-                    if (nodes[x, y] != null
-                        && objCount < boardInfo.nEnemies)
+                    for (int x = 0; x < boardInfo.width; x++)
                     {
-                        placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
-                        rand = RNG.Next(100);
-
-                        int winObjCount = 0;
-
-                        foreach (WinObject winObj in winObjects)
+                        if (objCount < boardInfo.nEnemies)
                         {
-                            //if the node is taken by a winObject, jump to the next node
-                            if (nodes[x, y].position == winObj.position)
+                            if (nodes[x, y] != null)
                             {
-                                break;
-                            }
+                                placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
+                                rand = RNG.Next(100);
 
-                            winObjCount++;
+                                int winObjCount = 0;
 
-                            //if the node is empty and is not the first, second or third position
-                            if (winObjCount == winObjects.Count
-                                && nodes[x, y].isEmpty
-                                && rand > placementChance
-                                && (x != 0 || y != 0)
-                                && !(x == 1 || y == 0)
-                                && !(x == 1 || y == 1))
-                            {
-                                //create and place the spikes
-                                Spike spike = new Spike(game);
-                                spike.position = nodes[x, y].position;
-                                bool error = false;
-
-                                //confirms if the enemy is separated from the other enemies by at least X units
-                                foreach (EnemyObject enemy in enemyObjects)
+                                foreach (WinObject winObj in winObjects)
                                 {
-                                    if (Math.Abs(enemy.position.X - spike.position.X) < 2
-                                        || Math.Abs(enemy.position.Y - spike.position.Y) < 2)
+                                    //if the node is taken by a winObject, jump to the next node
+                                    if (nodes[x, y].position == winObj.position)
                                     {
-                                        error = true;
                                         break;
                                     }
-                                }
 
-                                //Place the spike
-                                if(!error)
-                                {
-                                    enemyObjects.Add(spike);
-                                    objCount++;
-                                    break;
+                                    winObjCount++;
+
+                                    //if the node is empty and is not the first, second or third position
+                                    if (winObjCount == winObjects.Count
+                                        && nodes[x, y].isEmpty
+                                        && rand > placementChance
+                                        && (x != 0 || y != 0)
+                                        && !(x == 1 || y == 0)
+                                        && !(x == 1 || y == 1))
+                                    {
+                                        //create and place the spikes
+                                        Spike spike = new Spike(game);
+                                        spike.position = nodes[x, y].position;
+                                        bool error = false;
+
+                                        //confirms if the enemy is separated from the other enemies by at least X units
+                                        foreach (EnemyObject enemy in enemyObjects)
+                                        {
+                                            if (Math.Abs(enemy.position.X - spike.position.X) < 2
+                                                || Math.Abs(enemy.position.Y - spike.position.Y) < 2)
+                                            {
+                                                error = true;
+                                                break;
+                                            }
+                                        }
+
+                                        //Place the spike
+                                        if (!error)
+                                        {
+                                            enemyObjects.Add(spike);
+                                            objCount++;
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
+                        else
+                            break;
                     }
                 }
+                else
+                    break;
             }
         }
 
@@ -403,11 +443,19 @@ namespace Game1
             //go through the nodes
             for (int y = 0; y < boardInfo.height; y++)
             {
+                if (CollectibleCount == boardInfo.nCollectibles
+                    && objCount == boardInfo.nBoxes)
+                    break;
+
                 for (int x = 0; x < boardInfo.width; x++)
                 {
                     rand = RNG.Next(100);
 
-                    if (nodes[x, y] != null && !(x == 0 && y == 0))
+                    if (CollectibleCount == boardInfo.nCollectibles
+                        && objCount == boardInfo.nBoxes)
+                        break;
+
+                        if (nodes[x, y] != null && !(x == 0 && y == 0))
                     {
                         //place Collectible
                         if (CollectibleCount < boardInfo.nCollectibles && rand > 50)
@@ -512,10 +560,15 @@ namespace Game1
 
             for (int y = 0; y < boardInfo.height; y++)
             {
+                if (boxCount == boardInfo.nBoxes)
+                    break;
+
                 for (int x = 0; x < boardInfo.width; x++)
                 {
-                    if (nodes[x, y] != null
-                        && boxCount < boardInfo.nBoxes)
+                    if (boxCount == boardInfo.nBoxes)
+                        break;
+
+                    if (nodes[x, y] != null)
                     {
                         placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nBoxes);
                         rand = RNG.Next(100);

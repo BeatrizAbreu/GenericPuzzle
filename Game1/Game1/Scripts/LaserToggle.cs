@@ -25,8 +25,8 @@ namespace Game1.Scripts
             else
             {
                 textures = new Texture2D[4];
-                textures[0] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOff");
-                textures[1] = game.Content.Load<Texture2D>("assets/octaboard/lasertoggleOn");
+                textures[0] = game.Content.Load<Texture2D>("assets/lasertoggleOff");
+                textures[1] = game.Content.Load<Texture2D>("assets/lasertoggleOn");
             }
 
             texture = textures[0];
@@ -38,6 +38,16 @@ namespace Game1.Scripts
             {
                 isTriggered = !isTriggered;
                 wall.board.Node(wall.position).isEmpty = isTriggered;
+
+                int index = 0;
+
+                if (Game1.isOctaboard)
+                    index += 2;
+
+                index += isTriggered ? 1 : 0;
+
+                wall.texture = wall.textures[index];
+                texture = textures[index];
             }
         }
     }

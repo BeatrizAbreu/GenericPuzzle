@@ -10,7 +10,7 @@ namespace Game1.Scripts
 {
     class QuadBoard : Board
     {
-        public QuadBoard(int width, int height, int nHoles, int nBoxes, int nEnemies, int nCollectibles, int nPortals, int nDirections, Game1 game) : base(width, height, nHoles, nBoxes, nEnemies, nPortals, nCollectibles, nDirections, game)
+        public QuadBoard(int width, int height, int nHoles, int nBoxes, int nCollectibles, int nEnemies, int nPortals, int nLasers, int nDirections, Game1 game) : base(width, height, nHoles, nBoxes, nCollectibles, nEnemies, nPortals, nLasers, nDirections, game)
         {
             nodeTexture = game.Content.Load<Texture2D>("assets/quadnode");
         }
