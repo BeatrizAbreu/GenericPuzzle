@@ -261,8 +261,6 @@ namespace Game1
                     spriteBatch.Draw(laser.Key.texture, board.DrawPosition(laser.Key.position) * height, laser.Value.color);
                     //laser
                     spriteBatch.Draw(laser.Value.texture, board.DrawPosition(laser.Value.position) * height, laser.Value.color);
-
-                    /*FIX ME: ADICIONAR CORES DIFERENTES COMO FIZ PARA OS PORTAIS*/
                 }
 
                 else
