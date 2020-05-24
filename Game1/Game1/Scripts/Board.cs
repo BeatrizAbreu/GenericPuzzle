@@ -371,7 +371,7 @@ namespace Game1
         public void CreateEnemyObjects()
         {
             int objCount = 0;
-           // int rand;
+            int rand;
 
             for (int y = 0; y < boardInfo.height; y++)
             {
@@ -383,8 +383,8 @@ namespace Game1
                         {
                             if (nodes[x, y] != null)
                             {
-                               // placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
-                                //rand = RNG.Next(100);
+                               placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
+                                rand = RNG.Next(100);
 
                                 int winObjCount = 0;
 
@@ -397,43 +397,41 @@ namespace Game1
                                     }
 
                                     winObjCount++;
-
-                                   // if(rand > placementChance)
-                                    //{
-                                        //if the node is empty and is not the first, second or third position
-                                       
-                                    //}
                                 }
 
-                                if (winObjCount == winObjects.Count
+                                if (rand > placementChance)
+                                {
+                                    if (winObjCount == winObjects.Count
                                            && nodes[x, y].isEmpty
                                            && (x != 0 || y != 0)
                                            && !(x == 1 || y == 0)
                                            && !(x == 1 || y == 1))
-                                {
-                                    //create and place the spikes
-                                    Spike spike = new Spike(game);
-                                    spike.position = nodes[x, y].position;
-                                    bool error = false;
-
-                                    //confirms if the enemy is separated from the other enemies by at least X units
-                                    foreach (EnemyObject enemy in enemyObjects)
                                     {
-                                        if (Math.Abs(enemy.position.X - spike.position.X) < 2
-                                            && Math.Abs(enemy.position.Y - spike.position.Y) < 2)
+                                        //create and place the spikes
+                                        Spike spike = new Spike(game);
+                                        spike.position = nodes[x, y].position;
+                                        bool error = false;
+
+                                        //confirms if the enemy is separated from the other enemies by at least X units
+                                        foreach (EnemyObject enemy in enemyObjects)
                                         {
-                                            error = true;
-                                            break;
+                                            if (Math.Abs(enemy.position.X - spike.position.X) < 2
+                                                && Math.Abs(enemy.position.Y - spike.position.Y) < 2)
+                                            {
+                                                error = true;
+                                                break;
+                                            }
+                                        }
+
+                                        //Place the spike
+                                        if (!error)
+                                        {
+                                            enemyObjects.Add(spike);
+                                            objCount++;
                                         }
                                     }
-
-                                    //Place the spike
-                                    if (!error)
-                                    {
-                                        enemyObjects.Add(spike);
-                                        objCount++;
-                                    }
                                 }
+                                    
                             }
                         }
                         else
