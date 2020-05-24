@@ -302,10 +302,21 @@ namespace Game1
             //draw the spikes' sprites
             foreach (EnemyObject enemyObject in currentGameState.enemyObjects)
             {
-                if (!isOctaboard)
-                    spriteBatch.Draw(enemyObject.texture, board.DrawPosition(enemyObject.position) * height, Color.White);
+                if (enemyObject.tag == "Spike")
+                {
+                    if (!isOctaboard)
+                        spriteBatch.Draw(enemyObject.texture, board.DrawPosition(enemyObject.position) * height, Color.White);
+                    else
+                        spriteBatch.Draw(AssignOctaTetxure(enemyObject.texture, "Spike", enemyObject.position), board.DrawPosition(enemyObject.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                }
+
                 else
-                    spriteBatch.Draw(AssignOctaTetxure(enemyObject.texture, "Spike", enemyObject.position), board.DrawPosition(enemyObject.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.White);
+                {
+                    if (!isOctaboard)
+                        spriteBatch.Draw(playerTex, board.DrawPosition(enemyObject.position) * height, Color.Red);
+                    else
+                        spriteBatch.Draw(AssignOctaTetxure(playerTex, "Player", enemyObject.position), board.DrawPosition(enemyObject.position) * (height / 2 + OctaBoard.quadTexture.Height / 2), Color.Red);
+                }
             }
 
             //draw the boxes' sprites

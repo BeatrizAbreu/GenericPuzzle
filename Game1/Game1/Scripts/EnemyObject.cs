@@ -12,10 +12,11 @@ namespace Game1.Scripts
     {
         public Vector2 position;
         public Texture2D texture;
+        public string tag;
 
-        public virtual void Action()
+        public void Action()
         {
-
+            Player.hasLost = true;
         }
         public virtual void Action(Board board)
         {

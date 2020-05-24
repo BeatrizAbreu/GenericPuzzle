@@ -383,7 +383,7 @@ namespace Game1
                         {
                             if (nodes[x, y] != null)
                             {
-                               placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
+                                placementChance = Functions.GetPlacementChance(x, y, boardInfo.width, boardInfo.height, boardInfo.nEnemies);
                                 rand = RNG.Next(100);
 
                                 int winObjCount = 0;
@@ -426,7 +426,18 @@ namespace Game1
                                         //Place the spike
                                         if (!error)
                                         {
-                                            enemyObjects.Add(spike);
+                                            rand = RNG.Next(100);
+                                            if(rand > 30)
+                                                enemyObjects.Add(spike);
+                                            else
+                                            {
+                                                Vector2 dir = new Vector2(0, 1);
+                                                if (rand <= 15 && x != boardInfo.width - 1)
+                                                    dir = new Vector2(0, -1);
+
+                                                MovableEnemy movingEnemy = new MovableEnemy(nodes[x, y].position, 3, "Copycat", dir);
+                                                enemyObjects.Add(movingEnemy);
+                                            }
                                             objCount++;
                                         }
                                     }

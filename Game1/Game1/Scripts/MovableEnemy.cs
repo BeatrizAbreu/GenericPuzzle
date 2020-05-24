@@ -10,38 +10,38 @@ namespace Game1.Scripts
     class MovableEnemy : EnemyObject
     {
         Vector2 source;
-        public Vector2 currentPosition;
+     //   public Vector2 currentPosition;
         int distance;
-        public string tag;
+        public string id;
+        Vector2 dir;
 
-        public MovableEnemy(Vector2 source, int distance, string tag, bool xAxis)
+        public MovableEnemy(Vector2 source, int distance, string id, Vector2 dir)
         {
             this.source = source;
-            currentPosition = source;
+            position = source;
             this.distance = distance;
-            this.tag = tag;
+            this.id = id;
+            this.tag = "Movable";
+            this.dir = dir;
         }
 
         public override void Action(Board board)
         {
-            Vector2 destination = currentPosition;
-
             Move(board);
         }
 
         public bool Move(Board board)
         {
-            Vector2 dir;
             Vector2 targetPosition;
 
-            if (currentPosition.Y + 1 <= source.Y)
+            if (position.Y + 1 <= source.Y)
             {
-                targetPosition = new Vector2(currentPosition.X, currentPosition.Y + 1);
+                targetPosition = new Vector2(position.X, position.Y + 1);
                 dir = new Vector2(0, 1);
             }
             else
             {
-                targetPosition = new Vector2(currentPosition.X, currentPosition.Y - 1);
+                targetPosition = new Vector2(position.X, position.Y - 1);
                 dir = new Vector2(0, -1);
             }
           //  targetPosition = currentPosition.Y + 1 <= source.Y + distance ? new Vector2(currentPosition.X, currentPosition.Y + 1) : new Vector2(currentPosition.X, currentPosition.Y - 1);

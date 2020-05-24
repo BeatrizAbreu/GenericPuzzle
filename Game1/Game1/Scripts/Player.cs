@@ -91,10 +91,23 @@ namespace Game1.Scripts
 
             // First we move
             nMoves++;
+
+            //update position
             if (isTeleporting)
                 position = teleportPos;
             else
                 position = targetNode.position;
+
+            //trigger movable enemy's movement
+            foreach (var enemy in board.enemyObjects)
+            {
+                if (enemy.tag == "Movable")
+                {
+                    enemy.Action(board);
+                    if (enemy.position == position)
+                        enemy.Action();
+                }
+            }
 
             //laser toggle ahead!
             foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
