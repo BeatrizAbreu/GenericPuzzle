@@ -12,7 +12,6 @@ namespace Game1.Scripts
         Vector2 source;
         public Vector2 currentPosition;
         int distance;
-        bool xAxis;
         public string tag;
 
         public MovableEnemy(Vector2 source, int distance, string tag, bool xAxis)
@@ -21,7 +20,6 @@ namespace Game1.Scripts
             currentPosition = source;
             this.distance = distance;
             this.tag = tag;
-            this.xAxis = xAxis;
         }
 
         public override void Action(Board board)
@@ -33,48 +31,29 @@ namespace Game1.Scripts
 
         public bool Move(Board board)
         {
-            Node currentNode = board.Node(position);
-            Node targetNode = board.Move(currentNode, direction);
-            bool isTeleporting = false;
-            Vector2 teleportPos = new Vector2();
+            Vector2 dir;
+            Vector2 targetPosition;
 
-            if (currentNode == targetNode)
-                return false;
-
-            foreach (Portal portal in board.portals)
+            if (currentPosition.Y + 1 <= source.Y)
             {
-                // Portal ahead!
-                if (portal.pos1 == targetNode.position || portal.pos2 == targetNode.position)
-                {
-                    Vector2 dir = targetNode.position - currentNode.position;
-
-                    if (BoardInfo.nDirections == 6)
-                    {
-                        if ((targetNode.position.X % 2 == 0 && currentNode.position.X % 2 != 0)
-                            || (targetNode.position.X % 2 != 0 && currentNode.position.X % 2 == 0))
-                            dir.Y += 1;
-                    }
-
-                    teleportPos = portal.Trigger(this.position, dir, targetNode.position);
-
-                    if (board.Node(teleportPos) == null)
-                        return false;
-
-                    targetNode = board.Node(teleportPos);
-                    isTeleporting = true;
-                    break;
-                }
+                targetPosition = new Vector2(currentPosition.X, currentPosition.Y + 1);
+                dir = new Vector2(0, 1);
             }
+            else
+            {
+                targetPosition = new Vector2(currentPosition.X, currentPosition.Y - 1);
+                dir = new Vector2(0, -1);
+            }
+          //  targetPosition = currentPosition.Y + 1 <= source.Y + distance ? new Vector2(currentPosition.X, currentPosition.Y + 1) : new Vector2(currentPosition.X, currentPosition.Y - 1);
+            Node currentNode = board.Node(position);
+            Node targetNode = board.Node(targetPosition).isEmpty ? board.Node(targetPosition) : board.Node(targetPosition - 2 * dir);
 
             if (!targetNode.isEmpty)
             {
                 return false;
             }
 
-            if (isTeleporting)
-                position = teleportPos;
-            else
-                position = targetNode.position;
+            position = targetNode.position;
 
             //laser toggle ahead!
             foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
@@ -82,38 +61,6 @@ namespace Game1.Scripts
                 //Trigger the laser's toggle
                 if (position == laser.Key.position)
                     laser.Key.Action(laser.Value);
-            }
-
-            // then we might die
-            // find the next node's enemy
-            foreach (EnemyObject enemyObj in board.enemyObjects)
-            {
-                //find the obstacle that's in the neighbor
-                if (enemyObj.position == position)
-                {
-                    // kill the player
-                    enemyObj.Action();
-                    break;
-                }
-            }
-
-            foreach (WinObject winObject in board.winObjects)
-            {
-                //Collectible ahead!
-                if (winObject.tag == "Collectible" && winObject.position == position)
-                {
-                    winObject.Action();
-                }
-            }
-
-            //we're in a octaboard
-            if (Game1.isOctaboard)
-            {
-                //change nDirections if needed
-                if ((currentNode.position.X + currentNode.position.Y) % 2 != targetNode.position.X + targetNode.position.Y % 2)
-                {
-                    BoardInfo.nDirections = BoardInfo.nDirections == 8 ? 4 : 8;
-                }
             }
 
             return true;

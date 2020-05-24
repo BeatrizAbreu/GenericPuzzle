@@ -13,6 +13,13 @@ namespace Game1.Scripts
         public Vector2 position;
         public Texture2D texture;
 
-        public abstract void Action();
+        public virtual void Action()
+        {
+
+        }
+        public virtual void Action(Board board)
+        {
+
+        }
     }
 }

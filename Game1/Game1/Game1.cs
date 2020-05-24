@@ -22,12 +22,12 @@ namespace Game1
         static int nHoles = 0;
         static int nBoxes = 3;
         static int nCollectibles = 4;
-        static int nPortals = 1;
-        static int nLasers = 3;
-        static int nEnemies = 2;
+        static int nPortals = 0;
+        static int nLasers = 0;
+        static int nEnemies = 5;
         static int width = 9;
         static int height = 5;
-        static int nDirections = 4;
+        static int nDirections = 6;
 
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
