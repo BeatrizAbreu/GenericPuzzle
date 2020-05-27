@@ -46,7 +46,11 @@ namespace Game1.Scripts
             }
           //  targetPosition = currentPosition.Y + 1 <= source.Y + distance ? new Vector2(currentPosition.X, currentPosition.Y + 1) : new Vector2(currentPosition.X, currentPosition.Y - 1);
             Node currentNode = board.Node(position);
-            Node targetNode = board.Node(targetPosition).isEmpty ? board.Node(targetPosition) : board.Node(targetPosition - 2 * dir);
+            Node targetNode;
+            if (board.Node(targetPosition) != null)
+                targetNode = board.Node(targetPosition).isEmpty ? board.Node(targetPosition) : board.Node(targetPosition - 2 * dir);
+            else
+                return false;
 
             if (!targetNode.isEmpty)
             {

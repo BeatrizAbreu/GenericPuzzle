@@ -44,6 +44,7 @@ namespace Game1.Scripts
             if (currentNode == targetNode)
                 return false;
 
+            if(board.portals != null)
             foreach (Portal portal in board.portals)
             {
                 // Portal ahead!
@@ -110,6 +111,7 @@ namespace Game1.Scripts
             }
 
             //laser toggle ahead!
+            if(board.lasers != null)
             foreach (KeyValuePair<LaserToggle, Wall> laser in board.lasers)
             {
                 //Trigger the laser's toggle

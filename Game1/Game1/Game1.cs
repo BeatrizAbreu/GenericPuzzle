@@ -19,13 +19,13 @@ namespace Game1
         private Texture2D playerTex;
 
         //Board making information
-        static int nHoles = 0;
-        static int nBoxes = 3;
-        static int nCollectibles = 4;
-        static int nPortals = 0;
+        static int nHoles = 3;
+        static int nBoxes = 4;
+        static int nCollectibles = 3;
+        static int nPortals = 1;
         static int nLasers = 0;
-        static int nEnemies = 5;
-        static int width = 9;
+        static int nEnemies = 1;
+        static int width = 5;
         static int height = 5;
         static int nDirections = 6;
 
@@ -48,8 +48,8 @@ namespace Game1
         public static int movesCount = 0;
 
         //Player type
-        bool realPlayer = true;
-        bool MCTSPlayer = false;
+        bool realPlayer = false;
+        bool MCTSPlayer = true;
         bool randomPlayer = false;
 
         //Board from file
@@ -69,7 +69,7 @@ namespace Game1
             playsCount = lossCount = winCount = 0;
             Board board;
             Player player;
-            new RNG(2);
+            new RNG(4);
             lossCount = winCount = 0;
             //setting first keyboard states
             state = Keyboard.GetState();
@@ -135,7 +135,34 @@ namespace Game1
             {
                 treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS, 0, 10);
                 System.Console.WriteLine($"{treeRootMTCS.winCount} vs {treeRootMTCS.lossCount} ({treeRootMTCS.playsCount})");
+                currentGameState = GetMCTSWinBoard(treeRootMTCS).gameState;
             }
+        }
+
+        private NodeMCTS GetMCTSWinBoard(NodeMCTS root)
+        {
+            NodeMCTS bestChild = new NodeMCTS();
+            bestChild.winCount = -1;
+            int count = 0;
+
+            if (root.children != null)
+            {
+                foreach (var child in root.children)
+                {
+                    if (bestChild.winCount == -1)
+                        bestChild = child.Value;
+                    else if (bestChild.winCount < child.Value.winCount)
+                        bestChild = child.Value;
+                    count++;
+
+                    if (count == root.children.Count)
+                    {
+                        bestChild = GetMCTSWinBoard(bestChild);
+                    }
+                }
+            }
+
+            return bestChild;
         }
 
         protected override void UnloadContent()
@@ -154,7 +181,7 @@ namespace Game1
                 RestartGame();
             }
 
-            //Respawn the player when he loses/wins and give the info to the father node
+            //Respawn the player when he loses/ wins and give the info to the father node
             if (currentGameState.board.EvaluateVictory(currentGameState) != 0)
             {
                 if (currentGameState.board.EvaluateVictory(currentGameState) == -1)
@@ -210,7 +237,7 @@ namespace Game1
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(new Color(38, 38,38));
 
             spriteBatch.Begin();
 
@@ -237,6 +264,7 @@ namespace Game1
             }
 
             //draw the portals' sprites
+            if(currentGameState.board.portals != null)
             foreach (var portal in currentGameState.board.portals)
             {
                 if(!isOctaboard)
@@ -253,7 +281,8 @@ namespace Game1
 
 
             //draw the lasers' sprites
-            foreach (var laser in currentGameState.board.lasers)
+            if (currentGameState.board.lasers != null)
+                foreach (var laser in currentGameState.board.lasers)
             {
                 if (!isOctaboard)
                 {

@@ -259,7 +259,7 @@ namespace Game1
                 pos2 = CreatePortal(pos1);
 
                 //If we can't place both portals, we don't place any of the pair
-                if (!(i > 0 && pos2 == Vector2.One))
+                if (pos2 != pos1)//(!(i > 0 && pos2 == Vector2.One))
                 {
                     Portal portal = new Portal(pos1, pos2, colors[portals.Count], game);
                     portals.Add(portal);
@@ -281,7 +281,7 @@ namespace Game1
                         if (portalsCount / 2 < boardInfo.nPortals)
                         {
                             //If the node is not a hole and not the first cell
-                            if (nodes[x, y] != null && !(y == 1 && x == 1))
+                            if (nodes[x, y] != null && (y > 1 || x > 1))
                             {
                                 //If the node is empty
                                 if (nodes[x, y].isEmpty)
@@ -334,22 +334,22 @@ namespace Game1
                                             if (!occupied)
                                             {
                                                 //If this is the second portal
-                                                if (pos != Vector2.One)
-                                                {
+                                                //if (pos != Vector2.One)
+                                                //{
                                                     //this node can be taken - it's not too close to another portal!
-                                                    if (Math.Abs(pos.X - pos1.X) >= 3
-                                                        || Math.Abs(pos.Y - pos1.Y) >= 3)
+                                                    if (Math.Abs(pos.X - pos1.X) >= 2
+                                                        || Math.Abs(pos.Y - pos1.Y) >= 2)
                                                     {
                                                         portalsCount++;
                                                         return pos1;
                                                     }
-                                                }
+                                             //   }
 
-                                                else
-                                                {
-                                                    portalsCount++;
-                                                    return pos1;
-                                                }
+                                                //else
+                                                //{
+                                                //    portalsCount++;
+                                                //    return pos1;
+                                                //}
                                             }
                                         }
                                     }
@@ -646,12 +646,12 @@ namespace Game1
                         }
 
                         //we're in the 4 extreme lines/collumns
-                        else
-                        {
-                            rand = RNG.Next(100);
+                        //else
+                        //{
+                        //    rand = RNG.Next(100);
 
-                            CreateBox(x, y, ref boxCount);
-                        }
+                        //    CreateBox(x, y, ref boxCount);
+                        //}
                     }
                 }
             }

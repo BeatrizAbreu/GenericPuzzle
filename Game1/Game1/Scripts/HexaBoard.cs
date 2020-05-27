@@ -84,7 +84,8 @@ namespace Game1
         public override Vector2 DrawPosition(Vector2 cellPos)
         {
             float yDelta = cellPos.X % 2 == 0 ? 0 : 0.5f;
-            return new Vector2(cellPos.X, cellPos.Y + yDelta);    
+            float xDelta = cellPos.X > 0 ? 0.125f * cellPos.X : 0;
+            return new Vector2(cellPos.X - xDelta, cellPos.Y + yDelta);    
         } 
 
         public override Node Move(Node currentNode, Direction direction)

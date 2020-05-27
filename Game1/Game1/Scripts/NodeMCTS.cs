@@ -105,71 +105,69 @@ namespace Game1.Scripts
             // - if this is a lose position,   sum one to lost count
             // either way, increment  
             // FIXME!!!
-
-
         }
 
 
-        public void Iterate(NodeMCTS root, NodeMCTS firstRoot)
-        {
-            int x = (int)root.gameState.player.position.X, y = (int)root.gameState.player.position.Y;
+        //public void Iterate(NodeMCTS root, NodeMCTS firstRoot)
+        //{
+        //    int x = (int)root.gameState.player.position.X, y = (int)root.gameState.player.position.Y;
 
-            //if the node has a neighbor list, iterate through each neighbor
-            if (root.gameState.board.nodes[x, y].neighbors != null)
-            {
-                //shuffle the neighbors keys so the order is random (not really a necessary step)
-                var neighborKeys = root.gameState.board.Node(new Microsoft.Xna.Framework.Vector2(x, y)).neighbors.Keys.Shuffle().ToList();
+        //    //if the node has a neighbor list, iterate through each neighbor
+        //    if (root.gameState.board.nodes[x, y].neighbors != null)
+        //    {
+        //        //shuffle the neighbors keys so the order is random (not really a necessary step)
+        //        var neighborKeys = root.gameState.board.Node(new Microsoft.Xna.Framework.Vector2(x, y)).neighbors.Keys.Shuffle().ToList();
 
-                //saves the best path given the formula
-                NodeMCTS bestPath = new NodeMCTS();
+        //        //saves the best path given the formula
+        //        NodeMCTS bestPath = new NodeMCTS();
 
-                NodeMCTS rootCopy = root.Copy();
+        //        NodeMCTS rootCopy = root.Copy();
 
-                bool isExpanding = false;
+        //        bool isExpanding = false;
 
-                foreach (var key in neighborKeys)
-                {
-                    //if the node doesn't have children yet or its direction hasn't yet been visited
-                    if (!root.children.ContainsKey(key))
-                    {
-                        //if the player can move towards that direction, it moves
-                        if (rootCopy.gameState.player.Move(key))
-                        {
-                            //create the child node and executes a random run
-                            NodeMCTS child = new NodeMCTS(rootCopy.gameState);
+        //        foreach (var key in neighborKeys)
+        //        {
+        //            //if the node doesn't have children yet or its direction hasn't yet been visited
+        //            if (!root.children.ContainsKey(key))
+        //            {
+        //                //if the player can move towards that direction, it moves
+        //                if (rootCopy.gameState.player.Move(key))
+        //                {
+        //                    //create the child node and executes a random run
+        //                    NodeMCTS child = new NodeMCTS(rootCopy.gameState);
 
-                            //add the child to the children list
-                            root.children.Add(key, child);
+        //                    //add the child to the children list
+        //                    root.children.Add(key, child);
 
-                            //update the parent's win/loss/plays values
-                            root.playsCount += child.playsCount;
-                            root.lossCount += child.lossCount;
-                            root.winCount += child.winCount;
-                        }
-                    }
+        //                    //update the parent's win/loss/plays values
+        //                    root.playsCount += child.playsCount;
+        //                    root.lossCount += child.lossCount;
+        //                    root.winCount += child.winCount;
+        //                }
+        //            }
 
-                    //this node has already been visited
-                    else
-                    {
-                        isExpanding = true;
-                        break;
-                    }
-                }
+        //            //this node has already been visited
+        //            else
+        //            {
+        //                isExpanding = true;
+        //                break;
+        //            }
+        //        }
 
-                //if the tree is expanding through evaluation
-                if (isExpanding)
-                {
-                    //find the best path using the formula
-                    bestPath = GetBestPath(root);
+        //        //if the tree is expanding through evaluation
+        //        if (isExpanding)
+        //        {
+        //            //find the best path using the formula
+        //            bestPath = GetBestPath(root);
 
-                    //iterate through the bestPath's children and expand the tree
-                    Iterate(bestPath, firstRoot);
-                }
+        //            //iterate through the bestPath's children and expand the tree
+        //            Iterate(bestPath, firstRoot);
+        //        }
                 
-                //go through the root again 
-                Iterate(firstRoot, firstRoot);
-            }
-        }
+        //        //go through the root again 
+        //        Iterate(firstRoot, firstRoot);
+        //    }
+        //}
 
         public bool Iterate(NodeMCTS root, NodeMCTS firstRoot, int iNow, int iTotal)
         {
@@ -184,7 +182,11 @@ namespace Game1.Scripts
                 //saves the best path given the formula
                 NodeMCTS bestPath = new NodeMCTS();
 
-                NodeMCTS rootCopy = root.Copy();
+                NodeMCTS rootCopy = new NodeMCTS();  //= root.Copy();
+                rootCopy.children = root.children;
+                rootCopy.gameState = root.gameState;
+                rootCopy.lossCount = root.lossCount;
+                rootCopy.winCount = root.winCount;
 
                 bool isExpanding = false;
 
