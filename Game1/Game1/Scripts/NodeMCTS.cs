@@ -15,7 +15,7 @@ namespace Game1.Scripts
         public int winCount;
         public int lossCount;
         public int playsCount;
-        string hashGameState;
+     //   string hashGameState;
 
         public NodeMCTS(GameState gameState)
         {
@@ -182,11 +182,11 @@ namespace Game1.Scripts
                 //saves the best path given the formula
                 NodeMCTS bestPath = new NodeMCTS();
 
-                NodeMCTS rootCopy = new NodeMCTS();  //= root.Copy();
-                rootCopy.children = root.children;
-                rootCopy.gameState = root.gameState;
-                rootCopy.lossCount = root.lossCount;
-                rootCopy.winCount = root.winCount;
+                NodeMCTS rootCopy = root.Copy(); //new NodeMCTS();  
+               // rootCopy.children = root.children.Copy();
+               // rootCopy.gameState = root.gameState.Copy();
+               // rootCopy.lossCount = root.lossCount.Copy();
+               // rootCopy.winCount = root.winCount.Copy();
 
                 bool isExpanding = false;
 

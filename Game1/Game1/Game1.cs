@@ -181,22 +181,22 @@ namespace Game1
                 RestartGame();
             }
 
-            //Respawn the player when he loses/ wins and give the info to the father node
-            if (currentGameState.board.EvaluateVictory(currentGameState) != 0)
-            {
-                if (currentGameState.board.EvaluateVictory(currentGameState) == -1)
-                {
-                    lossCount++;
-                }
-                else
-                {
-                    winCount++;
-                }
+            ////Respawn the player when he loses/ wins and give the info to the father node
+            //if (currentGameState.board.EvaluateVictory(currentGameState) != 0)
+            //{
+            //    if (currentGameState.board.EvaluateVictory(currentGameState) == -1)
+            //    {
+            //        lossCount++;
+            //    }
+            //    else
+            //    {
+            //        winCount++;
+            //    }
 
-                //drawCount = root.children.Count - root.lossCount - root.winCount;
+            //    //drawCount = root.children.Count - root.lossCount - root.winCount;
 
-                Respawn(gameTime);
-            }
+            //    Respawn(gameTime);
+            //}
 
             if (realPlayer)
             {               
