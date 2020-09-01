@@ -147,11 +147,11 @@ namespace Game1
 
             LaserToggle toggle = new LaserToggle(game);
 
-            for (int y = 1; y < boardInfo.height - 1; y++)
+            for (int y = 0; y < boardInfo.height - 1; y++)
             {
                 if (laserCount < boardInfo.nLasers)
                 {
-                    for (int x = 1; x < boardInfo.width - 1; x++)
+                    for (int x = 0; x < boardInfo.width - 1; x++)
                     {
                         if (laserCount < boardInfo.nLasers)
                         {

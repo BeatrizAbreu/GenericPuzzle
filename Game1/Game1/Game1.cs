@@ -19,13 +19,13 @@ namespace Game1
         private Texture2D playerTex;
 
         //Board making information
-        static int nHoles = 3;
-        static int nBoxes = 4;
-        static int nCollectibles = 3;
-        static int nPortals = 1;
+        static int nHoles = 0;
+        static int nBoxes = 0;
+        static int nCollectibles = 4;
+        static int nPortals = 0;
         static int nLasers = 0;
-        static int nEnemies = 1;
-        static int width = 5;
+        static int nEnemies = 0;
+        static int width = 6;
         static int height = 5;
         static int nDirections = 6;
 
@@ -133,37 +133,37 @@ namespace Game1
 
             if(MCTSPlayer)
             {
-                treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS, 0, 10);
+                treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS, 0, 15);
                 System.Console.WriteLine($"{treeRootMTCS.winCount} vs {treeRootMTCS.lossCount} ({treeRootMTCS.playsCount})");
-                currentGameState = GetMCTSWinBoard(treeRootMTCS).gameState;
+            //    currentGameState = GetMCTSWinBoard(treeRootMTCS).gameState;
             }
         }
 
-        private NodeMCTS GetMCTSWinBoard(NodeMCTS root)
-        {
-            NodeMCTS bestChild = new NodeMCTS();
-            bestChild.winCount = -1;
-            int count = 0;
+        //private NodeMCTS GetMCTSWinBoard(NodeMCTS root)
+        //{
+        //    NodeMCTS bestChild = new NodeMCTS();
+        //    bestChild.winCount = -1;
+        //    int count = 0;
 
-            if (root.children != null)
-            {
-                foreach (var child in root.children)
-                {
-                    if (bestChild.winCount == -1)
-                        bestChild = child.Value;
-                    else if (bestChild.winCount < child.Value.winCount)
-                        bestChild = child.Value;
-                    count++;
+        //    if (root.children != null)
+        //    {
+        //        foreach (var child in root.children)
+        //        {
+        //            if (bestChild.winCount == -1)
+        //                bestChild = child.Value;
+        //            else if (bestChild.winCount < child.Value.winCount)
+        //                bestChild = child.Value;
+        //            count++;
 
-                    if (count == root.children.Count)
-                    {
-                        bestChild = GetMCTSWinBoard(bestChild);
-                    }
-                }
-            }
+        //            if (count == root.children.Count)
+        //            {
+        //                bestChild = GetMCTSWinBoard(bestChild);
+        //            }
+        //        }
+        //    }
 
-            return bestChild;
-        }
+        //    return bestChild;
+        //}
 
         protected override void UnloadContent()
         {
@@ -182,21 +182,21 @@ namespace Game1
             }
 
             ////Respawn the player when he loses/ wins and give the info to the father node
-            //if (currentGameState.board.EvaluateVictory(currentGameState) != 0)
-            //{
-            //    if (currentGameState.board.EvaluateVictory(currentGameState) == -1)
-            //    {
-            //        lossCount++;
-            //    }
-            //    else
-            //    {
-            //        winCount++;
-            //    }
+            if (currentGameState.board.EvaluateVictory(currentGameState) != 0)
+            {
+                if (currentGameState.board.EvaluateVictory(currentGameState) == -1)
+                {
+                    lossCount++;
+                }
+                else
+                {
+                    winCount++;
+                }
 
-            //    //drawCount = root.children.Count - root.lossCount - root.winCount;
+                //drawCount = root.children.Count - root.lossCount - root.winCount;
 
-            //    Respawn(gameTime);
-            //}
+                Respawn(gameTime);
+            }
 
             if (realPlayer)
             {               
@@ -237,7 +237,8 @@ namespace Game1
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(38, 38,38));
+            //GraphicsDevice.Clear(new Color(38, 38,38));
+            GraphicsDevice.Clear(Color.White);
 
             spriteBatch.Begin();
 
