@@ -79,7 +79,7 @@ namespace Game1.Scripts
             float uBest = 0f;
             foreach (Direction direction in children.Keys) {
                 NodeMCTS node = children[direction]; 
-                float u = (node.winCount / node.playsCount) + C * (float)Math.Sqrt( 2 * Math.Log(N) / node.playsCount);
+                float u = ((float)node.winCount / node.playsCount) + C * (float)Math.Sqrt( 2 * Math.Log(N) / node.playsCount);
                 if (u > uBest) {
                     uBest = u; bestDirection = direction;
                 }
