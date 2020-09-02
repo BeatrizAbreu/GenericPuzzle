@@ -313,7 +313,7 @@ namespace Game1.Scripts
                 N = GetNValue(child.Value);
 
                 //calculate the node's formula
-                result = child.Value.winCount / child.Value.playsCount
+                result = (float)child.Value.winCount / child.Value.playsCount
                     + C * (float)Math.Sqrt(2 * Math.Log(Math.E, N) / child.Value.playsCount);
 
                 if (i == 0)
