@@ -20,7 +20,7 @@ namespace Game1
 
         //Board making information
         static int nHoles = 0;
-        static int nBoxes = 1;
+        static int nBoxes = 2;
         static int nCollectibles = 0;
         static int nPortals = 0;
         static int nLasers = 0;
