@@ -232,12 +232,16 @@ namespace Game1.Scripts
                     //find the best path using the formula
                     bestPath = GetBestPath(root);
 
+                    int prevplays = bestPath.playsCount;
+                    int prevloss = bestPath.lossCount;
+                    int prevwin = bestPath.winCount;
+                    
                     bool res = Iterate(bestPath, firstRoot, iNow, iTotal);
                     //   FindParent(ref bestPath, ref firstRoot);
 
-                    root.playsCount += bestPath.playsCount;
-                    root.lossCount += bestPath.lossCount;
-                    root.winCount += bestPath.winCount;
+                    root.playsCount += bestPath.playsCount - prevplays;
+                    root.lossCount += bestPath.lossCount - prevloss;
+                    root.winCount += bestPath.winCount - prevwin;
 
                     //iterate through the bestPath's children and expand the tree
                     if (res)

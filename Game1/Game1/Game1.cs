@@ -20,14 +20,14 @@ namespace Game1
 
         //Board making information
         static int nHoles = 0;
-        static int nBoxes = 0;
-        static int nCollectibles = 4;
+        static int nBoxes = 1;
+        static int nCollectibles = 0;
         static int nPortals = 0;
         static int nLasers = 0;
         static int nEnemies = 0;
-        static int width = 6;
-        static int height = 5;
-        static int nDirections = 6;
+        static int width = 4;
+        static int height = 4;
+        static int nDirections = 4;
 
         Vector2[] baseObstaclePos;
         public static bool isOctaboard = false;
@@ -133,7 +133,7 @@ namespace Game1
 
             if(MCTSPlayer)
             {
-                treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS, 0, 15);
+                treeRootMTCS.Iterate(treeRootMTCS, treeRootMTCS, 0, 30);
                 System.Console.WriteLine($"{treeRootMTCS.winCount} vs {treeRootMTCS.lossCount} ({treeRootMTCS.playsCount})");
             //    currentGameState = GetMCTSWinBoard(treeRootMTCS).gameState;
             }
